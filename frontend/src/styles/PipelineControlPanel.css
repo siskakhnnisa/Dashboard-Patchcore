@@ -1,0 +1,197 @@
+.pipeline-panel {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.pipeline-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pipeline-header-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pipeline-header-right {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pipeline-count {
+  font-size: 11px;
+  color: var(--text-muted);
+  background: var(--bg-card-soft);
+  padding: 2px 7px;
+  border-radius: 999px;
+}
+
+.pipeline-toggle-btn {
+  font-size: 11.5px;
+  padding: 4px 10px;
+  gap: 4px;
+  border-radius: var(--radius-sm);
+  transition: all var(--transition);
+}
+
+.pipeline-toggle-btn.running {
+  background: #dcfce7;
+  color: #16a34a;
+}
+
+.pipeline-toggle-btn.running:hover {
+  background: #bbf7d0;
+}
+
+.pipeline-toggle-btn.stopped {
+  background: var(--bg-card-soft);
+  color: var(--text-secondary);
+}
+
+.pipeline-icon-btn {
+  width: 28px;
+  height: 28px;
+  padding: 0;
+  justify-content: center;
+  border-radius: var(--radius-sm);
+}
+
+/* ── Pipeline Flow ── */
+.pipeline-flow {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+
+.pipeline-stage-wrap {
+  display: flex;
+  flex-direction: column;
+}
+
+.pipeline-stage {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 10px;
+  border-radius: var(--radius-sm);
+  cursor: pointer;
+  transition: background var(--transition);
+  border: 1px solid transparent;
+}
+
+.pipeline-stage:hover {
+  background: var(--bg-hover);
+}
+
+.pipeline-stage.active {
+  background: var(--bg-card-soft);
+}
+
+.pipeline-stage.disabled {
+  opacity: 0.5;
+}
+
+.pipeline-stage-icon {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.pipeline-stage-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.pipeline-stage-label {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: var(--text-primary);
+}
+
+.pipeline-stage-desc {
+  font-size: 11px;
+  color: var(--text-muted);
+  margin-top: 1px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Toggle switch */
+.pipeline-stage-toggle {
+  width: 28px;
+  height: 16px;
+  border-radius: 999px;
+  position: relative;
+  flex-shrink: 0;
+  transition: background var(--transition);
+  cursor: pointer;
+}
+
+.pipeline-stage-toggle.on {
+  background: var(--toggle-color, var(--accent-green));
+}
+
+.pipeline-stage-toggle.off {
+  background: var(--border-medium);
+}
+
+.pipeline-stage-toggle::after {
+  content: '';
+  position: absolute;
+  top: 2px;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: white;
+  transition: left var(--transition);
+  box-shadow: var(--shadow-xs);
+}
+
+.pipeline-stage-toggle.on::after {
+  left: 14px;
+}
+
+.pipeline-stage-toggle.off::after {
+  left: 2px;
+}
+
+/* ── Connector ── */
+.pipeline-connector {
+  display: flex;
+  align-items: center;
+  padding: 0 10px;
+  height: 10px;
+}
+
+.pipeline-connector-line {
+  width: 2px;
+  height: 10px;
+  background: var(--border-light);
+  margin-left: 5px;
+  border-radius: 1px;
+  transition: background var(--transition);
+}
+
+.pipeline-connector.active .pipeline-connector-line {
+  opacity: 0.7;
+}
+
+/* ── Status Bar ── */
+.pipeline-status-bar {
+  display: flex;
+  gap: 3px;
+  height: 4px;
+}
+
+.pipeline-status-seg {
+  flex: 1;
+  border-radius: 999px;
+  transition: background 0.3s ease, opacity 0.3s ease;
+}

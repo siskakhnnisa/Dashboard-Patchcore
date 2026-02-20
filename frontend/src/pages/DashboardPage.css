@@ -1,0 +1,72 @@
+.dashboard {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding-top: 16px;
+  max-width: 1400px;
+}
+
+/* ── Section header ── */
+.dashboard-section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.dashboard-section-title {
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dashboard-date-btn {
+  gap: 4px;
+  font-size: 13px;
+  color: var(--text-secondary);
+  border: 1px solid var(--border-light);
+  border-radius: var(--radius-sm);
+  padding: 5px 10px;
+}
+
+/* ── Middle row ── */
+.dashboard-middle {
+  display: grid;
+  grid-template-columns: 1fr 220px;
+  gap: 14px;
+  align-items: stretch;
+}
+
+.dashboard-monitor-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+}
+
+.dashboard-monitor-col .live-monitor {
+  flex: 1;
+  min-height: 320px;
+}
+
+.dashboard-traffic-col {
+  display: flex;
+  flex-direction: column;
+}
+
+/* ── Detection row ── */
+.dashboard-detection-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+  align-items: stretch;
+}
+
+/* ── Responsive ── */
+@media (max-width: 900px) {
+  .dashboard-middle {
+    grid-template-columns: 1fr;
+  }
+
+  .dashboard-detection-row {
+    grid-template-columns: 1fr;
+  }
+}
