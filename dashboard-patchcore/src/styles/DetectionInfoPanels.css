@@ -1,0 +1,132 @@
+.det-info-panel {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.det-info-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.det-info-icon {
+  color: var(--text-muted);
+}
+
+.det-info-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.det-info-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.det-info-row-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  background: var(--bg-card-soft);
+  border-radius: var(--radius-sm);
+  color: var(--text-secondary);
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.det-info-row-content {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.det-info-row-label {
+  font-size: 12.5px;
+  color: var(--text-primary);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  justify-content: space-between;
+}
+
+.det-info-value {
+  font-size: 12px;
+  font-family: var(--font-mono);
+  color: var(--text-secondary);
+  font-weight: 400;
+}
+
+.det-info-row-time {
+  font-size: 11px;
+  color: var(--text-muted);
+}
+
+/* Status badge */
+.det-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  font-family: var(--font-mono);
+}
+
+.det-status-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  animation: pulse-dot 1.5s ease infinite;
+}
+
+.status-red {
+  color: var(--accent-red);
+}
+.status-green {
+  color: var(--accent-green);
+}
+
+/* Anomaly bar */
+.det-anomaly-bar-wrap {
+  height: 4px;
+  background: var(--bg-card-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.det-anomaly-bar {
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    var(--accent-green) 0%,
+    var(--accent-yellow) 60%,
+    var(--accent-red) 100%
+  );
+  border-radius: 999px;
+  transition: width 0.5s ease;
+}
+
+/* Footer */
+.det-info-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 10px;
+  background: var(--bg-card-soft);
+  border-radius: var(--radius-sm);
+  font-size: 11.5px;
+  color: var(--text-secondary);
+}
+
+.det-info-footer-severity {
+  color: var(--accent-red);
+  font-weight: 600;
+}
