@@ -1,0 +1,111 @@
+import cv2
+import uuid
+import aiofiles
+import os
+from pathlib import Path
+from typing import Optional
+from app.config import settings
+from app.core.logger import logger
+
+class VideoReader:
+    """Kelola pembacaan frame dari video file"""
+    
+    def __init__(self):
+        self.cap: Optional[cv2.VideoCapture] = None
+        self.video_id: Optional[str] = None
+        self.video_path: Optional[str] = None
+        self.total_frames: int = 0
+        self.fps: float = 0.0
+        self.width: int = 0
+        self.height: int = 0
+        self._current_frame: int = 0
+    
+    def open(self, video_path: str):
+        """Buka video file untuk dibaca"""
+        if not os.path.exists(video_path):
+            raise FileNotFoundError(f"Video tidak ditemukan: {video_path}")
+        
+        self.cap = cv2.VideoCapture(video_path)
+        if not self.cap.isOpened():
+            raise RuntimeError(f"Tidak bisa membuka video: {video_path}")
+        
+        self.video_path = video_path
+        self.total_frames = int(self.cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        self.fps = self.cap.get(cv2.CAP_PROP_FPS)
+        self.width = int(self.cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        self.height = int(self.cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+        self._current_frame = 0
+        
+        logger.info(f"Video dibuka: {video_path} | "
+                   f"{self.total_frames} frames | {self.fps:.1f} FPS | "
+                   f"{self.width}x{self.height}")
+    
+    def read_frame(self) -> Optional[tuple]:
+        """
+        Baca satu frame berikutnya.
+        Return: (frame_numpy, frame_index) atau None jika sudah selesai
+        """
+        if not self.cap or not self.cap.isOpened():
+            return None
+        
+        ret, frame = self.cap.read()
+        if not ret:
+            return None
+        
+        self._current_frame += 1
+        return frame, self._current_frame
+    
+    def get_progress(self) -> float:
+        """Return progress 0-100"""
+        if self.total_frames == 0:
+            return 0.0
+        return (self._current_frame / self.total_frames) * 100
+    
+    def release(self):
+        if self.cap:
+            self.cap.release()
+            self.cap = None
+        logger.info("Video reader dirilis")
+    
+    @property
+    def is_finished(self) -> bool:
+        return self._current_frame >= self.total_frames
+    
+    @property
+    def current_frame(self) -> int:
+        return self._current_frame
+
+
+async def save_uploaded_video(file_content: bytes, filename: str) -> dict:
+    """
+    Simpan video yang diupload ke folder uploads/.
+    Return: metadata video
+    """
+    video_id = str(uuid.uuid4())
+    ext = Path(filename).suffix
+    save_path = Path(settings.UPLOAD_DIR) / f"{video_id}{ext}"
+    
+    # Simpan file
+    async with aiofiles.open(save_path, "wb") as f:
+        await f.write(file_content)
+    
+    # Baca metadata
+    cap = cv2.VideoCapture(str(save_path))
+    total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    fps = cap.get(cv2.CAP_PROP_FPS)
+    width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+    height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    duration = total_frames / fps if fps > 0 else 0
+    cap.release()
+    
+    logger.info(f"Video disimpan: {save_path} | ID: {video_id}")
+    
+    return {
+        "video_id": video_id,
+        "filename": filename,
+        "path": str(save_path),
+        "total_frames": total_frames,
+        "fps": fps,
+        "duration_seconds": duration,
+        "resolution": f"{width}x{height}"
+    }

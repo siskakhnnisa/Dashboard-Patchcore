@@ -1,0 +1,168 @@
+2026-02-24 22:16:58.504 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:16:58.507 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:16:58.508 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:19:45.354 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:19:45.356 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:19:45.357 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:23:54.183 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:23:54.198 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:23:54.211 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:26:09.603 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:26:09.604 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:26:09.605 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:27:04.383 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:27:04.385 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:27:04.386 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:27:05.374 | SUCCESS  | app.models.segmentation:load:57 - Segmentation model loaded | device=cpu
+2026-02-24 22:27:05.377 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-24 22:31:40.254 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-24 22:31:40.256 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-24 22:31:40.257 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-24 22:31:41.554 | SUCCESS  | app.models.segmentation:load:57 - Segmentation model loaded | device=cpu
+2026-02-24 22:31:41.556 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-24 22:32:04.181 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-24 22:32:04.205 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-24 22:32:04.206 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-24 23:42:37.181 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\046ae769-9b83-4b38-ae69-be5992ebc25f.mp4 | ID: 046ae769-9b83-4b38-ae69-be5992ebc25f
+2026-02-24 23:42:40.446 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 046ae769-9b83-4b38-ae69-be5992ebc25f
+2026-02-24 23:42:40.719 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\046ae769-9b83-4b38-ae69-be5992ebc25f.mp4 | 2767 frames | 30.0 FPS | 1360x1530
+2026-02-24 23:42:53.505 | ERROR    | app.core.pipeline_manager:_run_loop:186 - Error di pipeline loop: X has 448 features, but PCA is expecting 3584 features as input.
+2026-02-24 23:42:53.655 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 00:35:01.140 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\41528002-d0dc-4664-8228-1609de694b5b.mp4 | ID: 41528002-d0dc-4664-8228-1609de694b5b
+2026-02-25 00:35:58.045 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 41528002-d0dc-4664-8228-1609de694b5b
+2026-02-25 00:35:58.643 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\41528002-d0dc-4664-8228-1609de694b5b.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 00:36:08.867 | ERROR    | app.core.pipeline_manager:_run_loop:186 - Error di pipeline loop: X has 448 features, but PCA is expecting 3584 features as input.
+2026-02-25 00:36:08.886 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 00:36:24.490 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 00:36:24.948 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 00:36:25.082 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 01:18:35.731 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 01:18:36.197 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 01:18:36.295 | INFO     | app.models.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 01:18:40.395 | SUCCESS  | app.models.segmentation:load:57 - Segmentation model loaded | device=cpu
+2026-02-25 01:18:40.402 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 01:19:28.310 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 01:19:28.312 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 01:19:28.313 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 01:20:27.569 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\d33197bf-5f30-46e6-9524-7aea23aa8c63.mp4 | ID: d33197bf-5f30-46e6-9524-7aea23aa8c63
+2026-02-25 01:20:44.938 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: d33197bf-5f30-46e6-9524-7aea23aa8c63
+2026-02-25 01:20:45.181 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\d33197bf-5f30-46e6-9524-7aea23aa8c63.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 01:44:17.963 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 01:44:18.233 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 01:44:18.370 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 01:44:47.891 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 01:44:47.895 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 01:44:47.896 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 01:48:58.431 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 01:48:58.432 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 01:48:58.433 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 01:48:59.134 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 01:48:59.136 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 01:49:17.415 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 01:49:17.578 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 01:49:17.596 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 02:02:39.321 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 02:02:39.326 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 02:02:39.339 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 02:03:04.871 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 02:03:04.915 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 02:03:04.919 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 02:03:05.897 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 02:03:05.928 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 02:03:13.866 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 02:03:13.868 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 02:03:13.868 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 02:03:16.225 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\1c624c23-9cc9-4e2f-a9bc-9c7473013083.mp4 | ID: 1c624c23-9cc9-4e2f-a9bc-9c7473013083
+2026-02-25 02:03:37.642 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 1c624c23-9cc9-4e2f-a9bc-9c7473013083
+2026-02-25 02:03:37.886 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\1c624c23-9cc9-4e2f-a9bc-9c7473013083.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 02:04:03.810 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 02:04:03.834 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 02:04:03.852 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 02:54:35.251 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 1c624c23-9cc9-4e2f-a9bc-9c7473013083
+2026-02-25 02:54:35.459 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\1c624c23-9cc9-4e2f-a9bc-9c7473013083.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 02:54:48.276 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 02:54:48.298 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 02:54:48.299 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 02:54:48.300 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 03:06:44.791 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 03:06:44.794 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 03:06:44.794 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 03:06:46.096 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 03:06:46.103 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 03:07:06.423 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 03:07:06.532 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 03:07:06.667 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 03:07:55.886 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\2b1b601b-46ee-46cb-83ae-6cd4f79381b8.mp4 | ID: 2b1b601b-46ee-46cb-83ae-6cd4f79381b8
+2026-02-25 03:08:11.085 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 2b1b601b-46ee-46cb-83ae-6cd4f79381b8
+2026-02-25 03:08:11.249 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\2b1b601b-46ee-46cb-83ae-6cd4f79381b8.mp4 | 2767 frames | 30.0 FPS | 1360x1530
+2026-02-25 09:13:13.652 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 09:13:13.849 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 09:13:13.879 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 09:13:13.891 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 09:24:31.529 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 09:24:31.532 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 09:24:31.532 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 09:24:32.271 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 09:24:32.275 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 09:24:40.612 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 09:24:40.615 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 09:24:40.616 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 09:24:49.712 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\6fe62970-7891-4410-993e-7965d4fbd3cc.mp4 | ID: 6fe62970-7891-4410-993e-7965d4fbd3cc
+2026-02-25 09:24:52.403 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 6fe62970-7891-4410-993e-7965d4fbd3cc
+2026-02-25 09:24:52.605 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\6fe62970-7891-4410-993e-7965d4fbd3cc.mp4 | 2767 frames | 30.0 FPS | 1360x1530
+2026-02-25 09:30:43.161 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 09:30:43.306 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 09:30:43.310 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 09:30:43.312 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 09:33:05.988 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 09:33:06.022 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 09:33:06.043 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 09:33:09.570 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 09:33:09.586 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 09:33:18.037 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 09:33:18.038 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 09:33:18.038 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 09:38:05.556 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 09:38:05.571 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 09:38:05.573 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 09:47:23.998 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 09:47:24.020 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 09:47:24.034 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 09:47:25.473 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 09:47:25.478 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 09:47:35.687 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 09:47:35.701 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 09:47:35.705 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 09:48:01.838 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\8b08d014-88ec-424c-a54c-f42003808ebb.mp4 | ID: 8b08d014-88ec-424c-a54c-f42003808ebb
+2026-02-25 09:48:10.748 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 8b08d014-88ec-424c-a54c-f42003808ebb
+2026-02-25 09:48:10.805 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\8b08d014-88ec-424c-a54c-f42003808ebb.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 10:06:17.782 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 10:06:17.868 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 10:06:17.877 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 10:06:17.877 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 10:09:12.270 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 10:09:12.271 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 10:09:12.288 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 10:09:13.433 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 10:09:13.436 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 10:09:24.019 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 10:09:24.049 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 10:09:24.058 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 10:10:50.586 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 10:10:50.590 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 10:10:50.592 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 10:12:48.772 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 10:12:48.774 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 10:12:48.774 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 10:12:50.334 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 10:12:50.368 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 10:13:01.293 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 10:13:01.297 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 10:13:01.298 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 10:13:01.623 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-25 10:13:03.551 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-25 10:13:38.240 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\120bb8c4-3322-4083-86fb-eee392b82990.mp4 | ID: 120bb8c4-3322-4083-86fb-eee392b82990
+2026-02-25 10:13:43.941 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 120bb8c4-3322-4083-86fb-eee392b82990
+2026-02-25 10:13:44.003 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\120bb8c4-3322-4083-86fb-eee392b82990.mp4 | 1383 frames | 30.0 FPS | 1360x1530
+2026-02-25 10:41:54.613 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-25 10:42:19.255 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2

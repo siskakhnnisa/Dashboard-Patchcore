@@ -1,0 +1,25 @@
+# Web Framework
+fastapi==0.111.0
+uvicorn[standard]==0.29.0
+python-multipart==0.0.9      # untuk file upload
+
+# WebSocket
+websockets==12.0
+
+# ML & Computer Vision
+torch==2.3.0
+torchvision==0.18.0
+opencv-python==4.9.0.80
+numpy==1.26.4
+scikit-learn==1.4.2          # PatchCore biasanya pakai sklearn
+Pillow==10.3.0
+
+# Utilities
+python-dotenv==1.0.1
+pydantic==2.7.1
+pydantic-settings==2.2.1
+aiofiles==23.2.1             # async file I/O
+loguru==0.7.2                # logging yang lebih baik
+
+# CORS & Security
+starlette==0.37.2
