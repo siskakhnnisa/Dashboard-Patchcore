@@ -4,6 +4,7 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
+from sqlalchemy import text
 import os
 
 from app.config import settings
@@ -16,7 +17,37 @@ from app.db import Base, engine
 from app.models.fod_snapshot import FODSnapshot
 
 
+# ── Buat tabel baru (tidak menyentuh tabel yang sudah ada) ─────────────────
 Base.metadata.create_all(bind=engine)
+
+
+def _migrate_fod_snapshots():
+    """
+    Tambah kolom validasi ke tabel fod_snapshots yang sudah ada.
+    SQLite mendukung ALTER TABLE ADD COLUMN tapi tidak DROP/MODIFY,
+    sehingga kita cukup cek keberadaan kolom lalu tambahkan jika belum ada.
+    """
+    new_columns = [
+        ("validation_status", "VARCHAR NOT NULL DEFAULT 'pending'"),
+        ("validated_by",      "VARCHAR"),
+        ("validated_at",      "DATETIME"),
+        ("validation_notes",  "VARCHAR"),
+    ]
+    with engine.connect() as conn:
+        result  = conn.execute(text("PRAGMA table_info(fod_snapshots)"))
+        existing = {row[1] for row in result.fetchall()}
+        for col_name, col_def in new_columns:
+            if col_name not in existing:
+                conn.execute(
+                    text(f"ALTER TABLE fod_snapshots ADD COLUMN {col_name} {col_def}")
+                )
+                logger.info(f"DB migration: kolom '{col_name}' ditambahkan ke fod_snapshots")
+        conn.commit()
+
+
+_migrate_fod_snapshots()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     """
