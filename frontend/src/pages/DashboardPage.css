@@ -100,8 +100,9 @@ html, body {
   display: flex;
   flex-direction: column;
   min-height: 320px;
-  padding: 24px;
+  padding: 0;
   width: 100%;
+  overflow: hidden;
 }
 
 .dashboard-traffic-col {
@@ -191,7 +192,7 @@ html, body {
     padding: 16px 12px;
     gap: 14px;
   }
-  
+
   .dashboard-title {
     font-size: 20px;
   }
@@ -200,17 +201,21 @@ html, body {
     grid-template-columns: 1fr 1fr;
     gap: 10px;
   }
-  
+
   .dashboard-card {
     padding: 16px;
   }
-  
+
   .stats-card {
     padding: 14px 12px;
     min-height: 85px;
   }
-  
-  .dashboard-monitor-col,
+
+  .dashboard-monitor-col {
+    padding: 0;
+    min-height: 200px;
+  }
+
   .dashboard-traffic-col,
   .dashboard-det-info,
   .dashboard-pipeline {
@@ -225,7 +230,7 @@ html, body {
     padding: 12px 8px;
     gap: 12px;
   }
-  
+
   .dashboard-title {
     font-size: 18px;
   }
@@ -234,17 +239,21 @@ html, body {
     grid-template-columns: 1fr;
     gap: 10px;
   }
-  
+
   .dashboard-card {
     padding: 14px;
   }
-  
+
   .stats-card {
     padding: 14px;
     min-height: 75px;
   }
-  
-  .dashboard-monitor-col,
+
+  .dashboard-monitor-col {
+    padding: 0;
+    min-height: 180px;
+  }
+
   .dashboard-traffic-col,
   .dashboard-det-info,
   .dashboard-pipeline {

@@ -1,4 +1,16 @@
+/* ── CSS Variables (scoped to this component) ── */
 .live-monitor {
+  --transition:      0.2s ease;
+  --accent-red:      #EF4444;
+  --accent-green:    #10B981;
+  --border-light:    #F1F5F9;
+  --border-medium:   #D1D5DB;
+  --text-primary:    #111827;
+  --text-secondary:  #6B7280;
+  --font-mono:       'SF Mono', 'Fira Code', 'Consolas', monospace;
+  --shadow-md:       0 4px 12px rgba(0, 0, 0, 0.10);
+  --radius-sm:       6px;
+
   overflow: hidden;
   display: flex;
   flex-direction: column;
@@ -112,7 +124,17 @@
   flex: 1;
   min-height: 220px;
   overflow: hidden;
-  background: #0e1a0e;
+  background: #0d1a0d;
+}
+
+/* Subtle vignette over the video */
+.monitor-feed::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(ellipse at center, transparent 60%, rgba(0,0,0,0.35) 100%);
+  pointer-events: none;
+  z-index: 6;
 }
 
 .monitor-feed-bg {
@@ -395,4 +417,22 @@
   color: #9CA3AF;
   box-shadow: none;
   transform: none;
+}
+
+
+/* ── Missing Keyframe Animations ── */
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 1;    transform: scale(1);    }
+  50%       { opacity: 0.5; transform: scale(0.75); }
+}
+
+@keyframes scanline {
+  0%   { top: -2px;   }
+  100% { top: 100%;   }
+}
+
+@keyframes blink {
+  0%, 49% { opacity: 1; }
+  50%,100% { opacity: 0; }
 }

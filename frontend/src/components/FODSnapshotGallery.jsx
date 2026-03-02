@@ -129,7 +129,9 @@ function SnapshotModal({ snap, staffName, onClose, onValidated }) {
   const showForm = isPending || revalidate;
 
   async function submit(status) {
-    if (!formName.trim()) {
+    // For "resolved" action, fall back to the person who originally confirmed it
+    const resolvedBy = formName.trim() || snap.validated_by || "";
+    if (!resolvedBy) {
       document.getElementById("fsg-modal-name-input")?.focus();
       return;
     }
@@ -140,7 +142,7 @@ function SnapshotModal({ snap, staffName, onClose, onValidated }) {
         headers: { "Content-Type": "application/json" },
         body:    JSON.stringify({
           validation_status: status,
-          validated_by:      formName.trim(),
+          validated_by:      resolvedBy,
           validation_notes:  formNotes.trim() || null,
         }),
       });
