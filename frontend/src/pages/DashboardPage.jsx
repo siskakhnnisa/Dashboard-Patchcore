@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect } from "react";
-import { ChevronDown } from "lucide-react";
+import React from "react";
+import FODSnapshotGallery from "../components/FODSnapshotGallery";
 import StatsRow from "../components/dashboard/StatsRow";
 import DetectionStatistics from "../components/detection/DetectionStatistic";
 import LiveMonitorPanel from "../components/monitoring/LiveMonitorPanel";
@@ -12,7 +12,7 @@ import "../pages/DashboardPage.css";
 export default function DashboardPage() {
 
 
-  const { connected, lastPayload, fps } = useDetectionStream();
+  const { connected, lastPayload, fps, frameBitmap } = useDetectionStream();
 
   // Card data for stats row
   const stats = [
@@ -27,25 +27,6 @@ export default function DashboardPage() {
       {/* Header */}
       <div className="dashboard-header">
         <h1 className="dashboard-title">Overview</h1>
-        <div className="dashboard-header-right" style={{ display: "flex", gap: "12px", alignItems: "center" }}>
-          
-          {/* ── Indikator koneksi WebSocket ── */}
-          <span style={{
-            fontSize: "12px",
-            fontWeight: "bold",
-            padding: "4px 10px",
-            borderRadius: "999px",
-            backgroundColor: connected ? "#E8F5E9" : "#FFEBEE",
-            color: connected ? "#2E7D32" : "#C62828"
-          }}>
-            {connected ? `● LIVE  ${fps} FPS` : "○ Disconnected"}
-          </span>
-
-          <button className="dashboard-date-btn">
-            <span>Today</span>
-            <ChevronDown size={16} />
-          </button>
-        </div>
       </div>
 
       {/* Stats Row */}
@@ -67,7 +48,7 @@ export default function DashboardPage() {
 
           {/* ── LiveMonitorPanel terima frame + bbox dari WebSocket ── */}
           <LiveMonitorPanel
-            frameB64={lastPayload?.frame_b64 ?? null}
+            frameBitmap={frameBitmap}
             bboxes={lastPayload?.bboxes ?? []}
             anomalyDetected={lastPayload?.anomaly_detected ?? false}
             fps={fps}
@@ -118,13 +99,17 @@ export default function DashboardPage() {
 
       {/* FOD Events Timeline */}
       <div className="dashboard-card">
-
         {/* ── FODeventsTimeline terima list events ── */}
         <FODeventsTimeline
           events={lastPayload?.recent_events ?? []}
           totalFodCount={lastPayload?.total_fod_count ?? 0}
         />
+      </div>
 
+      {/* FOD Snapshot Gallery */}
+      <div className="dashboard-card">
+        <h2 style={{marginBottom:12}}>FOD Snapshots Gallery</h2>
+        <FODSnapshotGallery enabled={lastPayload?.pipeline_status === 'running'} />
       </div>
     </div>
   );

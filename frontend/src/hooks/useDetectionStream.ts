@@ -58,6 +58,10 @@ const WS_URL = "ws://localhost:8000/ws/stream";
 
 export function useDetectionStream() {
   const wsRef = useRef<WebSocket | null>(null);
+  const [frameBitmap, setFrameBitmap] = useState<ImageBitmap | null>(null);
+  // Buffer untuk frame binary, hanya simpan 1 frame terbaru
+  const frameQueueRef = useRef<ArrayBuffer | null>(null);
+  const decodingRef = useRef(false);
   const reconnectTimerRef = useRef<number | null>(null);
 
   const [connected, setConnected] = useState(false);
@@ -70,50 +74,74 @@ export function useDetectionStream() {
 
   const connect = useCallback(() => {
     if (wsRef.current?.readyState === WebSocket.OPEN) return;
-
     const ws = new WebSocket(WS_URL);
-
+    let lastPayload: StreamPayload | null = null;
+    ws.binaryType = "arraybuffer";
     ws.onopen = () => {
       setConnected(true);
       console.log("[WS] Terhubung ke backend");
     };
-
     ws.onclose = () => {
       setConnected(false);
       console.log("[WS] Disconnected, mencoba reconnect...");
       reconnectTimerRef.current = setTimeout(connect, 3000);
     };
-
     ws.onerror = (err) => {
       console.error("[WS] Error:", err);
     };
-
     ws.onmessage = (event) => {
-      const payload: StreamPayload = JSON.parse(event.data);
-      setLastPayload(payload);
-
-      // Update FPS
-      if (payload.type === "frame") {
-        frameCountRef.current++;
-        const now = Date.now();
-        if (now - lastFpsRef.current >= 1000) {
-          setFps(frameCountRef.current);
-          frameCountRef.current = 0;
-          lastFpsRef.current = now;
+      if (typeof event.data === "string") {
+        // JSON metadata
+        lastPayload = JSON.parse(event.data);
+        setLastPayload(lastPayload);
+        if (lastPayload && lastPayload.type === "frame") {
+          frameCountRef.current++;
+          const now = Date.now();
+          if (now - lastFpsRef.current >= 1000) {
+            setFps(frameCountRef.current);
+            frameCountRef.current = 0;
+            lastFpsRef.current = now;
+          }
         }
+      } else if (event.data instanceof ArrayBuffer && lastPayload && lastPayload.type === "frame") {
+        // Frame masuk ke buffer, drop frame lama jika belum selesai decode
+        frameQueueRef.current = event.data;
+        decodeNextFrame();
       }
     };
 
+    // Fungsi untuk decode frame terbaru di buffer
+    async function decodeNextFrame() {
+      if (decodingRef.current) return;
+      if (!frameQueueRef.current) return;
+      decodingRef.current = true;
+      const data = frameQueueRef.current;
+      frameQueueRef.current = null;
+      try {
+        const blob = new Blob([data], { type: "image/jpeg" });
+        const bitmap = await createImageBitmap(blob);
+        setFrameBitmap(bitmap);
+      } catch (e) {
+        setFrameBitmap(null);
+      } finally {
+        decodingRef.current = false;
+        // Jika ada frame baru masuk saat decode, proses frame terbaru
+        if (frameQueueRef.current) decodeNextFrame();
+      }
+    }
     wsRef.current = ws;
   }, []);
 
   useEffect(() => {
     connect();
     return () => {
-      clearTimeout(reconnectTimerRef.current === null ? undefined : reconnectTimerRef.current);
+      if (reconnectTimerRef.current !== null) {
+        clearTimeout(reconnectTimerRef.current);
+        reconnectTimerRef.current = null;
+      }
       wsRef.current?.close();
     };
   }, [connect]);
 
-  return { connected, lastPayload, fps };
+  return { connected, lastPayload, fps, frameBitmap };
 }

@@ -166,3 +166,765 @@
 2026-02-25 10:13:44.003 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\120bb8c4-3322-4083-86fb-eee392b82990.mp4 | 1383 frames | 30.0 FPS | 1360x1530
 2026-02-25 10:41:54.613 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
 2026-02-25 10:42:19.255 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-25 10:48:08.965 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-25 10:50:12.263 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-25 10:50:12.370 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-25 10:50:12.435 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 10:50:12.436 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-25 10:50:12.438 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-25 13:45:33.038 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-25 13:45:33.078 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-25 13:45:33.079 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-25 13:45:33.968 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-25 13:45:33.986 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-25 13:45:47.450 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-25 13:45:47.451 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-25 13:45:47.451 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-25 13:46:22.744 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-25 14:32:40.354 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-25 14:43:27.513 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-25 14:54:03.813 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-25 15:57:19.987 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-25 16:09:40.347 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-25 19:18:35.129 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-25 19:18:44.526 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-25 19:18:59.992 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 11:16:02.906 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-26 11:16:02.910 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-26 11:16:02.911 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-26 11:16:04.393 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-26 11:16:04.395 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-26 11:16:27.454 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-26 11:16:27.556 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-26 11:16:27.557 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-26 11:16:28.289 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 11:16:29.356 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 11:29:18.590 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 11:29:18.619 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 11:56:06.717 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 12:03:14.482 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 12:03:14.573 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-26 12:03:14.587 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-26 12:03:14.591 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-26 13:40:58.954 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-26 13:40:58.955 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-26 13:40:58.956 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-26 13:40:59.717 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-26 13:40:59.719 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-26 13:41:21.930 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-26 13:41:21.932 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-26 13:41:21.933 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-26 13:41:22.275 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 13:41:28.898 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 13:49:32.164 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 13:49:32.752 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 13:49:33.346 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-26 13:49:34.099 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-26 13:49:34.232 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-26 13:50:25.572 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-26 13:50:25.574 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-26 13:50:25.574 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-26 13:50:26.422 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-26 13:50:26.428 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-26 13:50:50.271 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-26 13:50:50.282 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-26 13:50:50.286 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-26 13:50:50.414 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-26 13:50:50.421 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-26 13:50:50.423 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-26 13:51:16.733 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-26 13:51:16.740 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-26 13:51:16.743 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-26 13:51:18.742 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-26 13:51:18.746 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-26 13:51:27.853 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-26 13:51:27.855 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-26 13:51:27.856 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-26 13:51:27.898 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 13:51:27.926 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 13:54:58.614 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 13:54:59.719 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 13:55:00.060 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-26 13:55:00.275 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 13:55:00.705 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 13:55:01.843 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-02-26 13:55:24.215 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-02-26 13:55:24.704 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-02-26 13:58:18.778 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\ddaaf366-9143-42f0-a8f1-3975480f1453.mp4 | ID: ddaaf366-9143-42f0-a8f1-3975480f1453
+2026-02-26 13:58:23.939 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: ddaaf366-9143-42f0-a8f1-3975480f1453
+2026-02-26 13:58:24.013 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\ddaaf366-9143-42f0-a8f1-3975480f1453.mp4 | 2767 frames | 30.0 FPS | 1360x1530
+2026-02-26 14:10:51.717 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-02-26 14:10:56.050 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-02-26 14:11:12.882 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-02-26 14:11:12.893 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 14:11:13.178 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 14:11:22.267 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 14:27:14.691 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 14:28:44.278 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 14:28:44.945 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-26 14:28:52.513 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-26 14:46:53.992 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 14:47:18.936 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 14:47:19.278 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-26 14:47:19.279 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 14:47:19.285 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-26 14:47:26.762 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-26 14:47:26.898 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-26 14:47:27.072 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-26 14:47:27.094 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-26 14:47:27.098 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 10:19:40.408 | INFO     | app.main:lifespan:19 - 🚀 FOD Detection System starting up...
+2026-02-27 10:19:40.413 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 10:19:40.414 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 10:19:41.915 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 10:19:41.918 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 10:20:09.627 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 10:20:09.638 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 10:20:09.654 | SUCCESS  | app.main:lifespan:28 - ✅ System siap menerima koneksi
+2026-02-27 10:20:12.078 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:34:57.397 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:35:03.053 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:35:14.475 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\751a7239-bba5-45ad-94c8-7fd1e36a11c1.mp4 | ID: 751a7239-bba5-45ad-94c8-7fd1e36a11c1
+2026-02-27 10:35:17.864 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 751a7239-bba5-45ad-94c8-7fd1e36a11c1
+2026-02-27 10:35:17.874 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\751a7239-bba5-45ad-94c8-7fd1e36a11c1.mp4 | 1223 frames | 30.0 FPS | 640x360
+2026-02-27 10:45:35.602 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:45:35.794 | INFO     | app.main:lifespan:33 - 🛑 System shutting down...
+2026-02-27 10:45:37.484 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 10:45:37.609 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 10:45:37.685 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 10:49:36.869 | INFO     | app.main:lifespan:20 - 🚀 FOD Detection System starting up...
+2026-02-27 10:49:36.878 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 10:49:36.882 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 10:49:37.986 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 10:49:37.991 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 10:49:52.015 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 10:49:52.018 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 10:49:52.019 | SUCCESS  | app.main:lifespan:29 - ✅ System siap menerima koneksi
+2026-02-27 10:49:52.173 | INFO     | app.main:lifespan:34 - 🛑 System shutting down...
+2026-02-27 10:49:52.180 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 10:49:52.182 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 10:51:36.186 | INFO     | app.main:lifespan:20 - 🚀 FOD Detection System starting up...
+2026-02-27 10:51:36.188 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 10:51:36.189 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 10:51:38.169 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 10:51:38.178 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 10:51:50.580 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 10:51:50.584 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 10:51:50.586 | SUCCESS  | app.main:lifespan:29 - ✅ System siap menerima koneksi
+2026-02-27 10:51:50.627 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:51:50.640 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 10:51:50.642 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:52:36.160 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:55:26.382 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:55:26.691 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:55:31.671 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:55:41.158 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 10:56:07.578 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 10:56:07.696 | INFO     | app.main:lifespan:34 - 🛑 System shutting down...
+2026-02-27 10:56:07.701 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 10:56:07.702 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 11:01:41.592 | INFO     | app.main:lifespan:23 - 🚀 FOD Detection System starting up...
+2026-02-27 11:01:41.901 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 11:01:42.039 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 11:01:44.564 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 11:01:44.567 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 11:01:55.831 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 11:01:55.837 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 11:01:55.838 | SUCCESS  | app.main:lifespan:32 - ✅ System siap menerima koneksi
+2026-02-27 11:01:55.970 | INFO     | app.main:lifespan:37 - 🛑 System shutting down...
+2026-02-27 11:01:55.972 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 11:01:55.972 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 11:02:11.121 | INFO     | app.main:lifespan:25 - 🚀 FOD Detection System starting up...
+2026-02-27 11:02:11.124 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 11:02:11.124 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 11:02:11.639 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 11:02:11.641 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 11:02:16.789 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 11:02:16.790 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 11:02:16.790 | SUCCESS  | app.main:lifespan:34 - ✅ System siap menerima koneksi
+2026-02-27 11:02:16.826 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 11:02:16.828 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 11:02:16.967 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 11:02:16.967 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 11:02:28.232 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 11:02:40.973 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 11:02:47.818 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 11:03:14.183 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\ffb8e3e9-9dfc-4983-a611-c1274134fb9f.mp4 | ID: ffb8e3e9-9dfc-4983-a611-c1274134fb9f
+2026-02-27 11:03:17.675 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: ffb8e3e9-9dfc-4983-a611-c1274134fb9f
+2026-02-27 11:03:17.901 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\ffb8e3e9-9dfc-4983-a611-c1274134fb9f.mp4 | 361 frames | 30.0 FPS | 512x512
+2026-02-27 11:05:47.175 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:07:58.251 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:10:00.727 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:12:37.650 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:15:03.109 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:15:16.401 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 11:15:16.707 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 11:17:35.486 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:17:52.219 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 11:17:52.262 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 11:18:07.463 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 11:19:28.684 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:21:22.501 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:21:35.444 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 11:21:42.972 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 11:22:26.066 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 11:22:28.614 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 11:23:19.925 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\3a79ea9b-65aa-4c6a-b40f-912cbc102966.mp4 | ID: 3a79ea9b-65aa-4c6a-b40f-912cbc102966
+2026-02-27 11:23:27.088 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 11:23:27.093 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 11:23:27.094 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 11:23:27.099 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 3a79ea9b-65aa-4c6a-b40f-912cbc102966
+2026-02-27 11:23:27.108 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\3a79ea9b-65aa-4c6a-b40f-912cbc102966.mp4 | 361 frames | 30.0 FPS | 512x512
+2026-02-27 11:27:05.127 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:30:34.941 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:34:29.214 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:37:06.658 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:39:06.953 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 11:40:19.102 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 12:30:36.720 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:20:57.292 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:22:30.802 | INFO     | app.main:lifespan:25 - 🚀 FOD Detection System starting up...
+2026-02-27 13:22:30.803 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 13:22:30.804 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 13:22:32.952 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 13:22:32.957 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 13:22:46.695 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 13:22:46.750 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 13:22:46.751 | SUCCESS  | app.main:lifespan:34 - ✅ System siap menerima koneksi
+2026-02-27 13:23:11.692 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 13:23:11.944 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 13:23:16.150 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 13:24:43.391 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 13:24:43.726 | INFO     | app.main:lifespan:39 - 🛑 System shutting down...
+2026-02-27 13:24:43.856 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 13:24:43.877 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 13:25:51.672 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 13:25:51.681 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 13:25:51.681 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 13:25:52.931 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 13:25:52.933 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 13:26:07.554 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 13:26:07.558 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 13:26:07.563 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 13:26:07.744 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 13:26:07.747 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 13:26:07.749 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 13:26:45.846 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 13:26:45.850 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 13:26:45.851 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 13:26:46.948 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 13:26:46.951 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 13:26:57.330 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 13:26:57.346 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 13:26:57.348 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 13:26:57.623 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 13:26:57.629 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 13:26:57.672 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 13:26:57.715 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 13:26:58.119 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 13:26:59.319 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\1e6760cd-f870-4d06-95e6-230275da009f.mp4 | ID: 1e6760cd-f870-4d06-95e6-230275da009f
+2026-02-27 13:27:04.385 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 1e6760cd-f870-4d06-95e6-230275da009f
+2026-02-27 13:27:04.400 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\1e6760cd-f870-4d06-95e6-230275da009f.mp4 | 361 frames | 30.0 FPS | 512x512
+2026-02-27 13:30:18.590 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:33:43.556 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:35:56.694 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:38:35.520 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:41:21.441 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:43:44.516 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:46:17.847 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:48:32.309 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:51:00.832 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:53:12.404 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 13:53:12.513 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 13:53:21.528 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 13:54:16.792 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 13:54:17.164 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 13:54:17.195 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 13:54:17.617 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 13:54:48.223 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\9bc80d24-f048-4b4b-b56d-93629f10ee75.mp4 | ID: 9bc80d24-f048-4b4b-b56d-93629f10ee75
+2026-02-27 13:54:51.015 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 13:54:51.028 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 13:54:51.029 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 13:54:51.033 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 9bc80d24-f048-4b4b-b56d-93629f10ee75
+2026-02-27 13:54:51.173 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\9bc80d24-f048-4b4b-b56d-93629f10ee75.mp4 | 297 frames | 30.0 FPS | 1920x1080
+2026-02-27 13:58:11.200 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:00:57.142 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 14:00:57.145 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 14:00:57.146 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 14:00:58.506 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 14:00:58.513 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 14:01:24.378 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 14:01:24.401 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 14:01:24.407 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 14:01:34.634 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:01:34.762 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 14:01:34.775 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:01:34.926 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:02:36.420 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:02:40.717 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:03:17.360 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\06706624-e46d-4d73-9100-761fefd59be6.mp4 | ID: 06706624-e46d-4d73-9100-761fefd59be6
+2026-02-27 14:03:19.080 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 06706624-e46d-4d73-9100-761fefd59be6
+2026-02-27 14:03:19.174 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\06706624-e46d-4d73-9100-761fefd59be6.mp4 | 297 frames | 30.0 FPS | 1920x1080
+2026-02-27 14:06:45.800 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:11:17.281 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:13:57.723 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:13:59.102 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 14:13:59.404 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:13:59.426 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:13:59.494 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:15:52.273 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 14:15:52.275 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 14:15:52.276 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 14:15:53.580 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 14:15:53.583 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 14:16:16.684 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 14:16:16.851 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 14:16:16.885 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 14:16:18.586 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:17:35.706 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:17:36.398 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 14:17:36.687 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:17:36.845 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:18:41.319 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 14:18:41.323 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 14:18:41.324 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 14:18:42.836 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 14:18:42.840 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 14:18:59.147 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 14:18:59.407 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 14:18:59.410 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 14:18:59.548 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 14:18:59.573 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:18:59.578 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:19:25.334 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 14:19:25.336 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 14:19:25.338 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 14:19:26.107 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 14:19:26.110 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 14:19:34.828 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 14:19:34.834 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 14:19:34.835 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 14:19:34.909 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:19:34.915 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 14:19:34.918 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-02-27 14:19:34.937 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 14:19:34.939 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-02-27 14:19:34.979 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 14:19:35.020 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 14:19:35.050 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 14:19:36.463 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\16764bda-f391-4820-a8f3-39bdcd784428.mp4 | ID: 16764bda-f391-4820-a8f3-39bdcd784428
+2026-02-27 14:19:39.046 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 16764bda-f391-4820-a8f3-39bdcd784428
+2026-02-27 14:19:39.164 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\16764bda-f391-4820-a8f3-39bdcd784428.mp4 | 297 frames | 30.0 FPS | 1920x1080
+2026-02-27 14:23:15.587 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:26:34.651 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:29:17.233 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:29:45.758 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 14:29:45.893 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:29:54.603 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:30:09.806 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\26e5da4f-5aca-4ae8-a907-40e414760c1f.mp4 | ID: 26e5da4f-5aca-4ae8-a907-40e414760c1f
+2026-02-27 14:30:12.267 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:30:12.338 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:30:12.594 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:30:12.924 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 26e5da4f-5aca-4ae8-a907-40e414760c1f
+2026-02-27 14:30:13.162 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\26e5da4f-5aca-4ae8-a907-40e414760c1f.mp4 | 297 frames | 30.0 FPS | 1920x1080
+2026-02-27 14:34:46.834 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:37:53.758 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:39:06.092 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:39:06.212 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 14:39:06.404 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:39:06.477 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:39:06.496 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:41:15.553 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 14:41:15.715 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 14:41:15.735 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 14:41:18.583 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 14:41:18.585 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 14:41:51.718 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 14:41:52.150 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 14:41:52.170 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 14:41:52.572 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:42:35.523 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\b67fb26a-3fa5-4016-88b5-60885ae057f8.mp4 | ID: b67fb26a-3fa5-4016-88b5-60885ae057f8
+2026-02-27 14:42:41.262 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: b67fb26a-3fa5-4016-88b5-60885ae057f8
+2026-02-27 14:42:41.376 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\b67fb26a-3fa5-4016-88b5-60885ae057f8.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-02-27 14:46:16.308 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:46:17.320 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:46:17.989 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-02-27 14:46:18.132 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 14:46:27.897 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 14:46:38.853 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\65566845-7fa0-4635-a9e5-0ec12e1d1e27.mp4 | ID: 65566845-7fa0-4635-a9e5-0ec12e1d1e27
+2026-02-27 14:46:40.164 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:46:40.166 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 14:46:40.175 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 14:46:40.186 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 65566845-7fa0-4635-a9e5-0ec12e1d1e27
+2026-02-27 14:46:40.269 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\65566845-7fa0-4635-a9e5-0ec12e1d1e27.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-02-27 14:52:46.961 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:56:15.977 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 14:59:22.957 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:03:20.282 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 15:03:32.292 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:03:36.549 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 15:03:36.626 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 15:03:36.651 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 15:03:36.659 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 15:06:25.556 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 15:06:25.564 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 15:06:25.565 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 15:06:26.472 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 15:06:26.474 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 15:06:42.956 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 15:06:43.059 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 15:06:43.118 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 15:07:30.627 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 15:08:51.141 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 15:08:54.258 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 15:08:56.217 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 15:09:10.259 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\c8c34dc1-5e5e-4a40-be95-df018bdfe5f9.mp4 | ID: c8c34dc1-5e5e-4a40-be95-df018bdfe5f9
+2026-02-27 15:09:12.277 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: c8c34dc1-5e5e-4a40-be95-df018bdfe5f9
+2026-02-27 15:09:12.360 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\c8c34dc1-5e5e-4a40-be95-df018bdfe5f9.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-02-27 15:14:22.206 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:18:45.349 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:24:00.415 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 15:24:00.576 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 15:24:01.248 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:25:36.794 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 15:25:36.870 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 15:25:38.387 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-02-27 15:27:53.673 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:32:01.403 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:35:39.940 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-02-27 15:38:19.572 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 15:38:19.847 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 15:38:20.171 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 15:38:20.237 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 15:38:20.250 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 15:40:51.537 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 15:40:51.540 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 15:40:51.552 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 15:40:52.935 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 15:40:52.938 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 15:41:04.366 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 15:41:04.516 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 15:41:04.523 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 15:41:04.908 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-02-27 15:41:04.911 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-02-27 15:41:04.913 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-02-27 15:41:26.738 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-02-27 15:41:26.827 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-02-27 15:41:26.832 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-02-27 15:41:28.249 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-02-27 15:41:28.261 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-02-27 15:41:44.157 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-02-27 15:41:44.167 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-02-27 15:41:44.169 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-02-27 15:41:44.418 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 15:45:28.482 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 17:00:47.177 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 17:01:02.180 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-02-27 17:01:19.299 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-02-27 17:01:19.478 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-02-27 17:01:20.056 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 19:16:17.857 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 19:16:17.862 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 19:16:17.863 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 19:16:19.224 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 19:16:19.227 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 19:17:00.910 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 19:17:00.918 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 19:17:00.922 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 19:17:01.445 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 19:49:57.552 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\e87ef098-8584-4270-81a4-4dc2bfb581a0.mp4 | ID: e87ef098-8584-4270-81a4-4dc2bfb581a0
+2026-03-01 19:49:59.073 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: e87ef098-8584-4270-81a4-4dc2bfb581a0
+2026-03-01 19:49:59.113 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\e87ef098-8584-4270-81a4-4dc2bfb581a0.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-01 19:55:42.112 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 20:01:46.449 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 20:03:32.557 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 20:03:32.874 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 20:03:32.891 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 21:04:29.114 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-01 21:04:29.200 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-01 21:04:29.210 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 21:04:29.214 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 21:05:52.893 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 21:05:52.894 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 21:05:52.895 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 21:05:55.121 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 21:05:55.161 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 21:06:08.077 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 21:06:08.079 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 21:06:08.080 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 21:06:08.230 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-01 21:06:08.233 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 21:06:08.239 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 21:06:48.939 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 21:06:48.941 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 21:06:48.942 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 21:06:51.183 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 21:06:51.186 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 21:07:06.864 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 21:07:06.928 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 21:07:06.946 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 21:07:07.965 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 21:07:08.057 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 21:07:08.059 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-03-01 21:07:08.530 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-01 21:07:08.531 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-03-01 21:07:08.542 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-01 21:07:08.544 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 21:07:10.245 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 21:08:26.594 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\34cf9c55-f4e9-4593-910c-1f074fc1cf8a.mp4 | ID: 34cf9c55-f4e9-4593-910c-1f074fc1cf8a
+2026-03-01 21:08:37.917 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 34cf9c55-f4e9-4593-910c-1f074fc1cf8a
+2026-03-01 21:08:38.335 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\34cf9c55-f4e9-4593-910c-1f074fc1cf8a.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-01 21:16:42.837 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:23:03.128 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:29:31.694 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:35:47.240 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:39:15.651 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:43:00.603 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:46:46.132 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:50:33.145 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:54:20.642 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 21:58:29.855 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 22:02:39.223 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 22:07:02.160 | ERROR    | app.core.pipeline_manager:_run_loop:164 - Gagal simpan snapshot FOD: name 'datetime' is not defined
+2026-03-01 22:09:04.332 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 22:09:04.417 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-01 22:09:05.039 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-01 22:09:05.272 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 22:09:05.388 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 22:09:05.467 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 22:13:12.301 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 22:13:12.309 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 22:13:12.310 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 22:13:13.304 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 22:13:13.305 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 22:13:36.141 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 22:13:36.146 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 22:13:36.147 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 22:13:36.530 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 22:13:36.537 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 22:13:36.611 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-03-01 22:13:36.833 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-01 22:13:36.837 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-03-01 22:13:36.869 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-01 22:13:36.871 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 22:13:36.934 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 22:26:53.718 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 22:26:53.727 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-01 22:26:54.871 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 22:27:01.315 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-01 22:27:01.423 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-01 22:27:01.451 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 22:27:01.452 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 22:27:26.904 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 22:27:26.909 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 22:27:26.910 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 22:27:27.698 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 22:27:27.700 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 22:27:34.005 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 22:27:34.006 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 22:27:34.007 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 22:27:34.107 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 22:27:34.126 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 22:27:34.145 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-01 22:27:34.151 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 22:27:34.325 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-01 22:27:37.515 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\9af2df65-0796-4ce1-adae-d74f9f26e2a4.mp4 | ID: 9af2df65-0796-4ce1-adae-d74f9f26e2a4
+2026-03-01 22:27:41.168 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 9af2df65-0796-4ce1-adae-d74f9f26e2a4
+2026-03-01 22:27:41.235 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\9af2df65-0796-4ce1-adae-d74f9f26e2a4.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-01 22:30:48.090 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('2026-03-01 15:30:47.956065', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 1, '{"x": 0, "y": 0, "width": 1261, "height": 592}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_1_20260301_153047_913449.jpg', '2026-03-01 15:30:48.073242', 'FOD', 1.0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:33:50.857 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:33:50.828264', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 2, '{"x": 1167, "y": 278, "width": 113, "height": 104}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_2_20260301_153350_826139.jpg', '2026-03-01 15:33:50.854903', 'FOD', 0.7773)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:36:53.409 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:36:53.397461', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 3, '{"x": 1167, "y": 278, "width": 113, "height": 104}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_3_20260301_153653_395377.jpg', '2026-03-01 15:36:53.408341', 'FOD', 0.7792)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:39:52.279 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:39:52.270348', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 4, '{"x": 1220, "y": 293, "width": 60, "height": 44}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_4_20260301_153952_268507.jpg', '2026-03-01 15:39:52.279085', 'FOD', 0.7826)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:43:03.058 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:43:03.052067', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 5, '{"x": 1193, "y": 308, "width": 87, "height": 44}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_5_20260301_154303_050788.jpg', '2026-03-01 15:43:03.058332', 'FOD', 0.8226)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:46:18.106 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:46:18.097594', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 6, '{"x": 1140, "y": 278, "width": 140, "height": 104}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_6_20260301_154618_087134.jpg', '2026-03-01 15:46:18.105766', 'FOD', 0.8045)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:49:34.359 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:49:34.349455', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 7, '{"x": 1140, "y": 263, "width": 140, "height": 149}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_7_20260301_154934_347453.jpg', '2026-03-01 15:49:34.358121', 'FOD', 0.8239)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:52:55.895 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:52:55.886243', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 8, '{"x": 1167, "y": 293, "width": 113, "height": 119}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_8_20260301_155255_884699.jpg', '2026-03-01 15:52:55.894736', 'FOD', 0.8341)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:56:25.305 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:56:25.269586', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 9, '{"x": 1220, "y": 323, "width": 60, "height": 74}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_9_20260301_155625_258734.jpg', '2026-03-01 15:56:25.301863', 'FOD', 0.7948)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 22:59:49.050 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 15:59:48.989264', '9af2df65-0796-4ce1-adae-d74f9f26e2a4', 10, '{"x": 1220, "y": 323, "width": 60, "height": 29}', 'fod_9af2df65-0796-4ce1-adae-d74f9f26e2a4_10_20260301_155948_966998.jpg', '2026-03-01 15:59:49.039769', 'FOD', 0.0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 23:00:36.590 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-01 23:00:36.594 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-01 23:00:36.696 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-01 23:00:36.734 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 23:00:36.735 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-01 23:00:36.736 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-01 23:17:14.005 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 23:17:14.017 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 23:17:14.021 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 23:17:15.290 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 23:17:15.292 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 23:17:25.992 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 23:17:26.007 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 23:17:26.010 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 23:21:45.722 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 23:21:45.723 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 23:21:45.724 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 23:21:46.466 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 23:21:46.468 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 23:21:57.088 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 23:21:57.089 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 23:21:57.089 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 23:22:36.228 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-01 23:23:04.875 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\252b4a4b-cd04-4ffa-bfa9-923cd7276a25.mp4 | ID: 252b4a4b-cd04-4ffa-bfa9-923cd7276a25
+2026-03-01 23:23:10.907 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 252b4a4b-cd04-4ffa-bfa9-923cd7276a25
+2026-03-01 23:23:11.166 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\252b4a4b-cd04-4ffa-bfa9-923cd7276a25.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-01 23:26:42.533 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('2026-03-01 16:26:42.420122', '252b4a4b-cd04-4ffa-bfa9-923cd7276a25', 1, '{"x": 0, "y": 0, "width": 1261, "height": 592}', 'fod_252b4a4b-cd04-4ffa-bfa9-923cd7276a25_1_20260301_162642_384201.jpg', '2026-03-01 16:26:42.522444', 'FOD', 1.0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 23:30:14.730 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 16:30:14.714793', '252b4a4b-cd04-4ffa-bfa9-923cd7276a25', 2, '{"x": 1167, "y": 278, "width": 113, "height": 104}', 'fod_252b4a4b-cd04-4ffa-bfa9-923cd7276a25_2_20260301_163014_713086.jpg', '2026-03-01 16:30:14.728814', 'FOD', 0.7773)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 23:35:19.000 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 16:35:18.537166', '252b4a4b-cd04-4ffa-bfa9-923cd7276a25', 3, '{"x": 1167, "y": 278, "width": 113, "height": 104}', 'fod_252b4a4b-cd04-4ffa-bfa9-923cd7276a25_3_20260301_163518_521338.jpg', '2026-03-01 16:35:18.748575', 'FOD', 0.7792)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 23:42:41.672 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 16:42:41.475426', '252b4a4b-cd04-4ffa-bfa9-923cd7276a25', 4, '{"x": 1220, "y": 293, "width": 60, "height": 44}', 'fod_252b4a4b-cd04-4ffa-bfa9-923cd7276a25_4_20260301_164241_451586.jpg', '2026-03-01 16:42:41.566895', 'FOD', 0.7826)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-01 23:46:43.863 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-01 23:46:43.867 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-01 23:46:43.868 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-01 23:46:45.479 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-01 23:46:45.482 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-01 23:47:16.158 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-01 23:47:16.202 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-01 23:47:16.228 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-01 23:47:17.278 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 00:05:56.466 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 00:05:58.508 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 00:06:17.010 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\78f9a244-372a-4f5f-995e-6d40355ee086.mp4 | ID: 78f9a244-372a-4f5f-995e-6d40355ee086
+2026-03-02 00:06:18.837 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 78f9a244-372a-4f5f-995e-6d40355ee086
+2026-03-02 00:06:18.888 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\78f9a244-372a-4f5f-995e-6d40355ee086.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-02 00:12:22.062 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?)]
+[parameters: ('2026-03-01 17:12:21.826677', '78f9a244-372a-4f5f-995e-6d40355ee086', 1, '{"x": 0, "y": 0, "width": 1261, "height": 592}', 'fod_78f9a244-372a-4f5f-995e-6d40355ee086_1_20260301_171221_775283.jpg', '2026-03-01 17:12:22.034678', 'FOD', 1.0)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-02 00:23:05.063 | ERROR    | app.core.pipeline_manager:_run_loop:165 - Gagal simpan snapshot FOD: (sqlite3.OperationalError) no such table: fod_snapshots
+[SQL: INSERT INTO fod_snapshots (timestamp, video_id, frame_number, bbox, image_path, created_at, label, confidence) VALUES (?, ?, ?, ?, ?, ?, ?, ?) RETURNING id]
+[parameters: ('2026-03-01 17:23:04.892062', '78f9a244-372a-4f5f-995e-6d40355ee086', 2, '{"x": 1167, "y": 278, "width": 113, "height": 104}', 'fod_78f9a244-372a-4f5f-995e-6d40355ee086_2_20260301_172304_864123.jpg', '2026-03-01 17:23:05.049151', 'FOD', 0.7773)]
+(Background on this error at: https://sqlalche.me/e/20/e3q8)
+2026-03-02 00:29:20.685 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 00:29:20.861 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-02 00:29:21.235 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 00:29:21.254 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 00:29:21.258 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-02 00:42:12.333 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-02 00:42:12.334 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-02 00:42:12.335 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-02 00:42:12.866 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-02 00:42:12.867 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-02 00:42:18.615 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-02 00:42:18.631 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-02 00:42:18.632 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-02 00:42:45.406 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 00:42:55.167 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\67e6d9ad-e18c-434d-a118-26ffb1991d9b.mp4 | ID: 67e6d9ad-e18c-434d-a118-26ffb1991d9b
+2026-03-02 00:42:56.518 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 67e6d9ad-e18c-434d-a118-26ffb1991d9b
+2026-03-02 00:42:56.575 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\67e6d9ad-e18c-434d-a118-26ffb1991d9b.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-02 00:49:19.573 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 00:49:20.304 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-02 00:49:21.117 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 00:49:21.231 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 00:49:21.405 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-02 00:54:16.061 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-02 00:54:16.063 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-02 00:54:16.064 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-02 00:54:17.655 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-02 00:54:17.659 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-02 00:54:30.794 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-02 00:54:31.313 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-02 00:54:31.786 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-02 00:55:19.161 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 00:55:19.465 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 00:55:31.194 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\c8cd0fed-786e-4b87-bd97-9e701fbbf56a.mp4 | ID: c8cd0fed-786e-4b87-bd97-9e701fbbf56a
+2026-03-02 00:55:32.349 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: c8cd0fed-786e-4b87-bd97-9e701fbbf56a
+2026-03-02 00:55:32.414 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\c8cd0fed-786e-4b87-bd97-9e701fbbf56a.mp4 | 4151 frames | 30.0 FPS | 1920x1080
+2026-03-02 03:21:29.493 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 03:21:29.510 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 03:21:29.512 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-02 05:30:39.454 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: c8cd0fed-786e-4b87-bd97-9e701fbbf56a
+2026-03-02 05:30:39.693 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\c8cd0fed-786e-4b87-bd97-9e701fbbf56a.mp4 | 4151 frames | 30.0 FPS | 1920x1080
+2026-03-02 05:31:16.587 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 05:31:16.598 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 05:31:16.644 | INFO     | app.main:lifespan:41 - 🛑 System shutting down...
+2026-03-02 05:31:16.750 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 05:31:16.760 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 05:31:16.777 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-02 05:35:24.270 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-02 05:35:24.272 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-02 05:35:24.273 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-02 05:35:24.830 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-02 05:35:24.831 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-02 05:35:45.528 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-02 05:35:45.562 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-02 05:35:45.568 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-02 05:35:46.718 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 05:35:46.722 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 05:35:46.792 | INFO     | app.api.routes.websocket:websocket_stream:34 - Client disconnect dari WebSocket
+2026-03-02 05:35:46.803 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 05:35:46.832 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 05:35:50.864 | INFO     | app.services.video_reader:save_uploaded_video:101 - Video disimpan: uploads\8fa7b5dd-39f6-41bf-9828-fddb33f65f60.mp4 | ID: 8fa7b5dd-39f6-41bf-9828-fddb33f65f60
+2026-03-02 05:37:03.699 | INFO     | app.core.pipeline_manager:start_pipeline:71 - Pipeline dimulai untuk video: 8fa7b5dd-39f6-41bf-9828-fddb33f65f60
+2026-03-02 05:37:03.887 | INFO     | app.services.video_reader:open:39 - Video dibuka: uploads\8fa7b5dd-39f6-41bf-9828-fddb33f65f60.mp4 | 1383 frames | 30.0 FPS | 1920x1080
+2026-03-02 06:05:07.536 | ERROR    | app.core.pipeline_manager:_run_loop:232 - Error di pipeline loop: [enforce fail at alloc_cpu.cpp:117] data. DefaultCPUAllocator: not enough memory: you tried to allocate 2097152 bytes.
+2026-03-02 06:05:09.470 | INFO     | app.services.video_reader:release:68 - Video reader dirilis
+2026-03-02 06:05:44.326 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 06:05:44.334 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 06:14:37.269 | INFO     | app.main:lifespan:27 - 🚀 FOD Detection System starting up...
+2026-03-02 06:14:37.270 | INFO     | app.models.inference:load_models:25 - Loading semua model ke memori...
+2026-03-02 06:14:37.271 | INFO     | app.models.segmentation:load:39 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-02 06:14:37.833 | SUCCESS  | app.models.segmentation:load:66 - Segmentation model loaded | device=cpu
+2026-03-02 06:14:37.835 | INFO     | app.models.patchcore:load:48 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-02 06:14:44.933 | SUCCESS  | app.models.patchcore:load:75 - PatchCore loaded | device=cpu | img_size=384
+2026-03-02 06:14:44.937 | SUCCESS  | app.models.inference:load_models:28 - Semua model siap digunakan
+2026-03-02 06:14:44.938 | SUCCESS  | app.main:lifespan:36 - ✅ System siap menerima koneksi
+2026-03-02 06:16:04.724 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 06:18:00.218 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 06:18:00.222 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 06:18:30.348 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 06:18:30.662 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 06:18:47.289 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-02 06:18:49.065 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-02 06:18:51.950 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 06:19:25.316 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 06:19:25.623 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 06:19:49.664 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 06:19:49.994 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 06:19:52.525 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 06:19:52.841 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 06:22:27.623 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 1
+2026-03-02 06:22:30.956 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 2
+2026-03-02 06:23:03.446 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3
+2026-03-02 06:25:52.862 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 2
+2026-03-02 06:25:55.039 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 3

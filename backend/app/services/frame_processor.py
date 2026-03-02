@@ -7,11 +7,16 @@ class FrameProcessor:
     """Utility untuk encode frame dan render overlay"""
     
     @staticmethod
-    def encode_frame(frame: np.ndarray, quality: int = 80) -> str:
-        """Encode frame ke base64 JPEG string"""
+    def encode_frame_bytes(frame: np.ndarray, quality: int = 65, max_width: int = 640) -> bytes:
+        """Resize frame dan encode ke JPEG bytes (untuk WebSocket binary)"""
+        h, w = frame.shape[:2]
+        if w > max_width:
+            scale = max_width / w
+            new_size = (int(w * scale), int(h * scale))
+            frame = cv2.resize(frame, new_size, interpolation=cv2.INTER_AREA)
         encode_params = [cv2.IMWRITE_JPEG_QUALITY, quality]
         _, buffer = cv2.imencode(".jpg", frame, encode_params)
-        return base64.b64encode(buffer).decode("utf-8")
+        return buffer.tobytes()
     
     @staticmethod
     def draw_detection_overlay(

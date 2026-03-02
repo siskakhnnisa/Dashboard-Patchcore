@@ -98,12 +98,12 @@ class PipelineManager:
             
             while self._running:
                 loop_start = time.time()
-                
+                t_read = time.time()
                 # ── Baca frame (blocking → thread pool) ──────────────────
                 result_read = await loop.run_in_executor(
                     None, self.reader.read_frame
                 )
-                
+                t_read_done = time.time()
                 if result_read is None:
                     logger.info("Video selesai diputar")
                     await self._broadcast({
@@ -112,37 +112,78 @@ class PipelineManager:
                         "total_fod": self.event_logger.total_fod_count
                     })
                     break
-                
                 frame, frame_idx = result_read
-                
+                t_infer = time.time()
                 # ── Inference (blocking → thread pool) ───────────────────
                 detection = await loop.run_in_executor(
                     None, self.inference.process_frame, frame
                 )
-                
+                t_infer_done = time.time()
                 # ── Record ke event logger ────────────────────────────────
                 self.event_logger.record(detection)
-                
+                # ── Simpan snapshot FOD jika terdeteksi ────────────────
+                from app.services.fod_snapshot import save_fod_snapshot
+                from app.models.fod_snapshot import FODSnapshot
+                from app.db import SessionLocal
+                import datetime
+                if detection.anomaly_detected and detection.bboxes:
+                    db = SessionLocal()
+                    try:
+                        for bbox in detection.bboxes:
+                            # Crop & simpan gambar
+                            img_filename = save_fod_snapshot(
+                                frame,
+                                {
+                                    "x": bbox.x,
+                                    "y": bbox.y,
+                                    "width": bbox.width,
+                                    "height": bbox.height
+                                },
+                                self.video_id or "novid",
+                                frame_idx,
+                                bbox.label,
+                                bbox.confidence
+                            )
+                            # Simpan metadata ke DB
+                            snapshot = FODSnapshot(
+                                timestamp = datetime.datetime.utcnow(),
+                                video_id = self.video_id,
+                                frame_number = frame_idx,
+                                bbox = {
+                                    "x": bbox.x,
+                                    "y": bbox.y,
+                                    "width": bbox.width,
+                                    "height": bbox.height
+                                },
+                                image_path = img_filename,
+                                label = bbox.label,
+                                    confidence = bbox.confidence
+                            )
+                            db.add(snapshot)
+                        db.commit()
+                    except Exception as e:
+                        logger.error(f"Gagal simpan snapshot FOD: {e}")
+                        db.rollback()
+                    finally:
+                        db.close()
+
+                t_overlay = time.time()
                 # ── Gambar overlay di frame ───────────────────────────────
                 annotated_frame = self.processor.draw_detection_overlay(
                     frame, detection
                 )
-                
-                # ── Encode frame ke base64 ────────────────────────────────
-                frame_b64 = self.processor.encode_frame(annotated_frame)
-                
+                t_overlay_done = time.time()
+                # ── Encode frame ke JPEG bytes ────────────────────────────
+                frame_bytes = self.processor.encode_frame_bytes(annotated_frame)
+                t_encode_done = time.time()
                 # ── Update FPS counter ────────────────────────────────────
                 self._update_fps()
-                
-                # ── Susun payload untuk frontend ──────────────────────────
+                # ── Susun payload JSON (tanpa frame) ─────────────────────
                 payload = {
                     "type": "frame",
-                    "frame_b64": frame_b64,
                     "frame_id": frame_idx,
                     "timestamp": detection.timestamp,
                     "fps": self._current_fps,
-                    
-                    # DetectionInfoPanel & LiveMonitorPanel
                     "anomaly_detected": detection.anomaly_detected,
                     "anomaly_score": detection.anomaly_score,
                     "bboxes": [
@@ -154,15 +195,9 @@ class PipelineManager:
                         }
                         for b in detection.bboxes
                     ],
-                    
-                    # DetectionStatistic — chart data
                     "score_history": self.event_logger.get_score_history(),
-                    
-                    # FODeventsTimeline
                     "recent_events": self.event_logger.get_recent_events(10),
                     "total_fod_count": self.event_logger.total_fod_count,
-                    
-                    # PipelineControlPanel
                     "pipeline_status": self.status.value,
                     "video_progress_pct": self.reader.get_progress(),
                     "current_frame": self.reader.current_frame,
@@ -170,10 +205,21 @@ class PipelineManager:
                     "elapsed_seconds": time.time() - self._start_time,
                     "runway_area_pct": detection.runway_area_pct,
                 }
-                
+                t_payload_done = time.time()
                 # ── Broadcast ke semua client ─────────────────────────────
-                await self._broadcast(payload)
-                
+                await self._broadcast((payload, frame_bytes))
+                t_broadcast_done = time.time()
+                # ── Profiling log ─────────────────────────────────────────
+                logger.debug(
+                    f"Frame {frame_idx:05d} | "
+                    f"read={t_read_done-t_read:.3f}s "
+                    f"infer={t_infer_done-t_infer:.3f}s "
+                    f"overlay={t_overlay_done-t_overlay:.3f}s "
+                    f"encode={t_encode_done-t_overlay_done:.3f}s "
+                    f"payload={t_payload_done-t_encode_done:.3f}s "
+                    f"broadcast={t_broadcast_done-t_payload_done:.3f}s "
+                    f"total={t_broadcast_done-loop_start:.3f}s"
+                )
                 # ── Frame rate control ────────────────────────────────────
                 elapsed = time.time() - loop_start
                 sleep_time = frame_interval - elapsed
@@ -190,19 +236,22 @@ class PipelineManager:
             self.reader.release()
             self._running = False
     
-    async def _broadcast(self, payload: dict):
+    async def _broadcast(self, data):
         """Kirim payload ke semua WebSocket client yang aktif"""
         if not self._active_clients:
             return
-        
         disconnected = set()
         for client in self._active_clients:
             try:
-                await client.send_json(payload)
+                if isinstance(data, tuple):
+                    # Kirim JSON metadata dulu
+                    await client.send_json(data[0])
+                    # Kirim frame JPEG binary
+                    await client.send_bytes(data[1])
+                else:
+                    await client.send_json(data)
             except Exception:
                 disconnected.add(client)
-        
-        # Bersihkan client yang sudah disconnect
         self._active_clients -= disconnected
     
     def _update_fps(self):
