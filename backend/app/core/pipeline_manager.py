@@ -204,6 +204,7 @@ class PipelineManager:
                     "total_frames": self.reader.total_frames,
                     "elapsed_seconds": time.time() - self._start_time,
                     "runway_area_pct": detection.runway_area_pct,
+                    "video_id": self.video_id,
                 }
                 t_payload_done = time.time()
                 # ── Broadcast ke semua client ─────────────────────────────

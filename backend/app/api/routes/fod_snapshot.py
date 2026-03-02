@@ -1,23 +1,30 @@
-from fastapi import APIRouter, Depends, HTTPException, Response, Request
+from fastapi import APIRouter, Depends, HTTPException, Response, Request, Query
 from fastapi.responses import JSONResponse
 from sqlalchemy.orm import Session
 from app.models.fod_snapshot import FODSnapshot
 from app.schemas.fod_snapshot import FODSnapshotSchema
 from app.config import settings
-from typing import List
+from typing import List, Optional
 from app.db import get_db
 import os
 
 router = APIRouter(prefix="/fod-snapshots", tags=["FOD Snapshots"])
 
 @router.get("/", response_model=List[FODSnapshotSchema])
-def get_snapshots(request: Request, db: Session = Depends(get_db)):
-    data = db.query(FODSnapshot).order_by(FODSnapshot.created_at.desc()).all()
+def get_snapshots(
+    request: Request,
+    video_id: Optional[str] = Query(default=None, description="Filter snapshot berdasarkan video_id sesi deteksi aktif"),
+    db: Session = Depends(get_db)
+):
+    query = db.query(FODSnapshot).order_by(FODSnapshot.created_at.desc())
+    if video_id:
+        query = query.filter(FODSnapshot.video_id == video_id)
+    data = query.all()
     # Convert SQLAlchemy objects to dict before passing to Pydantic
     snapshots = []
     for row in data:
         try:
-            snapshots.append(FODSnapshotSchema.model_validate(row.__dict__).model_dump())
+            snapshots.append(FODSnapshotSchema.model_validate(row.__dict__).model_dump(mode='json'))
         except Exception as e:
             # Log error dan skip data yang gagal divalidasi
             import logging

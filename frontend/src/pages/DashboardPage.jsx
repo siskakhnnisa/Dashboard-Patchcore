@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import FODSnapshotGallery from "../components/FODSnapshotGallery";
 import StatsRow from "../components/dashboard/StatsRow";
 import DetectionStatistics from "../components/detection/DetectionStatistic";
@@ -11,10 +11,20 @@ import "../pages/DashboardPage.css";
 
 export default function DashboardPage() {
 
-
   const { connected, lastPayload, fps, frameBitmap } = useDetectionStream();
 
-  // Card data for stats row
+  // Pertahankan videoId terakhir yang diproses agar gallery tidak hilang
+  // ketika pipeline selesai (status message tidak membawa video_id)
+  const [persistedVideoId, setPersistedVideoId] = useState(null);
+
+  useEffect(() => {
+    if (lastPayload?.pipeline_status === 'running' && lastPayload?.video_id) {
+      setPersistedVideoId(lastPayload.video_id);
+    }
+  }, [lastPayload?.pipeline_status, lastPayload?.video_id]);
+
+  const pipelineRunning = lastPayload?.pipeline_status === 'running';
+
   const stats = [
     { key: "views",       component: <StatsRow statKey="views" />,       bgColor: "#E8E9F3" },
     { key: "visits",      component: <StatsRow statKey="visits" />,      bgColor: "#E3F2FD" },
@@ -58,11 +68,13 @@ export default function DashboardPage() {
         </div>
         <div className="dashboard-card dashboard-traffic-col">
 
-          {/* ── DetectionStatistics terima history score ── */}
+          {/* ── DetectionStatistics terima data anomaly dari PatchCore ── */}
           <DetectionStatistics
             scoreHistory={lastPayload?.score_history ?? []}
             totalFodCount={lastPayload?.total_fod_count ?? 0}
             anomalyScore={lastPayload?.anomaly_score ?? 0}
+            recentEvents={lastPayload?.recent_events ?? []}
+            runwayAreaPct={lastPayload?.runway_area_pct ?? 0}
           />
 
         </div>
@@ -108,8 +120,10 @@ export default function DashboardPage() {
 
       {/* FOD Snapshot Gallery */}
       <div className="dashboard-card">
-        <h2 style={{marginBottom:12}}>FOD Snapshots Gallery</h2>
-        <FODSnapshotGallery enabled={lastPayload?.pipeline_status === 'running'} />
+        <FODSnapshotGallery
+          enabled={pipelineRunning}
+          videoId={persistedVideoId}
+        />
       </div>
     </div>
   );

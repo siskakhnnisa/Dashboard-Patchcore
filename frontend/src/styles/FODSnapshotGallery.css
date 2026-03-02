@@ -1,0 +1,653 @@
+/* ═══════════════════════════════════════════════════
+   FOD Snapshot Gallery
+   ═══════════════════════════════════════════════════ */
+
+/* ── Root Widget ── */
+.fsg-widget {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+}
+
+/* ── Header ── */
+.fsg-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 12px;
+  border-bottom: 1.5px solid #F1F3F9;
+}
+
+.fsg-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.fsg-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+  letter-spacing: -0.2px;
+}
+
+.fsg-count-badge {
+  font-size: 11px;
+  font-weight: 600;
+  color: #374151;
+  background: #F1F5F9;
+  border: 1px solid #E2E8F0;
+  border-radius: 999px;
+  padding: 2px 9px;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Live badge — sama gaya dengan .ds-live-badge */
+.fsg-live-badge {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #059669;
+  background: #ECFDF5;
+  padding: 3px 9px;
+  border-radius: 999px;
+  border: 1px solid #A7F3D0;
+  letter-spacing: 0.02em;
+}
+
+.fsg-live-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+  animation: fsg-pulse 2s ease-in-out infinite;
+}
+
+@keyframes fsg-pulse {
+  0%, 100% { opacity: 1;    transform: scale(1);    }
+  50%       { opacity: 0.45; transform: scale(0.85); }
+}
+
+/* ── Summary Strip ── */
+.fsg-summary {
+  display: flex;
+  align-items: center;
+  background: linear-gradient(135deg, #F5F7FF 0%, #EEF2FF 100%);
+  border-radius: 10px;
+  border: 1px solid #E0E7FF;
+  padding: 12px 16px;
+}
+
+.fsg-summary-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  flex: 1;
+}
+
+.fsg-summary-val {
+  font-size: 18px;
+  font-weight: 600;
+  color: #374151;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+  letter-spacing: -0.3px;
+}
+
+.fsg-summary-lbl {
+  font-size: 10px;
+  color: #6B7280;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.07em;
+}
+
+.fsg-summary-div {
+  width: 1px;
+  height: 34px;
+  background: #C7D2FE;
+  flex-shrink: 0;
+}
+
+/* ── Scrollable Grid Area ── */
+.fsg-grid-area {
+  max-height: 480px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  padding-right: 4px;
+  scrollbar-width: thin;
+  scrollbar-color: #E2E8F0 transparent;
+}
+
+.fsg-grid-area::-webkit-scrollbar {
+  width: 5px;
+}
+.fsg-grid-area::-webkit-scrollbar-track {
+  background: transparent;
+}
+.fsg-grid-area::-webkit-scrollbar-thumb {
+  background: #E2E8F0;
+  border-radius: 999px;
+}
+.fsg-grid-area::-webkit-scrollbar-thumb:hover {
+  background: #CBD5E1;
+}
+
+/* ── Grid ── */
+.fsg-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+/* ── Snapshot Card ── */
+.fsg-card {
+  background: #FFFFFF;
+  border: 1px solid #E9ECF2;
+  border-radius: 10px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease, border-color 0.18s ease;
+}
+
+.fsg-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+  border-color: #C7D2FE;
+}
+
+/* ── Card Image Wrapper ── */
+.fsg-card-img-wrap {
+  position: relative;
+  width: 100%;
+  height: 116px;
+  background: #0e1a0e;
+  overflow: hidden;
+}
+
+.fsg-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transition: transform 0.3s ease;
+  display: block;
+}
+
+.fsg-card:hover .fsg-card-img {
+  transform: scale(1.06);
+}
+
+/* Scan-line overlay — konsisten dengan LiveMonitorPanel */
+.fsg-card-img-wrap::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: repeating-linear-gradient(
+    to bottom,
+    transparent 0px,
+    transparent 3px,
+    rgba(0, 0, 0, 0.04) 3px,
+    rgba(0, 0, 0, 0.04) 4px
+  );
+  pointer-events: none;
+}
+
+/* ── Severity Badge (overlay di atas gambar) ── */
+.fsg-severity {
+  position: absolute;
+  top: 7px;
+  right: 7px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: 999px;
+  backdrop-filter: blur(6px);
+  border: 1px solid transparent;
+  z-index: 2;
+  text-transform: uppercase;
+}
+
+.fsg-severity--high {
+  color: #fff;
+  background: rgba(220, 38, 38, 0.82);
+  border-color: rgba(220, 38, 38, 0.4);
+}
+
+.fsg-severity--medium {
+  color: #fff;
+  background: rgba(217, 119, 6, 0.82);
+  border-color: rgba(217, 119, 6, 0.4);
+}
+
+.fsg-severity--low {
+  color: #fff;
+  background: rgba(5, 150, 105, 0.82);
+  border-color: rgba(5, 150, 105, 0.4);
+}
+
+/* ── Frame index chip (kiri atas gambar) ── */
+.fsg-frame-chip {
+  position: absolute;
+  top: 7px;
+  left: 7px;
+  font-size: 9.5px;
+  font-weight: 600;
+  color: rgba(255, 255, 255, 0.92);
+  background: rgba(0, 0, 0, 0.45);
+  padding: 2px 7px;
+  border-radius: 999px;
+  backdrop-filter: blur(4px);
+  font-variant-numeric: tabular-nums;
+  letter-spacing: 0.02em;
+  z-index: 2;
+}
+
+/* ── No image placeholder ── */
+.fsg-card-noimg {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  color: rgba(255, 255, 255, 0.35);
+  font-size: 11px;
+}
+
+.fsg-card-noimg svg {
+  opacity: 0.4;
+}
+
+/* ── Card Body ── */
+.fsg-card-body {
+  padding: 10px 11px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 9px;
+}
+
+/* ── Confidence Bar ── */
+.fsg-conf-row {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.fsg-conf-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.fsg-conf-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fsg-conf-val {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: #374151;
+}
+
+.fsg-conf-track {
+  width: 100%;
+  height: 5px;
+  background: #F1F5F9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fsg-conf-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+  min-width: 3px;
+}
+
+.fsg-conf-fill--high   { background: #EF4444; }
+.fsg-conf-fill--medium { background: #F59E0B; }
+.fsg-conf-fill--low    { background: #10B981; }
+
+/* ── Metadata Grid ── */
+.fsg-meta {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 5px 8px;
+}
+
+.fsg-meta-item {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.fsg-meta-label {
+  font-size: 9px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fsg-meta-value {
+  font-size: 11px;
+  font-weight: 500;
+  color: #374151;
+  font-variant-numeric: tabular-nums;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ── Divider in card body ── */
+.fsg-card-divider {
+  height: 1px;
+  background: #F1F5F9;
+  margin: 0 -11px;
+}
+
+/* ── Modal Overlay ── */
+.fsg-modal-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(15, 20, 30, 0.72);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 24px;
+  animation: fsg-overlay-in 0.18s ease;
+}
+
+@keyframes fsg-overlay-in {
+  from { opacity: 0; }
+  to   { opacity: 1; }
+}
+
+.fsg-modal {
+  background: #fff;
+  border-radius: 14px;
+  overflow: hidden;
+  max-width: 560px;
+  width: 100%;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.22);
+  animation: fsg-modal-in 0.2s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+@keyframes fsg-modal-in {
+  from { opacity: 0; transform: scale(0.92) translateY(12px); }
+  to   { opacity: 1; transform: scale(1)    translateY(0);    }
+}
+
+.fsg-modal-img-wrap {
+  position: relative;
+  background: #0e1a0e;
+  width: 100%;
+  max-height: 300px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.fsg-modal-img {
+  width: 100%;
+  max-height: 300px;
+  object-fit: contain;
+  display: block;
+}
+
+.fsg-modal-severity {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 4px 12px;
+  border-radius: 999px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+}
+
+.fsg-modal-close {
+  position: absolute;
+  top: 12px;
+  left: 12px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.45);
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #fff;
+  transition: background 0.15s;
+  backdrop-filter: blur(4px);
+}
+
+.fsg-modal-close:hover {
+  background: rgba(0, 0, 0, 0.7);
+}
+
+.fsg-modal-body {
+  padding: 18px 20px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.fsg-modal-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: #374151;
+  margin: 0;
+}
+
+.fsg-modal-conf-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.fsg-modal-conf-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.fsg-modal-conf-label {
+  font-size: 10.5px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fsg-modal-conf-val {
+  font-size: 13px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.fsg-modal-conf-track {
+  height: 7px;
+  background: #F1F5F9;
+  border-radius: 999px;
+  overflow: hidden;
+}
+
+.fsg-modal-conf-fill {
+  height: 100%;
+  border-radius: 999px;
+  transition: width 0.5s ease;
+  min-width: 3px;
+}
+
+.fsg-modal-details {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 10px;
+  background: #F9FAFB;
+  border: 1px solid #F1F5F9;
+  border-radius: 10px;
+  padding: 12px 14px;
+}
+
+.fsg-modal-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fsg-modal-detail-label {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: #9CA3AF;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.fsg-modal-detail-value {
+  font-size: 13px;
+  font-weight: 600;
+  color: #374151;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Empty / Idle State ── */
+.fsg-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  padding: 40px 20px;
+  text-align: center;
+}
+
+.fsg-empty-icon {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  background: #F1F5F9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #CBD5E1;
+}
+
+.fsg-empty-title {
+  font-size: 13px;
+  font-weight: 600;
+  color: #6B7280;
+  margin: 0;
+}
+
+.fsg-empty-sub {
+  font-size: 11.5px;
+  color: #9CA3AF;
+  margin: 0;
+  max-width: 260px;
+  line-height: 1.6;
+}
+
+/* ── Skeleton Loading ── */
+.fsg-skeleton-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(190px, 1fr));
+  gap: 12px;
+}
+
+.fsg-skeleton-card {
+  border-radius: 10px;
+  overflow: hidden;
+  border: 1px solid #F1F5F9;
+}
+
+.fsg-skeleton-img {
+  width: 100%;
+  height: 116px;
+  background: linear-gradient(90deg, #F1F5F9 25%, #E9ECF2 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: fsg-shimmer 1.4s ease-in-out infinite;
+}
+
+.fsg-skeleton-body {
+  padding: 10px 11px 11px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.fsg-skeleton-line {
+  height: 9px;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #F1F5F9 25%, #E9ECF2 50%, #F1F5F9 75%);
+  background-size: 200% 100%;
+  animation: fsg-shimmer 1.4s ease-in-out infinite;
+}
+
+.fsg-skeleton-line--short { width: 55%; }
+.fsg-skeleton-line--full  { width: 100%; }
+.fsg-skeleton-line--med   { width: 75%; }
+
+@keyframes fsg-shimmer {
+  0%   { background-position:  200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+/* ── Error State ── */
+.fsg-error {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+  background: #FEF2F2;
+  border: 1px solid #FECACA;
+  border-radius: 10px;
+  font-size: 12px;
+  color: #DC2626;
+  font-weight: 500;
+}
+
+.fsg-error-icon {
+  flex-shrink: 0;
+  color: #EF4444;
+}
+
+/* ── Responsive ── */
+@media (max-width: 640px) {
+  .fsg-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+  .fsg-summary-val {
+    font-size: 15px;
+  }
+  .fsg-summary-lbl {
+    font-size: 9px;
+  }
+  .fsg-modal {
+    max-width: 100%;
+  }
+}

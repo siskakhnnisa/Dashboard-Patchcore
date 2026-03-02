@@ -47,6 +47,7 @@ export interface StreamPayload {
   total_frames?: number;
   elapsed_seconds?: number;
   runway_area_pct?: number;
+  video_id?: string;
 
   // Status/Error
   status?: string;

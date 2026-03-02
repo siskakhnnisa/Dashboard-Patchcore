@@ -13,5 +13,4 @@ class FODSnapshotSchema(BaseModel):
     label: Optional[str]
     confidence: Optional[float]
 
-    class Config:
-        orm_mode = True
+    model_config = {"from_attributes": True}

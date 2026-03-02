@@ -1,67 +1,62 @@
 import React, { useState } from "react";
 import {
   LayoutDashboard,
-  ShoppingCart,
-  FolderOpen,
-  User,
-  Building2,
+  MonitorPlay,
+  Clock,
+  Camera,
+  BarChart2,
+  Activity,
+  SlidersHorizontal,
+  Settings,
   FileText,
-  BookOpen,
-  MessageSquare,
   ChevronDown,
   ChevronRight,
   Plane,
-  Star,
-  Clock,
+  Shield,
+  Cpu,
+  FolderSearch,
 } from "lucide-react";
 import "../../styles/Sidebar.css";
 
 const NAV_GROUPS = [
   {
-    label: "Favorites",
+    label: "Monitoring",
     items: [
-      { id: "overview", label: "Overview", icon: null },
-      { id: "projects", label: "Projects", icon: null },
+      { id: "overview",       label: "Overview",       icon: LayoutDashboard },
+      { id: "live-monitor",   label: "Live Feed",      icon: MonitorPlay },
+      { id: "event-timeline", label: "Event Timeline", icon: Clock },
+      { id: "fod-snapshots",  label: "FOD Snapshots",  icon: Camera },
     ],
   },
   {
-    label: "Dashboards",
+    label: "Analysis",
     items: [
-      {
-        id: "dashboard-overview",
-        label: "Overview",
-        icon: LayoutDashboard,
-        active: true,
-      },
-      { id: "ecommerce", label: "Overview", icon: ShoppingCart },
-      { id: "projects-dash", label: "Projects", icon: FolderOpen },
+      { id: "detection-stats",  label: "Detection Stats",  icon: BarChart2 },
+      { id: "anomaly-trends",   label: "Anomaly Trends",   icon: Activity },
+      { id: "inspection-log",   label: "Inspection Log",   icon: FolderSearch },
     ],
   },
   {
-    label: "Pages",
+    label: "System",
     items: [
       {
-        id: "user-profile",
-        label: "User Profile",
-        icon: User,
+        id: "pipeline",
+        label: "Pipeline",
+        icon: Cpu,
         children: [
-          { id: "profile-overview", label: "Overview" },
-          { id: "profile-projects", label: "Projects" },
-          { id: "profile-campaigns", label: "Campaigns" },
-          { id: "profile-documents", label: "Documents" },
-          { id: "profile-followers", label: "History" },
+          { id: "pipeline-control", label: "Control Panel" },
+          { id: "pipeline-config",  label: "Configuration" },
+          { id: "pipeline-log",     label: "Run History" },
         ],
       },
-      { id: "account", label: "Account", icon: User },
-      { id: "corporate", label: "Corporate", icon: Building2 },
-      { id: "blog", label: "Blog", icon: BookOpen },
-      { id: "social", label: "Social", icon: MessageSquare },
+      { id: "settings", label: "Settings",  icon: Settings },
+      { id: "reports",  label: "Reports",   icon: FileText },
     ],
   },
 ];
 
 export default function Sidebar({ activePage, onNavigate }) {
-  const [expandedItems, setExpandedItems] = useState({ "user-profile": true });
+  const [expandedItems, setExpandedItems] = useState({});
 
   const toggleExpand = (id) => {
     setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -74,13 +69,16 @@ export default function Sidebar({ activePage, onNavigate }) {
         <div className="sidebar-brand-icon">
           <Plane size={14} />
         </div>
-        <span className="sidebar-brand-name">ByeWind</span>
+        <div className="sidebar-brand-text">
+          <span className="sidebar-brand-name">FOD Detection</span>
+          <span className="sidebar-brand-sub">Runway Safety Intelligence</span>
+        </div>
       </div>
 
-      {/* Quick Nav Tabs */}
-      <div className="sidebar-tabs">
-        <button className="sidebar-tab active">Favorites</button>
-        <button className="sidebar-tab">Recently</button>
+      {/* Status pill */}
+      <div className="sidebar-status">
+        <span className="sidebar-status-dot" />
+        <span className="sidebar-status-label">System Active</span>
       </div>
 
       {/* Navigation */}
@@ -102,13 +100,13 @@ export default function Sidebar({ activePage, onNavigate }) {
         ))}
       </nav>
 
-      {/* Footer brand */}
-      {/* <div className="sidebar-footer">
-        <div className="sidebar-footer-brand">
-          <span className="sidebar-footer-icon">❄</span>
-          <span className="sidebar-footer-text">snowUI</span>
+      {/* Footer */}
+      <div className="sidebar-footer">
+        <div className="sidebar-footer-inner">
+          <Shield size={12} />
+          <span>Runway Safety System</span>
         </div>
-      </div> */}
+      </div>
     </aside>
   );
 }
@@ -124,16 +122,12 @@ function SidebarItem({ item, activePage, onNavigate, expanded, onToggle }) {
         className={`sidebar-item ${isActive ? "active" : ""}`}
         onClick={() => {
           if (hasChildren) onToggle(item.id);
-          else onNavigate(item.id);
+          else onNavigate?.(item.id);
         }}
       >
-        {Icon ? (
+        {Icon && (
           <span className="sidebar-item-icon">
             <Icon size={15} />
-          </span>
-        ) : (
-          <span className="sidebar-item-dot">
-            <span className="dot" />
           </span>
         )}
         <span className="sidebar-item-label">{item.label}</span>
@@ -149,10 +143,8 @@ function SidebarItem({ item, activePage, onNavigate, expanded, onToggle }) {
           {item.children.map((child) => (
             <button
               key={child.id}
-              className={`sidebar-child-item ${
-                activePage === child.id ? "active" : ""
-              }`}
-              onClick={() => onNavigate(child.id)}
+              className={`sidebar-child-item ${activePage === child.id ? "active" : ""}`}
+              onClick={() => onNavigate?.(child.id)}
             >
               {child.label}
             </button>

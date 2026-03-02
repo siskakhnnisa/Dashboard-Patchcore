@@ -1,6 +1,10 @@
+/* ═══════════════════════════════════════════════════
+   Sidebar — FOD Guard / PatchCore Detection
+   ═══════════════════════════════════════════════════ */
+
 .sidebar {
-  width: 260px;
-  min-width: 260px;
+  width: 240px;
+  min-width: 240px;
   height: 100vh;
   background-color: #FFFFFF;
   border-right: 1px solid #E5E7EB;
@@ -8,7 +12,7 @@
   flex-direction: column;
   overflow: hidden;
   padding: 0;
-  box-shadow: 1px 0 3px rgba(0, 0, 0, 0.04);
+  box-shadow: 1px 0 4px rgba(0, 0, 0, 0.04);
 }
 
 /* ── Brand Section ── */
@@ -16,58 +20,76 @@
   display: flex;
   align-items: center;
   gap: 10px;
-  padding: 20px 16px 16px;
+  padding: 18px 16px 14px;
   border-bottom: 1px solid #F3F4F6;
 }
 
 .sidebar-brand-icon {
-  width: 24px;
-  height: 24px;
-  background: #1F2937;
-  border-radius: 6px;
+  width: 28px;
+  height: 28px;
+  background: linear-gradient(135deg, #1F2937 0%, #374151 100%);
+  border-radius: 7px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   flex-shrink: 0;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+}
+
+.sidebar-brand-text {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
 }
 
 .sidebar-brand-name {
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 700;
   color: #111827;
-  letter-spacing: -0.2px;
+  letter-spacing: -0.3px;
+  line-height: 1;
 }
 
-/* ── Tabs Section ── */
-.sidebar-tabs {
-  display: flex;
-  gap: 4px;
-  padding: 12px 16px;
-  border-bottom: 1px solid #F3F4F6;
-}
-
-.sidebar-tab {
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 12px;
+.sidebar-brand-sub {
+  font-size: 10px;
   font-weight: 500;
-  color: #6B7280;
-  background: transparent;
-  border: none;
-  cursor: pointer;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  transition: all 0.15s ease;
+  color: #9CA3AF;
+  letter-spacing: 0.02em;
+  line-height: 1;
 }
 
-.sidebar-tab.active {
-  color: #111827;
-  background: #F3F4F6;
+/* ── System Status ── */
+.sidebar-status {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  margin: 10px 16px;
+  padding: 7px 10px;
+  background: #F0FDF4;
+  border: 1px solid #BBF7D0;
+  border-radius: 8px;
 }
 
-.sidebar-tab:hover:not(.active) {
-  color: #374151;
-  background: #F9FAFB;
+.sidebar-status-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #10B981;
+  flex-shrink: 0;
+  animation: sb-pulse 2.5s ease-in-out infinite;
+}
+
+@keyframes sb-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(16,185,129,0.4); }
+  50%       { opacity: 0.7; box-shadow: 0 0 0 3px rgba(16,185,129,0); }
+}
+
+.sidebar-status-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #059669;
+  letter-spacing: 0.01em;
 }
 
 /* ── Navigation ── */
@@ -75,7 +97,7 @@
   flex: 1;
   overflow-y: auto;
   overflow-x: hidden;
-  padding: 8px 12px;
+  padding: 4px 12px 8px;
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -83,7 +105,7 @@
 
 /* Custom scrollbar */
 .sidebar-nav::-webkit-scrollbar {
-  width: 6px;
+  width: 4px;
 }
 
 .sidebar-nav::-webkit-scrollbar-track {
@@ -105,16 +127,16 @@
 }
 
 .sidebar-group:last-child {
-  margin-bottom: 8px;
+  margin-bottom: 4px;
 }
 
 .sidebar-group-label {
-  font-size: 11px;
-  font-weight: 600;
-  color: #9CA3AF;
+  font-size: 10px;
+  font-weight: 700;
+  color: #C4C9D4;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  padding: 8px 12px 6px;
+  letter-spacing: 0.09em;
+  padding: 6px 12px 5px;
   user-select: none;
 }
 
@@ -128,10 +150,10 @@
 .sidebar-item {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 9px;
   width: 100%;
-  padding: 8px 12px;
-  border-radius: 8px;
+  padding: 7px 10px;
+  border-radius: 7px;
   background: transparent;
   border: none;
   cursor: pointer;
@@ -139,20 +161,32 @@
   font-size: 13px;
   color: #6B7280;
   text-align: left;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   position: relative;
   font-weight: 400;
 }
 
 .sidebar-item:hover {
   background: #F9FAFB;
-  color: #111827;
+  color: #1F2937;
 }
 
 .sidebar-item.active {
-  background: #F3F4F6;
-  color: #111827;
-  font-weight: 500;
+  background: #EEF2FF;
+  color: #4338CA;
+  font-weight: 600;
+}
+
+.sidebar-item.active::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 3px;
+  height: 60%;
+  background: #6366F1;
+  border-radius: 0 3px 3px 0;
 }
 
 /* ── Item Icon ── */
@@ -164,36 +198,15 @@
   height: 18px;
   flex-shrink: 0;
   color: #9CA3AF;
+  transition: color 0.15s ease;
 }
 
-.sidebar-item.active .sidebar-item-icon,
 .sidebar-item:hover .sidebar-item-icon {
-  color: #374151;
+  color: #4B5563;
 }
 
-/* ── Item Dot (for favorites) ── */
-.sidebar-item-dot {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 18px;
-  height: 18px;
-  flex-shrink: 0;
-}
-
-.dot {
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: #D1D5DB;
-}
-
-.sidebar-item:hover .dot {
-  background: #9CA3AF;
-}
-
-.sidebar-item.active .dot {
-  background: #6B7280;
+.sidebar-item.active .sidebar-item-icon {
+  color: #6366F1;
 }
 
 /* ── Item Label ── */
@@ -205,42 +218,57 @@
 
 /* ── Item Arrow (for expandable items) ── */
 .sidebar-item-arrow {
-  color: #9CA3AF;
+  color: #C4C9D4;
   display: flex;
   align-items: center;
   margin-left: auto;
   flex-shrink: 0;
+  transition: color 0.15s ease;
 }
 
 .sidebar-item:hover .sidebar-item-arrow {
-  color: #6B7280;
+  color: #9CA3AF;
 }
 
 /* ── Children/Submenu ── */
 .sidebar-children {
-  padding-left: 28px;
+  padding-left: 32px;
   display: flex;
   flex-direction: column;
   gap: 1px;
   margin-top: 2px;
-  margin-bottom: 4px;
+  margin-bottom: 3px;
 }
 
 .sidebar-child-item {
   display: block;
   width: 100%;
-  padding: 7px 12px;
+  padding: 6px 10px;
   border-radius: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
-  font-size: 13px;
-  color: #6B7280;
+  font-size: 12.5px;
+  color: #9CA3AF;
   background: transparent;
   border: none;
   cursor: pointer;
   text-align: left;
-  transition: all 0.15s ease;
+  transition: background 0.15s ease, color 0.15s ease;
   font-weight: 400;
   line-height: 1.4;
+  position: relative;
+}
+
+.sidebar-child-item::before {
+  content: "";
+  display: inline-block;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #E5E7EB;
+  margin-right: 8px;
+  vertical-align: middle;
+  flex-shrink: 0;
+  transition: background 0.15s ease;
 }
 
 .sidebar-child-item:hover {
@@ -248,55 +276,58 @@
   color: #374151;
 }
 
+.sidebar-child-item:hover::before {
+  background: #D1D5DB;
+}
+
 .sidebar-child-item.active {
-  color: #111827;
-  font-weight: 500;
-  background: #F3F4F6;
+  color: #4338CA;
+  font-weight: 600;
+  background: #EEF2FF;
+}
+
+.sidebar-child-item.active::before {
+  background: #6366F1;
 }
 
 /* ── Footer Section ── */
 .sidebar-footer {
-  padding: 16px;
-  border-top: 1px solid #F3F4F6;
-  margin-top: auto;
+  padding: 12px 16px;
+  border-top: 1px solid #F1F3F9;
   flex-shrink: 0;
 }
 
-.sidebar-footer-brand {
+.sidebar-footer-inner {
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-.sidebar-footer-icon {
-  font-size: 16px;
-  color: #60A5FA;
-  line-height: 1;
-}
-
-.sidebar-footer-text {
-  font-size: 13px;
-  font-weight: 600;
-  color: #9CA3AF;
+  gap: 7px;
+  color: #C4C9D4;
+  font-size: 11px;
+  font-weight: 500;
   letter-spacing: 0.02em;
 }
 
-/* ── Responsive adjustments ── */
+.sidebar-footer-inner svg {
+  flex-shrink: 0;
+  stroke: #C4C9D4;
+}
+
+/* ── Responsive ── */
 @media (max-width: 1024px) {
   .sidebar {
-    width: 240px;
-    min-width: 240px;
+    width: 220px;
+    min-width: 220px;
   }
 }
 
 @media (max-width: 768px) {
   .sidebar {
     position: fixed;
-    left: -260px;
+    left: -240px;
     z-index: 1000;
     transition: left 0.3s ease;
   }
-  
+
   .sidebar.open {
     left: 0;
   }
