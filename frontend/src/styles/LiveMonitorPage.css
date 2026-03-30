@@ -1,0 +1,93 @@
+/* ── Live Feed Page ── */
+.livefeed {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  padding: 24px 32px;
+  width: 100%;
+  max-width: 100vw;
+  min-height: 100vh;
+  margin: 0;
+  box-sizing: border-box;
+  background: #F9FAFB;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif;
+  overflow-x: hidden;
+}
+
+.livefeed-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  width: 100%;
+}
+
+.livefeed-title {
+  font-size: 24px;
+  font-weight: 600;
+  color: #1a1a1a;
+  margin: 0;
+  letter-spacing: -0.3px;
+}
+
+/* ── Card Base ── */
+.livefeed-card {
+  background: #FFFFFF;
+  border-radius: 12px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  padding: 20px;
+  width: 100%;
+  color: #1f2937;
+  transition: box-shadow 0.2s;
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-sizing: border-box;
+  overflow: hidden;
+}
+
+.livefeed-card:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* ── Main Row: Monitor + Pipeline ── */
+.livefeed-main {
+  display: grid;
+  grid-template-columns: 2.2fr 1fr;
+  gap: 20px;
+  align-items: stretch;
+  width: 100%;
+}
+
+.livefeed-monitor-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 0;
+  width: 100%;
+  overflow: hidden;
+}
+
+.livefeed-pipeline-col {
+  display: flex;
+  flex-direction: column;
+  min-height: 320px;
+  padding: 24px;
+  width: 100%;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1200px) {
+  .livefeed-main {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 768px) {
+  .livefeed {
+    padding: 16px;
+    gap: 14px;
+  }
+
+  .livefeed-title {
+    font-size: 20px;
+  }
+}

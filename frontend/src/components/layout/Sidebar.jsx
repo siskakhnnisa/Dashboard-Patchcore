@@ -1,13 +1,12 @@
 import React, { useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   MonitorPlay,
   Clock,
   Camera,
   BarChart2,
-  Activity,
   SlidersHorizontal,
-  Settings,
   FileText,
   ChevronDown,
   ChevronRight,
@@ -15,8 +14,23 @@ import {
   Shield,
   Cpu,
   FolderSearch,
+  Radio,
 } from "lucide-react";
 import "../../styles/Sidebar.css";
+
+const ROUTE_MAP = {
+  "overview":          "/",
+  "live-monitor":      "/live-monitor",
+  "stream":            "/stream",
+  "event-timeline":    "/event-timeline",
+  "fod-snapshots":     "/fod-snapshots",
+  "detection-stats":   "/detection-stats",
+  "inspection-log":    "/inspection-log",
+  "pipeline-control":  "/pipeline/control",
+  "pipeline-config":   "/pipeline/config",
+  "pipeline-log":      "/pipeline/log",
+  "reports":           "/reports",
+};
 
 const NAV_GROUPS = [
   {
@@ -24,6 +38,7 @@ const NAV_GROUPS = [
     items: [
       { id: "overview",       label: "Overview",       icon: LayoutDashboard },
       { id: "live-monitor",   label: "Live Feed",      icon: MonitorPlay },
+      { id: "stream",         label: "Stream",         icon: Radio },
       { id: "event-timeline", label: "Event Timeline", icon: Clock },
       { id: "fod-snapshots",  label: "FOD Snapshots",  icon: Camera },
     ],
@@ -32,7 +47,6 @@ const NAV_GROUPS = [
     label: "Analysis",
     items: [
       { id: "detection-stats",  label: "Detection Stats",  icon: BarChart2 },
-      { id: "anomaly-trends",   label: "Anomaly Trends",   icon: Activity },
       { id: "inspection-log",   label: "Inspection Log",   icon: FolderSearch },
     ],
   },
@@ -49,14 +63,24 @@ const NAV_GROUPS = [
           { id: "pipeline-log",     label: "Run History" },
         ],
       },
-      { id: "settings", label: "Settings",  icon: Settings },
       { id: "reports",  label: "Reports",   icon: FileText },
     ],
   },
 ];
 
-export default function Sidebar({ activePage, onNavigate }) {
+export default function Sidebar() {
+  const navigate = useNavigate();
+  const location = useLocation();
   const [expandedItems, setExpandedItems] = useState({});
+
+  const currentId = Object.entries(ROUTE_MAP).find(
+    ([, path]) => path === location.pathname
+  )?.[0] ?? "overview";
+
+  const handleNavigate = (id) => {
+    const path = ROUTE_MAP[id];
+    if (path) navigate(path);
+  };
 
   const toggleExpand = (id) => {
     setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
@@ -90,8 +114,8 @@ export default function Sidebar({ activePage, onNavigate }) {
               <SidebarItem
                 key={item.id}
                 item={item}
-                activePage={activePage}
-                onNavigate={onNavigate}
+                activePage={currentId}
+                onNavigate={handleNavigate}
                 expanded={expandedItems[item.id]}
                 onToggle={toggleExpand}
               />

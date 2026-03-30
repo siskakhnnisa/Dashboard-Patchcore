@@ -1,17 +1,17 @@
 import React, { useState, useEffect } from "react";
-import {
-  AlertTriangle,
-  Info,
-  CheckCircle,
-  Clock,
-  ChevronDown,
-} from "lucide-react";
+// import {
+//   AlertTriangle,
+//   Info,
+//   CheckCircle,
+//   Clock,
+//   ChevronDown,
+// } from "lucide-react";
 import "../../styles/FODEventsTimeline.css";
 
 const EVENT_TYPES = {
-  detection: { icon: AlertTriangle, color: "#ef4444", label: "FOD Detection" },
-  clear: { icon: CheckCircle, color: "#22c55e", label: "Clear" },
-  info: { icon: Info, color: "#3b82f6", label: "System Info" },
+  detection: { color: "#ef4444", label: "FOD Detection" },
+  clear: { color: "#22c55e", label: "Clear" },
+  info: { color: "#3b82f6", label: "System Info" },
 };
 
 const INITIAL_EVENTS = [
@@ -74,8 +74,7 @@ function formatTimestamp(date) {
   });
 }
 
-export default function FODEventsTimeline({ liveDetections = [] }) {
-  const [events, setEvents] = useState(INITIAL_EVENTS);
+export default function FODEventsTimeline({ events = [] }) {
   const [expandedId, setExpandedId] = useState(null);
   const [, forceUpdate] = useState(0);
 
@@ -85,35 +84,15 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
     return () => clearInterval(t);
   }, []);
 
-  // Add new events based on live detections
-  useEffect(() => {
-    if (liveDetections.length > 0) {
-      const highSev = liveDetections.filter((d) => d.severity === "high");
-      if (highSev.length > 0) {
-        setEvents((prev) => {
-          // Don't add duplicate events too quickly
-          const last = prev[0];
-          if (
-            last &&
-            new Date() - last.time < 30000 &&
-            last.type === "detection"
-          )
-            return prev;
-          const newEvent = {
-            id: Date.now(),
-            type: "detection",
-            message: `FOD detected — ${highSev.length} object${
-              highSev.length > 1 ? "s" : ""
-            }`,
-            details: `Objects: ${liveDetections.length} total | High severity: ${highSev.length}`,
-            time: new Date(),
-            severity: "high",
-          };
-          return [newEvent, ...prev].slice(0, 20);
-        });
-      }
-    }
-  }, [liveDetections.length]);
+  // Tampilkan event dari backend, fallback ke dummy jika kosong
+  const timelineEvents = events.length > 0 ? events.map((e, idx) => ({
+    id: e.event_id || idx,
+    type: e.type || 'detection',
+    message: e.message || `FOD detected — ${e.fod_count ?? 1} object(s)`,
+    details: e.details || `Frame: ${e.frame_id ?? '-'} | Score: ${e.max_score ?? '-'} | Severity: ${e.severity ?? '-'}`,
+    time: e.timestamp ? new Date(e.timestamp) : new Date(),
+    severity: (e.severity || '').toLowerCase(),
+  })) : INITIAL_EVENTS;
 
   return (
     <div className="timeline card">
@@ -122,7 +101,7 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
           <span className="section-title" style={{ margin: 0 }}>
             FOD Events Timeline
           </span>
-          <span className="timeline-count">{events.length} events</span>
+          <span className="timeline-count">{timelineEvents.length} events</span>
         </div>
         <div className="timeline-filters">
           <button className="timeline-filter active">All</button>
@@ -132,8 +111,8 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
       </div>
 
       <div className="timeline-list">
-        {events.map((event) => {
-          const { icon: Icon, color } = EVENT_TYPES[event.type];
+        {timelineEvents.map((event) => {
+          const { color } = EVENT_TYPES[event.type] || EVENT_TYPES.detection;
           const isExpanded = expandedId === event.id;
           return (
             <div
@@ -148,9 +127,7 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
                 <div
                   className="timeline-node"
                   style={{ background: color, borderColor: color }}
-                >
-                  <Icon size={9} color="white" />
-                </div>
+                />
                 <div
                   className="timeline-line"
                   style={{ background: color + "30" }}
@@ -178,15 +155,11 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
                   </div>
                   <div className="timeline-event-right">
                     <div className="timeline-event-time">
-                      <Clock size={9} />
                       <span>{formatTime(event.time)}</span>
                     </div>
-                    <ChevronDown
-                      size={11}
-                      className={`timeline-expand-icon ${
-                        isExpanded ? "rotated" : ""
-                      }`}
-                    />
+                    <span
+                      className={`timeline-expand-icon ${isExpanded ? "rotated" : ""}`}
+                    >▼</span>
                   </div>
                 </div>
 
@@ -194,7 +167,6 @@ export default function FODEventsTimeline({ liveDetections = [] }) {
                   <div className="timeline-event-details animate-fade-in">
                     <div className="timeline-detail-text">{event.details}</div>
                     <div className="timeline-timestamp">
-                      <Clock size={9} />
                       {formatTimestamp(event.time)}
                     </div>
                   </div>

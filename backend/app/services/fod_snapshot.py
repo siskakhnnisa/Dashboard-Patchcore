@@ -11,8 +11,16 @@ def save_fod_snapshot(frame, bbox: Dict, video_id: str, frame_number: int, label
     Crop frame sesuai bbox dan simpan sebagai file gambar.
     Return: path file gambar relatif ke SNAPSHOT_DIR
     """
+    fh, fw = frame.shape[:2]
     x, y, w, h = bbox["x"], bbox["y"], bbox["width"], bbox["height"]
-    crop = frame[y:y+h, x:x+w]
+
+    # Clamp bbox ke dalam batas frame
+    x1 = max(0, min(x, fw - 1))
+    y1 = max(0, min(y, fh - 1))
+    x2 = max(x1 + 1, min(x + w, fw))
+    y2 = max(y1 + 1, min(y + h, fh))
+
+    crop = frame[y1:y2, x1:x2]
     timestamp = datetime.utcnow().strftime("%Y%m%d_%H%M%S_%f")
     filename = f"fod_{video_id}_{frame_number}_{timestamp}.jpg"
     filepath = os.path.join(SNAPSHOT_DIR, filename)

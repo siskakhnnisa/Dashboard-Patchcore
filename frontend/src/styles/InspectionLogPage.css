@@ -1,0 +1,457 @@
+/* ══════════════════════════════════════════════════════
+   Inspection Log Page – full-viewport, zero dead-space
+   ══════════════════════════════════════════════════════ */
+
+/* ── Page Root ── */
+.ilog {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  min-height: 0;
+  padding: 16px;
+  gap: 12px;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', sans-serif;
+  box-sizing: border-box;
+  overflow: hidden;
+  background: #F8F9FB;
+}
+
+/* ── Top Bar ── */
+.ilog-topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 10px 16px;
+  flex-shrink: 0;
+}
+.ilog-filters {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.ilog-sel {
+  padding: 8px 32px 8px 12px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  font-size: 13px;
+  color: #374151;
+  background: #F9FAFB url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 24 24' fill='none' stroke='%236B7280' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'/%3E%3C/svg%3E") right 10px center no-repeat;
+  appearance: none;
+  outline: none;
+  cursor: pointer;
+  min-width: 150px;
+  font-family: inherit;
+}
+.ilog-sel:focus { border-color: #6366F1; box-shadow: 0 0 0 2px rgba(99,102,241,.12); }
+.ilog-csv-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: #F5F7FF;
+  border: 1px solid #E0E7FF;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #6366F1;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: inherit;
+}
+.ilog-csv-btn:hover:not(:disabled) { background: #EEF2FF; }
+.ilog-csv-btn:disabled { opacity: .4; cursor: default; }
+
+/* ── Summary Stats Row ── */
+.ilog-stats {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 10px;
+  flex-shrink: 0;
+}
+.ilog-stat {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.ilog-stat-label { font-size: 11.5px; font-weight: 500; color: #6B7280; }
+.ilog-stat-val   { font-size: 24px; font-weight: 700; color: #111827; line-height: 1.2; }
+.ilog-stat-val--accent { color: #10B981; }
+
+/* ── Main Grid: fills remaining height ── */
+.ilog-grid {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 12px;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* ── Panel (card) ── */
+.ilog-panel {
+  background: #fff;
+  border: 1px solid #E5E7EB;
+  border-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  overflow: hidden;
+}
+.ilog-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px 16px;
+  border-bottom: 1px solid #F3F4F6;
+  flex-shrink: 0;
+}
+.ilog-panel-title {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: #374151;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+}
+
+/* ── Sidebar (right) ── */
+.ilog-side {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #374151 transparent;
+}
+
+/* ── Table ── */
+.ilog-scroll {
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: #374151 transparent;
+}
+.ilog-tbl {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+.ilog-tbl thead { position: sticky; top: 0; z-index: 1; }
+.ilog-tbl th {
+  background: #F9FAFB;
+  font-weight: 600;
+  color: #6B7280;
+  padding: 9px 14px;
+  text-align: left;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .4px;
+  border-bottom: 1px solid #E5E7EB;
+  white-space: nowrap;
+}
+.ilog-tbl td {
+  padding: 9px 14px;
+  border-bottom: 1px solid #F3F4F6;
+  color: #374151;
+  vertical-align: middle;
+}
+.ilog-tbl tbody tr { transition: background .1s; }
+.ilog-tbl tbody tr:hover { background: #F9FAFB; }
+
+.ilog-mono { font-family: 'SF Mono','Fira Code','Cascadia Code',monospace; font-size: 12px; color: #6B7280; }
+.ilog-bold { font-weight: 700; color: #111827; }
+.ilog-chip {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #F3F4F6;
+  border-radius: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: #374151;
+}
+
+/* ── Status Badges ── */
+.ilog-st {
+  display: inline-flex;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 10px;
+  border-radius: 6px;
+  white-space: nowrap;
+}
+.ilog-st--active    { background: #D1FAE5; color: #065F46; }
+.ilog-st--confirmed { background: #D1FAE5; color: #065F46; }
+.ilog-st--cleared   { background: #FEF9C3; color: #854D0E; }
+.ilog-st--false     { background: #FEE2E2; color: #991B1B; }
+.ilog-st--review    { background: #FEE2E2; color: #991B1B; }
+
+/* ── IMG Button ── */
+.ilog-img-btn {
+  padding: 3px 10px;
+  background: #F3F4F6;
+  border: 1px solid #E5E7EB;
+  border-radius: 5px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #6B7280;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ilog-img-btn:hover { background: #EEF2FF; color: #6366F1; border-color: #C7D2FE; }
+
+/* ── Pagination ── */
+.ilog-pager {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 16px;
+  border-top: 1px solid #F3F4F6;
+  font-size: 12px;
+  color: #6B7280;
+  flex-shrink: 0;
+}
+.ilog-pager-btns { display: flex; align-items: center; gap: 6px; }
+.ilog-pager-btns button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px; height: 26px;
+  border: 1px solid #E5E7EB;
+  border-radius: 6px;
+  background: #fff;
+  color: #374151;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ilog-pager-btns button:hover:not(:disabled) { background: #F3F4F6; }
+.ilog-pager-btns button:disabled { opacity: .3; cursor: default; }
+.ilog-pager-btns span { font-size: 12px; font-weight: 600; min-width: 40px; text-align: center; }
+
+/* ── Empty State ── */
+.ilog-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 32px 16px;
+  color: #6B7280;
+  text-align: center;
+  font-size: 13px;
+  flex: 1;
+}
+.ilog-empty--sm { padding: 20px 12px; }
+.ilog-empty-sub { font-size: 12px; color: #6B7280; max-width: 260px; }
+@keyframes ilog-spin { to { transform: rotate(360deg); } }
+.ilog-spin { animation: ilog-spin 1s linear infinite; }
+
+/* ── Distribution ── */
+.ilog-dist {
+  padding: 12px 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.ilog-dist-row { display: flex; align-items: center; gap: 8px; }
+.ilog-dist-name {
+  font-size: 12.5px;
+  font-weight: 500;
+  color: #374151;
+  min-width: 90px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.ilog-dist-track { flex: 1; height: 8px; background: #F3F4F6; border-radius: 4px; overflow: hidden; }
+.ilog-dist-fill  { height: 100%; border-radius: 4px; background: linear-gradient(90deg,#6366F1,#818CF8); transition: width .4s; }
+.ilog-dist-num   { font-size: 13px; font-weight: 700; color: #111827; min-width: 24px; text-align: right; }
+
+/* ── Snapshots ── */
+.ilog-snaps {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  padding: 12px 14px;
+}
+.ilog-snap { display: flex; flex-direction: column; gap: 3px; }
+.ilog-snap-img-wrap {
+  position: relative;
+  background: #F3F4F6;
+  border-radius: 6px;
+  overflow: hidden;
+  aspect-ratio: 4/3;
+}
+.ilog-snap-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.ilog-snap-badge {
+  position: absolute;
+  top: 4px; left: 4px;
+  font-size: 9px;
+  font-weight: 700;
+  padding: 2px 5px;
+  background: rgba(239,68,68,.85);
+  color: #fff;
+  border-radius: 3px;
+}
+.ilog-snap-time { font-size: 10.5px; color: #6B7280; text-align: center; font-family: 'SF Mono','Fira Code',monospace; }
+
+/* ── Preview Modal ── */
+.ilog-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  background: rgba(0,0,0,.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  backdrop-filter: blur(4px);
+}
+.ilog-modal {
+  background: #fff;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90vw;
+  box-shadow: 0 20px 60px rgba(0,0,0,.3);
+  overflow: hidden;
+  animation: ilog-pop .2s ease;
+}
+@keyframes ilog-pop {
+  from { opacity: 0; transform: scale(.95) translateY(6px); }
+  to   { opacity: 1; transform: scale(1) translateY(0); }
+}
+.ilog-modal-img-area { position: relative; background: #111; min-height: 100px; }
+.ilog-modal-img { width: 100%; display: block; max-height: 220px; object-fit: contain; }
+.ilog-modal-body { padding: 14px 18px 18px; }
+.ilog-modal-title { font-size: 14px; font-weight: 600; color: #1F2937; margin: 0 0 12px; }
+.ilog-modal-info { display: flex; flex-direction: column; gap: 8px; }
+.ilog-modal-row { display: flex; justify-content: space-between; align-items: center; font-size: 13px; }
+.ilog-modal-row > span:first-child { color: #6B7280; }
+.ilog-modal-row > span:last-child  { color: #374151; font-weight: 500; }
+.ilog-modal-close {
+  margin-top: 14px;
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #E5E7EB;
+  border-radius: 8px;
+  background: #F9FAFB;
+  font-size: 13px;
+  font-weight: 500;
+  color: #374151;
+  cursor: pointer;
+  font-family: inherit;
+}
+.ilog-modal-close:hover { background: #F3F4F6; }
+
+/* ── Responsive ── */
+@media (max-width: 1024px) {
+  .ilog { height: auto; min-height: 100%; overflow: visible; }
+  .ilog-grid { grid-template-columns: 1fr; flex: none; overflow: visible; }
+  .ilog-panel--table { min-height: 400px; }
+  .ilog-side { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; overflow: visible; }
+}
+@media (max-width: 768px) {
+  .ilog { padding: 10px; gap: 10px; }
+  .ilog-stats { grid-template-columns: repeat(2, 1fr); }
+  .ilog-topbar { flex-direction: column; align-items: stretch; }
+  .ilog-filters { flex-wrap: wrap; }
+  .ilog-side { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+  .ilog-stats { grid-template-columns: 1fr; }
+  .ilog-sel { min-width: auto; width: 100%; }
+}
+
+/* ══════════════════════════════════════════════════════
+   Live Detection Banner & Real-time Events Panel
+   ══════════════════════════════════════════════════════ */
+
+.ilog-live-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: linear-gradient(90deg, #EEF2FF 0%, #F0FDF4 100%);
+  border: 1px solid #C7D2FE;
+  border-radius: 10px;
+  padding: 10px 16px;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.ilog-live-banner-left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4338CA;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.ilog-live-banner-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #059669;
+  font-size: 12px;
+}
+
+.ilog-live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22C55E;
+  flex-shrink: 0;
+  animation: ilog-pulse 2s ease-in-out infinite;
+}
+
+@keyframes ilog-pulse {
+  0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(34,197,94,0.4); }
+  50%      { opacity: 0.6; box-shadow: 0 0 0 4px rgba(34,197,94,0); }
+}
+
+.ilog-live-label {
+  white-space: nowrap;
+}
+
+.ilog-live-panel {
+  flex-shrink: 0;
+  border: 1px solid #C7D2FE;
+  background: #FAFAFF;
+}
+
+.ilog-live-panel .ilog-panel-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ilog-live-panel .ilog-panel-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #4338CA;
+}
+
+.ilog-live-count {
+  font-size: 11px;
+  color: #6B7280;
+  font-weight: 500;
+}
+
+.ilog-live-row {
+  animation: ilog-row-in 0.3s ease-out;
+}
+
+@keyframes ilog-row-in {
+  from { opacity: 0; transform: translateX(-6px); }
+  to   { opacity: 1; transform: translateX(0); }
+}

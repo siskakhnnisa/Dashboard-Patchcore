@@ -1,0 +1,57 @@
+# ── Python ──────────────────────────────────────────────────────────────────
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+backend/venv/
+env/
+
+# ── Database ─────────────────────────────────────────────────────────────────
+*.db
+*.sqlite
+*.sqlite3
+
+# ── Environment / Secrets ────────────────────────────────────────────────────
+.env
+.env.local
+.env.production
+
+# ── ML model weights (large binary files) ────────────────────────────────────
+backend/models_weights/*.pkl
+backend/models_weights/*.pth
+backend/models_weights/*.pt
+
+# ── Runtime directories ───────────────────────────────────────────────────────
+backend/uploads/
+backend/snapshots/
+backend/logs/
+
+# ── Frontend ──────────────────────────────────────────────────────────────────
+frontend/node_modules/
+frontend/dist/
+frontend/.vite/
+
+# ── Logs ──────────────────────────────────────────────────────────────────────
+*.log
+logs/
+
+# ── OS ────────────────────────────────────────────────────────────────────────
+.DS_Store
+Thumbs.db
+
+# ── Editor ────────────────────────────────────────────────────────────────────
+.vscode/settings.json
+*.swp
+*.swo
+
+# ── Temp files (tmpclaude-* etc.) ─────────────────────────────────────────────
+tmpclaude-*

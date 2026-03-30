@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import {
   Play,
   Pause,
@@ -24,13 +24,15 @@ const STAGES = [
 import { api } from '../../services/api';
 
 // ── Component ─────────────────────────────────────────────────────────────────
+
 export default function PipelineControlPanel({
   pipelineStatus: externalStatus,
   videoProgress = 37.5,
   currentFrame = 478,
   totalFrames: externalTotal,
+  videoId: externalVideoId,
 }) {
-  const [videoId, setVideoId]               = useState(null);
+  const [videoId, setVideoId]               = useState(externalVideoId ?? null);
   const [videoMeta, setVideoMeta]           = useState(null);
   const [uploading, setUploading]           = useState(false);
   const [threshold, setThreshold]           = useState(0.5);
@@ -38,6 +40,20 @@ export default function PipelineControlPanel({
   const [stages, setStages]                 = useState(
     STAGES.reduce((acc, s) => ({ ...acc, [s.id]: true }), {})
   );
+
+  // Sync videoId from parent if changed
+  useEffect(() => {
+    if (externalVideoId && externalVideoId !== videoId) {
+      setVideoId(externalVideoId);
+    }
+  }, [externalVideoId]);
+
+  // Sync pipelineStatus from parent if changed
+  useEffect(() => {
+    if (externalStatus && externalStatus !== pipelineStatus) {
+      setPipelineStatus(externalStatus);
+    }
+  }, [externalStatus]);
 
   const isRunning   = pipelineStatus === "running";
   const activeCount = Object.values(stages).filter(Boolean).length;
@@ -91,181 +107,121 @@ export default function PipelineControlPanel({
   const totalFrames = externalTotal ?? videoMeta?.total_frames ?? 0;
 
   // ── Render ────────────────────────────────────────────────────────────────────
+
   return (
     <div className="pipeline-panel">
-
-      {/* ── Header ── */}
-      <div className="pipeline-header">
-        <div className="pipeline-header-left">
-          <span className="pipeline-title">Pipeline Control</span>
-          <span className="pipeline-count">{activeCount}/{STAGES.length} active</span>
-        </div>
-        <div className="pipeline-header-right">
-          <button
-            className={`pipeline-toggle-btn ${isRunning ? "running" : "stopped"}`}
-            onClick={handleTogglePipeline}
-            disabled={!videoId && !isRunning}
-          >
-            {isRunning ? <Pause size={11} /> : <Play size={11} />}
-            <span>{isRunning ? "Pause" : "Resume"}</span>
-          </button>
-          <button className="pipeline-icon-btn" onClick={() => setPipelineStatus("idle")}>
-            <RotateCcw size={12} />
-          </button>
-          <button className="pipeline-icon-btn">
-            <Settings size={12} />
-          </button>
-        </div>
-      </div>
-
-      {/* ── Upload ── */}
-      <div>
-        <div className="pipeline-section-label">
-          <Upload size={11} /> Video Input
-        </div>
-        <label className={`pipeline-upload-box ${uploading || isRunning ? "disabled" : ""}`}>
-          <input
-            type="file"
-            accept="video/mp4,video/avi"
-            onChange={handleFileChange}
-            style={{ display: "none" }}
-            disabled={uploading || isRunning}
-          />
-          <Upload size={14} color="#94a3b8" />
-          <span className="pipeline-upload-text">
-            {uploading
-              ? "Uploading…"
-              : videoMeta
-              ? videoMeta.filename
-              : "Click to upload video (mp4, avi)"}
-          </span>
-        </label>
-        {videoMeta && (
-          <div className="pipeline-upload-success">
-            ✓ {videoMeta.resolution} · {videoMeta.fps.toFixed(0)} FPS · {videoMeta.duration_seconds.toFixed(1)}s · {videoMeta.total_frames} frames
-          </div>
-        )}
-      </div>
-
-      {/* ── Threshold ── */}
-      <div>
-        <div className="pipeline-threshold-row">
-          <div className="pipeline-section-label">
-            <SlidersHorizontal size={11} /> Anomaly Threshold
-          </div>
-          <span className="pipeline-threshold-val">{threshold.toFixed(2)}</span>
-        </div>
-        <input
-          type="range"
-          min="0" max="1" step="0.01"
-          value={threshold}
-          onChange={(e) => handleThresholdChange(parseFloat(e.target.value))}
-          className="pipeline-range"
-        />
-      </div>
-
-      <div className="pipeline-divider" />
-
-      {/* ── Pipeline stages ── */}
-      <div className="pipeline-flow">
-        {STAGES.map((stage, idx) => {
-          const isEnabled = stages[stage.id];
-          const isActive  = isEnabled && isRunning;
-          return (
-            <div key={stage.id} className="pipeline-stage-wrap">
-              <div
-                className={`pipeline-stage ${isActive ? "active" : ""} ${!isEnabled ? "disabled" : ""}`}
-                onClick={() => toggleStage(stage.id)}
-              >
-                {/* Status icon */}
-                <div className="pipeline-stage-icon">
-                  {isActive
-                    ? <CheckCircle2 size={13} color={stage.color} />
-                    : isEnabled
-                    ? <Circle       size={13} color={stage.color} />
-                    : <AlertCircle  size={13} color={stage.color} />}
-                </div>
-
-                {/* Stage info */}
-                <div className="pipeline-stage-info">
-                  <div className="pipeline-stage-label">{stage.label}</div>
-                  <div className="pipeline-stage-desc">{stage.desc}</div>
-                </div>
-
-                {/* Toggle — background color is dynamic per stage, so kept inline */}
-                <div
-                  className={`pipeline-stage-toggle ${isEnabled ? "on" : "off"}`}
-                  style={isEnabled ? { background: stage.color } : undefined}
-                />
-              </div>
-
-              {/* Connector */}
-              {idx < STAGES.length - 1 && (
-                <div className={`pipeline-connector ${isActive ? "active" : ""}`}>
-                  <div
-                    className="pipeline-connector-line"
-                    style={isActive ? { background: stage.color } : undefined}
-                  />
-                </div>
-              )}
+          {/* ── Header ── */}
+          <div className="pipeline-header">
+            <div className="pipeline-header-left">
+              <span className="pipeline-title">Pipeline Control</span>
+              <span className="pipeline-count">{activeCount}/{STAGES.length} active</span>
             </div>
-          );
-        })}
-      </div>
-
-      {/* ── Status bar ── */}
-      <div className="pipeline-status-bar">
-        {STAGES.map((stage) => (
-          <div
-            key={stage.id}
-            className="pipeline-status-seg"
-            style={{
-              background: stages[stage.id] && isRunning ? stage.color : "#e2e8f0",
-              opacity:    stages[stage.id] && isRunning ? 1 : 0.4,
-            }}
-          />
-        ))}
-      </div>
-
-      {/* ── Progress (only when running) ── */}
-      {isRunning && (
-        <div>
-          <div className="pipeline-progress-row">
-            <span>Frame {currentFrame} / {totalFrames}</span>
-            <span>{progress.toFixed(1)}%</span>
+            <div className="pipeline-header-right">
+              <button
+                className={`pipeline-toggle-btn ${isRunning ? "running" : "stopped"}`}
+                onClick={handleTogglePipeline}
+                disabled={!videoId && !isRunning}
+              >
+                {isRunning ? <Pause size={11} /> : <Play size={11} />}
+                <span>{isRunning ? "Pause" : "Resume"}</span>
+              </button>
+              <button className="pipeline-icon-btn" onClick={() => setPipelineStatus("idle")}> 
+                <RotateCcw size={12} />
+              </button>
+              <button className="pipeline-icon-btn">
+                <Settings size={12} />
+              </button>
+            </div>
           </div>
-          <div className="pipeline-progress-track">
-            <div className="pipeline-progress-fill" style={{ width: `${progress}%` }} />
+
+          {/* ── Upload ── */}
+          <div>
+            <div className="pipeline-section-label">
+              <Upload size={11} /> Video Input
+            </div>
+            <label className={`pipeline-upload-box ${uploading || isRunning ? "disabled" : ""}`}>
+              <input
+                type="file"
+                accept="video/mp4,video/avi"
+                onChange={handleFileChange}
+                style={{ display: "none" }}
+                disabled={uploading || isRunning}
+              />
+              <Upload size={14} color="#94a3b8" />
+              <span className="pipeline-upload-text">
+                {uploading
+                  ? "Uploading…"
+                  : videoMeta
+                  ? videoMeta.filename
+                  : "Click to upload video (mp4, avi)"}
+              </span>
+            </label>
+            {videoMeta && (
+              <div className="pipeline-upload-success">
+                ✓ {videoMeta.resolution} · {videoMeta.fps.toFixed(0)} FPS · {videoMeta.duration_seconds.toFixed(1)}s · {videoMeta.total_frames} frames
+              </div>
+            )}
           </div>
-        </div>
-      )}
 
-      {/* ── Action buttons ── */}
-      <div className="pipeline-actions">
-        <button
-          className="pipeline-btn pipeline-btn-start"
-          onClick={handleStart}
-          disabled={!videoId || isRunning || uploading}
-        >
-          <Play size={12} />
-          {uploading ? "Uploading…" : "START"}
-        </button>
-        <button
-          className="pipeline-btn pipeline-btn-stop"
-          onClick={handleStop}
-          disabled={!isRunning}
-        >
-          <span style={{ fontSize: "10px" }}>■</span> STOP
-        </button>
-      </div>
+          {/* ── Threshold ── */}
+          <div>
+            <div className="pipeline-threshold-row">
+              <div className="pipeline-section-label">
+                <SlidersHorizontal size={11} /> Anomaly Threshold
+              </div>
+              <span className="pipeline-threshold-val">{threshold.toFixed(2)}</span>
+            </div>
+            <input
+              type="range"
+              min="0" max="1" step="0.01"
+              value={threshold}
+              onChange={(e) => handleThresholdChange(parseFloat(e.target.value))}
+              className="pipeline-range"
+            />
+          </div>
 
-      {/* ── Status badge ── */}
-      <div className="pipeline-badge-row">
-        <span className={`pipeline-badge ${pipelineStatus}`}>
-          {pipelineStatus.toUpperCase()}
-        </span>
-      </div>
+          {/* ── Pipeline Stages removed ── */}
 
+          <div className="pipeline-divider" />
+
+          {/* ── Progress (only when running) ── */}
+          {isRunning && (
+            <div>
+              <div className="pipeline-progress-row">
+                <span>Frame {currentFrame} / {totalFrames}</span>
+                <span>{progress.toFixed(1)}%</span>
+              </div>
+              <div className="pipeline-progress-track">
+                <div className="pipeline-progress-fill" style={{ width: `${progress}%` }} />
+              </div>
+            </div>
+          )}
+
+          {/* ── Action buttons ── */}
+          <div className="pipeline-actions">
+            <button
+              className="pipeline-btn pipeline-btn-start"
+              onClick={handleStart}
+              disabled={!videoId || isRunning || uploading}
+            >
+              <Play size={12} />
+              {uploading ? "Uploading…" : "START"}
+            </button>
+            <button
+              className="pipeline-btn pipeline-btn-stop"
+              onClick={handleStop}
+              disabled={!isRunning}
+            >
+              <span style={{ fontSize: "10px" }}>■</span> STOP
+            </button>
+          </div>
+
+          {/* ── Status badge ── */}
+          <div className="pipeline-badge-row">
+            <span className={`pipeline-badge ${pipelineStatus}`}>
+              {pipelineStatus.toUpperCase()}
+            </span>
+          </div>
     </div>
   );
 }

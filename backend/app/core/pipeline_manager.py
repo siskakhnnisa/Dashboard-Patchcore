@@ -2,7 +2,7 @@ import asyncio
 import time
 from typing import Optional, Set
 from fastapi import WebSocket
-from app.models.inference import InferencePipeline
+from app.ml.inference import InferencePipeline
 from app.services.video_reader import VideoReader
 from app.services.frame_processor import FrameProcessor
 from app.services.event_logger import FODEventLogger
@@ -92,6 +92,17 @@ class PipelineManager:
         """
         try:
             self.reader.open(self.video_path)
+            
+            # Notify clients that pipeline actually started processing
+            await self._broadcast({
+                "type": "status",
+                "status": "processing",
+                "pipeline_status": "running",
+                "video_id": self.video_id,
+                "total_frames": self.reader.total_frames,
+                "message": f"Pipeline dimulai — {self.reader.total_frames} frames"
+            })
+            
             frame_interval = 1.0 / settings.TARGET_FPS
             
             loop = asyncio.get_event_loop()
@@ -126,13 +137,17 @@ class PipelineManager:
                 from app.models.fod_snapshot import FODSnapshot
                 from app.db import SessionLocal
                 import datetime
+                import cv2 as _cv2
                 if detection.anomaly_detected and detection.bboxes:
+                    # bbox koordinat berdasarkan frame_resized (FRAME_WIDTH x FRAME_HEIGHT),
+                    # jadi kita resize frame agar crop koordinatnya cocok.
+                    frame_for_crop = _cv2.resize(frame, (settings.FRAME_WIDTH, settings.FRAME_HEIGHT))
                     db = SessionLocal()
                     try:
                         for bbox in detection.bboxes:
                             # Crop & simpan gambar
                             img_filename = save_fod_snapshot(
-                                frame,
+                                frame_for_crop,
                                 {
                                     "x": bbox.x,
                                     "y": bbox.y,
@@ -230,9 +245,16 @@ class PipelineManager:
         except asyncio.CancelledError:
             pass
         except Exception as e:
-            logger.error(f"Error di pipeline loop: {e}")
+            import traceback
+            tb = traceback.format_exc()
+            logger.error(f"Error di pipeline loop: {e}\n{tb}")
             self.status = PipelineStatus.ERROR
-            await self._broadcast({"type": "error", "message": str(e)})
+            await self._broadcast({
+                "type": "error",
+                "pipeline_status": "error",
+                "message": str(e),
+                "video_id": self.video_id,
+            })
         finally:
             self.reader.release()
             self._running = False
@@ -241,8 +263,10 @@ class PipelineManager:
         """Kirim payload ke semua WebSocket client yang aktif"""
         if not self._active_clients:
             return
+        # Snapshot client set to avoid RuntimeError if set changes during await
+        clients = list(self._active_clients)
         disconnected = set()
-        for client in self._active_clients:
+        for client in clients:
             try:
                 if isinstance(data, tuple):
                     # Kirim JSON metadata dulu

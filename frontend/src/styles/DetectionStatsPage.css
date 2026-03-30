@@ -1,0 +1,321 @@
+/* ═══════════════════════════════════════════════════════════════
+   Detection Stats Page — Dark dashboard theme
+   ═══════════════════════════════════════════════════════════════ */
+
+.ds-page {
+  padding: 24px 28px 40px;
+  max-width: 1320px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ── Header ── */
+.ds-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.ds-title {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #1E293B;
+  margin: 0;
+  letter-spacing: -0.02em;
+}
+.ds-subtitle {
+  font-size: 0.82rem;
+  color: #64748B;
+  margin: 4px 0 0;
+}
+.ds-session-filter {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #F8FAFC;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 6px 12px;
+  color: #64748B;
+}
+.ds-session-filter select {
+  background: transparent;
+  border: none;
+  color: #374151;
+  font-size: 0.82rem;
+  outline: none;
+  cursor: pointer;
+}
+.ds-session-filter select option {
+  background: #FFFFFF;
+  color: #374151;
+}
+
+/* ── KPI Cards ── */
+.ds-kpi-row {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 14px;
+}
+.ds-kpi-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  padding: 16px;
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  transition: border-color 0.2s;
+}
+.ds-kpi-card:hover {
+  border-color: #CBD5E1;
+}
+.ds-kpi-icon {
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+.ds-kpi-body {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  min-width: 0;
+}
+.ds-kpi-value {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: #1E293B;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+}
+.ds-kpi-label {
+  font-size: 0.72rem;
+  color: #64748B;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 500;
+}
+.ds-kpi-sub {
+  font-size: 0.72rem;
+  color: #475569;
+  margin-top: 2px;
+}
+
+/* ── Chart Grids ── */
+.ds-chart-grid {
+  display: grid;
+  gap: 16px;
+}
+.ds-grid-2 {
+  grid-template-columns: 1fr 1fr;
+}
+.ds-grid-3 {
+  grid-template-columns: 2fr 1fr;
+}
+.ds-span-2 {
+  /* already handled by grid-3 layout */
+}
+
+/* ── Chart Card ── */
+.ds-chart-card {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 12px;
+  overflow: hidden;
+}
+.ds-chart-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 18px;
+  border-bottom: 1px solid #E2E8F0;
+  color: #6B7280;
+  font-size: 0.82rem;
+  font-weight: 600;
+}
+.ds-chart-body {
+  padding: 16px;
+}
+.ds-chart-empty {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 200px;
+  color: #475569;
+  font-size: 0.82rem;
+}
+
+/* ── Tooltip ── */
+.ds-tooltip {
+  background: #FFFFFF;
+  border: 1px solid #E2E8F0;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-size: 0.78rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+}
+.ds-tooltip-label {
+  color: #64748B;
+  margin-bottom: 6px;
+  font-weight: 500;
+}
+.ds-tooltip-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #374151;
+  padding: 2px 0;
+}
+.ds-tooltip-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+/* ── Badges ── */
+.ds-sev-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  border: 1px solid;
+}
+.ds-status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: 6px;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+/* ── Top Frames Table ── */
+.ds-top-frames {
+  margin-top: 2px;
+}
+.ds-table-wrap {
+  overflow-x: auto;
+}
+.ds-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.8rem;
+}
+.ds-table thead th {
+  text-align: left;
+  padding: 10px 12px;
+  color: #64748B;
+  font-size: 0.72rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  border-bottom: 1px solid rgba(255,255,255,0.06);
+  white-space: nowrap;
+}
+.ds-table tbody tr {
+  border-bottom: 1px solid #E2E8F0;
+  transition: background 0.15s;
+}
+.ds-table tbody tr:hover {
+  background: #FFFFFF;
+}
+.ds-table tbody td {
+  padding: 10px 12px;
+  color: #6B7280;
+  vertical-align: middle;
+}
+.ds-cell-rank {
+  font-weight: 700;
+  color: #6366F1;
+  width: 36px;
+  text-align: center;
+}
+.ds-mono {
+  font-family: "JetBrains Mono", "Fira Code", monospace;
+  font-size: 0.75rem;
+  color: #64748B;
+}
+.ds-conf {
+  font-weight: 700;
+  font-size: 0.82rem;
+}
+.ds-cell-time {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  color: #6B7280;
+  font-size: 0.78rem;
+}
+.ds-time-sub {
+  font-size: 0.7rem;
+  color: #64748B;
+}
+.ds-thumb-wrap {
+  width: 44px;
+  height: 34px;
+  border-radius: 6px;
+  overflow: hidden;
+  background: rgba(0,0,0,0.3);
+  border: 1px solid #E2E8F0;
+}
+.ds-thumb {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Recharts overrides ── */
+.ds-chart-body .recharts-text {
+  fill: #64748B;
+}
+.ds-chart-body .recharts-cartesian-axis-line,
+.ds-chart-body .recharts-cartesian-axis-tick-line {
+  stroke: #E2E8F0;
+}
+.ds-chart-body .recharts-legend-item-text {
+  color: #64748B !important;
+  font-size: 11px;
+}
+
+/* ── Responsive ── */
+@media (max-width: 1100px) {
+  .ds-kpi-row {
+    grid-template-columns: repeat(3, 1fr);
+  }
+  .ds-grid-3 {
+    grid-template-columns: 1fr;
+  }
+  .ds-span-2 {
+    grid-column: auto;
+  }
+}
+@media (max-width: 768px) {
+  .ds-page {
+    padding: 16px;
+  }
+  .ds-kpi-row {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .ds-grid-2 {
+    grid-template-columns: 1fr;
+  }
+  .ds-header {
+    flex-direction: column;
+  }
+}
+@media (max-width: 480px) {
+  .ds-kpi-row {
+    grid-template-columns: 1fr;
+  }
+}

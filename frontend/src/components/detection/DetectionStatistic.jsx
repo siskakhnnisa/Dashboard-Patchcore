@@ -1,4 +1,9 @@
 import React, { useMemo } from "react";
+import { Download } from "lucide-react";
+import {
+  AreaChart, Area, XAxis, YAxis, ReferenceLine,
+  ResponsiveContainer, Tooltip,
+} from "recharts";
 import "../../styles/DetectionStatistic.css";
 
 const SEVERITY_CONFIG = {
@@ -20,6 +25,28 @@ export default function DetectionStatistics({
   recentEvents  = [],
   runwayAreaPct = 0,
 }) {
+  // Download CSV handler
+  function handleDownloadCSV() {
+    if (!recentEvents.length) return;
+    const header = ["Time", "Frame", "Type", "Message", "Score", "Severity"];
+    const rows = recentEvents.map(e => [
+      e.timestamp ? new Date(e.timestamp).toLocaleString() : "",
+      e.frame_id ?? "",
+      e.type ?? "",
+      (e.message ?? "").replace(/\n/g, " "),
+      e.max_score ?? "",
+      e.severity ?? ""
+    ]);
+    const csv = [header, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(",")).join("\r\n");
+    const blob = new Blob([csv], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = "detection_log.csv";
+    document.body.appendChild(a);
+    a.click();
+    setTimeout(() => { URL.revokeObjectURL(url); a.remove(); }, 200);
+  }
   // ── Severity counts ──────────────────────────────────────────────────────
   const severityCounts = useMemo(() => {
     const counts = { HIGH: 0, MEDIUM: 0, LOW: 0 };
@@ -43,22 +70,10 @@ export default function DetectionStatistics({
     return { avgScore: avg, peakScore: peak, minScore: min };
   }, [scoreHistory, anomalyScore]);
 
-  // ── Sparkline SVG path ───────────────────────────────────────────────────
-  const sparkline = useMemo(() => {
+  // ── Recharts data ─────────────────────────────────────────────────────
+  const chartData = useMemo(() => {
     const data = scoreHistory.slice(-40);
-    if (data.length < 2) return null;
-    const W = 200, H = 52;
-    const THRESHOLD = 0.5;
-    const minVal  = Math.min(...data, 0);
-    const maxVal  = Math.max(...data, 1);
-    const range   = maxVal - minVal || 1;
-    const toX     = (i) => (i / (data.length - 1)) * W;
-    const toY     = (v) => H - ((v - minVal) / range) * H;
-    const path    = data
-      .map((v, i) => `${i === 0 ? "M" : "L"}${toX(i).toFixed(1)},${toY(v).toFixed(1)}`)
-      .join(" ");
-    const threshY = toY(THRESHOLD);
-    return { path, threshY, W, H, count: data.length };
+    return data.map((score, i) => ({ idx: i, score }));
   }, [scoreHistory]);
 
   const risk = getRiskLevel(anomalyScore);
@@ -67,13 +82,15 @@ export default function DetectionStatistics({
     <div className="ds-widget">
 
       {/* ── Header ── */}
-      <div className="ds-header">
+      <div className="ds-header" style={{ justifyContent: 'space-between', alignItems: 'center', gap: 8 }}>
         <h3 className="ds-title">Detection Statistics</h3>
         <span className="ds-live-badge">
           <span className="ds-live-dot" />
           Live
         </span>
       </div>
+
+      {/* Download log button and info (only below score pills) */}
 
       {/* ── Summary Row ── */}
       <div className="ds-summary">
@@ -124,48 +141,42 @@ export default function DetectionStatistics({
         </div>
       </div>
 
-      {/* ── Score Trend Sparkline ── */}
+      {/* ── Score Trend (Recharts) ── */}
       <div className="ds-section">
         <div className="ds-section-label-row">
           <span className="ds-section-label">Score Trend</span>
-          {sparkline && (
-            <span className="ds-section-sub">last {sparkline.count} frames</span>
+          {chartData.length > 1 && (
+            <span className="ds-section-sub">last {chartData.length} frames</span>
           )}
         </div>
         <div className="ds-sparkline-wrap">
-          {sparkline ? (
-            <svg
-              viewBox={`0 0 ${sparkline.W} ${sparkline.H}`}
-              className="ds-sparkline"
-              preserveAspectRatio="none"
-            >
-              <defs>
-                <linearGradient id="ds-grad" x1="0" y1="0" x2="0" y2="1">
-                  <stop offset="0%"   stopColor="#6366F1" stopOpacity="0.3" />
-                  <stop offset="100%" stopColor="#6366F1" stopOpacity="0.01" />
-                </linearGradient>
-              </defs>
-              {/* Threshold line */}
-              <line
-                x1="0" y1={sparkline.threshY}
-                x2={sparkline.W} y2={sparkline.threshY}
-                stroke="#EF4444" strokeDasharray="3 3" strokeWidth="1" opacity="0.55"
-              />
-              {/* Fill area under line */}
-              <path
-                d={`${sparkline.path} L${sparkline.W},${sparkline.H} L0,${sparkline.H} Z`}
-                fill="url(#ds-grad)"
-              />
-              {/* Main line */}
-              <path
-                d={sparkline.path}
-                fill="none"
-                stroke="#6366F1"
-                strokeWidth="1.8"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-              />
-            </svg>
+          {chartData.length > 1 ? (
+            <ResponsiveContainer width="100%" height={64}>
+              <AreaChart data={chartData} margin={{ top: 4, right: 4, bottom: 0, left: 4 }}>
+                <defs>
+                  <linearGradient id="ds-area-grad" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="0%" stopColor="#6366F1" stopOpacity={0.35} />
+                    <stop offset="100%" stopColor="#6366F1" stopOpacity={0.02} />
+                  </linearGradient>
+                </defs>
+                <XAxis dataKey="idx" hide />
+                <YAxis domain={[0, 1]} hide />
+                <ReferenceLine y={0.5} stroke="#EF4444" strokeDasharray="3 3" strokeWidth={1} opacity={0.55} />
+                <Tooltip
+                  contentStyle={{ background: "#1F2937", border: "none", borderRadius: 6, fontSize: 11, color: "#E5E7EB" }}
+                  labelFormatter={() => ""}
+                  formatter={(v) => [v.toFixed(3), "Score"]}
+                />
+                <Area
+                  type="monotone"
+                  dataKey="score"
+                  stroke="#6366F1"
+                  strokeWidth={1.8}
+                  fill="url(#ds-area-grad)"
+                  isAnimationActive={false}
+                />
+              </AreaChart>
+            </ResponsiveContainer>
           ) : (
             <div className="ds-sparkline-empty">Menunggu data stream...</div>
           )}
@@ -193,36 +204,27 @@ export default function DetectionStatistics({
             </span>
           </div>
         </div>
+        {/* Download log button and info */}
+        <div style={{ marginTop: 18, display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 7 }}>
+          <span style={{ fontSize: 11.5, color: '#64748b', textAlign: 'center', maxWidth: 260, marginTop: 10 }}>
+            Unduh riwayat deteksi FOD dalam format CSV.
+          </span>
+          <button
+            className="ds-log-btn"
+            style={{
+              display: 'flex', alignItems: 'center', gap: 5, background: '#F5F7FF', border: '1px solid #E0E7FF', borderRadius: 7, padding: '6px 15px', fontSize: 12, color: '#6366F1', fontWeight: 600, cursor: 'pointer', transition: 'background 0.2s', marginTop: 2
+            }}
+            onClick={handleDownloadCSV}
+            title="Download detection log as CSV"
+            disabled={!recentEvents.length}
+          >
+            <Download size={15} style={{ marginRight: 2, opacity: 0.85 }} />
+            Download Detection Log
+          </button>
+        </div>
       </div>
 
-      {/* ── Runway Contamination ── */}
-      <div className="ds-runway">
-        <div className="ds-runway-top">
-          <span className="ds-runway-label">Runway Contamination</span>
-          <span className="ds-runway-val">
-            {runwayAreaPct.toFixed(1)}
-            <span className="ds-runway-unit">%</span>
-          </span>
-        </div>
-        <div className="ds-runway-track">
-          <div
-            className="ds-runway-fill"
-            style={{
-              width: `${Math.min(runwayAreaPct, 100)}%`,
-              background: runwayAreaPct > 5
-                ? "#EF4444"
-                : runwayAreaPct > 2
-                ? "#F59E0B"
-                : "#22C55E",
-            }}
-          />
-        </div>
-        <div className="ds-runway-scale">
-          <span>0%</span>
-          <span>5%</span>
-          <span>10%+</span>
-        </div>
-      </div>
+
 
     </div>
   );

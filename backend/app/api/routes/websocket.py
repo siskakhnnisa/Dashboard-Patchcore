@@ -14,23 +14,29 @@ async def websocket_stream(websocket: WebSocket):
         await websocket.send_json({
             "type": "connected",
             "message": "Terhubung ke FOD Detection Server",
+            "pipeline_status": pipeline_manager.status.value,
             "status": pipeline_manager.status.value
         })
 
-        async def receive_loop():
-            while True:
-                try:
-                    data = await websocket.receive_json()
-                    if data.get("type") == "ping":
-                        await websocket.send_json({"type": "pong"})
-                except Exception:
-                    break
-
-        # Jalankan receive_loop di background, biarkan pipeline_manager broadcast frame
-        receive_task = asyncio.create_task(receive_loop())
-        await receive_task
+        # Keep connection alive — receive client messages (ping/pong)
+        while True:
+            try:
+                data = await websocket.receive_text()
+                import json
+                msg = json.loads(data)
+                if msg.get("type") == "ping":
+                    await websocket.send_json({"type": "pong"})
+            except (ValueError, KeyError):
+                # Non-JSON message, ignore
+                pass
+            except WebSocketDisconnect:
+                break
+            except Exception:
+                break
 
     except WebSocketDisconnect:
         logger.info("Client disconnect dari WebSocket")
+    except Exception as e:
+        logger.error(f"WebSocket error: {e}")
     finally:
         await pipeline_manager.remove_client(websocket)

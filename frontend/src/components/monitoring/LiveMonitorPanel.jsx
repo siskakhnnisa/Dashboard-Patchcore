@@ -1,9 +1,9 @@
 // src/components/monitoring/LiveMonitorPanel.jsx
-import { useEffect, useRef } from "react";
+import React, { useEffect, useRef } from "react";
 import "../../styles/LiveMonitorPanel.css";
 
-export default function LiveMonitorPanel({
-  frameBitmap, anomalyDetected, bboxes, fps, connected
+const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
+  frameBitmap, anomalyDetected, bboxes, fps, connected, pipelineError, pipelineStatus
 }) {
   const canvasRef = useRef(null);
 
@@ -105,20 +105,61 @@ export default function LiveMonitorPanel({
             justifyContent: "center",
             gap: 10,
           }}>
-            {/* Animated radar icon */}
-            <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
-              stroke="rgba(100,220,100,0.35)" strokeWidth="1.2">
-              <circle cx="12" cy="12" r="10"/>
-              <circle cx="12" cy="12" r="6"/>
-              <circle cx="12" cy="12" r="2"/>
-              <line x1="12" y1="2"  x2="12" y2="6"/>
-              <line x1="12" y1="18" x2="12" y2="22"/>
-              <line x1="2"  y1="12" x2="6"  y2="12"/>
-              <line x1="18" y1="12" x2="22" y2="12"/>
-            </svg>
-            <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
-              Menunggu video stream…
-            </span>
+            {pipelineError ? (
+              <>
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(255,60,60,0.7)" strokeWidth="1.5">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v4M12 16h.01"/>
+                </svg>
+                <span className="hud-text" style={{ fontSize: "11px", color: "#ff5555" }}>
+                  Pipeline Error
+                </span>
+                <span className="hud-text" style={{ fontSize: "10px", opacity: 0.6, maxWidth: 280, textAlign: "center" }}>
+                  {pipelineError}
+                </span>
+              </>
+            ) : !connected ? (
+              <>
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(255,200,0,0.5)" strokeWidth="1.2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <path d="M12 8v4M12 16h.01"/>
+                </svg>
+                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
+                  Menghubungkan ke server…
+                </span>
+              </>
+            ) : pipelineStatus === "running" ? (
+              <>
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(100,220,100,0.35)" strokeWidth="1.2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="6"/>
+                  <circle cx="12" cy="12" r="2"/>
+                </svg>
+                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
+                  Loading frame pertama…
+                </span>
+              </>
+            ) : (
+              <>
+                {/* Animated radar icon */}
+                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(100,220,100,0.35)" strokeWidth="1.2">
+                  <circle cx="12" cy="12" r="10"/>
+                  <circle cx="12" cy="12" r="6"/>
+                  <circle cx="12" cy="12" r="2"/>
+                  <line x1="12" y1="2"  x2="12" y2="6"/>
+                  <line x1="12" y1="18" x2="12" y2="22"/>
+                  <line x1="2"  y1="12" x2="6"  y2="12"/>
+                  <line x1="18" y1="12" x2="22" y2="12"/>
+                </svg>
+                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
+                  Upload video dan tekan START untuk memulai deteksi
+                </span>
+              </>
+            )}
           </div>
         )}
 
@@ -149,4 +190,6 @@ export default function LiveMonitorPanel({
       </div>
     </div>
   );
-}
+});
+
+export default LiveMonitorPanel;

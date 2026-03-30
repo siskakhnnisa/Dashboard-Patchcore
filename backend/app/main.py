@@ -1,51 +1,33 @@
-from starlette.middleware.base import BaseHTTPMiddleware
-from starlette.responses import Response
 from contextlib import asynccontextmanager
+import time
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from starlette.middleware.base import BaseHTTPMiddleware
+from fastapi.responses import FileResponse, Response
 from fastapi.staticfiles import StaticFiles
-from sqlalchemy import text
 import os
 
 from app.config import settings
 from app.core.logger import logger
 from app.core.pipeline_manager import pipeline_manager
+from app.core.db_migrations import run_migrations
+from app.core.metrics import (
+    REQUEST_COUNT, REQUEST_DURATION, get_metrics,
+)
 from app.api.routes import video, pipeline, websocket
 from app.api.routes import fod_snapshot
+from app.api.routes import inspection_log
+from app.api.routes import detection_stats
+from app.api.routes import stream
+from app.core.stream_pipeline import stream_pipeline
 
 from app.db import Base, engine
 from app.models.fod_snapshot import FODSnapshot
 
 
-# ── Buat tabel baru (tidak menyentuh tabel yang sudah ada) ─────────────────
+# ── Buat tabel baru & jalankan migrasi ─────────────────────────────────────
 Base.metadata.create_all(bind=engine)
-
-
-def _migrate_fod_snapshots():
-    """
-    Tambah kolom validasi ke tabel fod_snapshots yang sudah ada.
-    SQLite mendukung ALTER TABLE ADD COLUMN tapi tidak DROP/MODIFY,
-    sehingga kita cukup cek keberadaan kolom lalu tambahkan jika belum ada.
-    """
-    new_columns = [
-        ("validation_status", "VARCHAR NOT NULL DEFAULT 'pending'"),
-        ("validated_by",      "VARCHAR"),
-        ("validated_at",      "DATETIME"),
-        ("validation_notes",  "VARCHAR"),
-    ]
-    with engine.connect() as conn:
-        result  = conn.execute(text("PRAGMA table_info(fod_snapshots)"))
-        existing = {row[1] for row in result.fetchall()}
-        for col_name, col_def in new_columns:
-            if col_name not in existing:
-                conn.execute(
-                    text(f"ALTER TABLE fod_snapshots ADD COLUMN {col_name} {col_def}")
-                )
-                logger.info(f"DB migration: kolom '{col_name}' ditambahkan ke fod_snapshots")
-        conn.commit()
-
-
-_migrate_fod_snapshots()
+run_migrations()
 
 
 @asynccontextmanager
@@ -64,6 +46,9 @@ async def lifespan(app: FastAPI):
     # Load model ke memori (sekali saat startup)
     pipeline_manager.initialize_models()
     
+    # Share inference model with stream pipeline
+    stream_pipeline.initialize(pipeline_manager.inference)
+    
     logger.success("✅ System siap menerima koneksi")
     
     yield  # Aplikasi berjalan
@@ -71,6 +56,7 @@ async def lifespan(app: FastAPI):
     # ── SHUTDOWN ─────────────────────────────────────────────────
     logger.info("🛑 System shutting down...")
     await pipeline_manager.stop_pipeline()
+    await stream_pipeline.stop_stream()
 
 app = FastAPI(
     title="FOD Detection System",
@@ -94,6 +80,9 @@ app.include_router(video.router)
 app.include_router(pipeline.router)
 app.include_router(websocket.router)
 app.include_router(fod_snapshot.router)
+app.include_router(inspection_log.router)
+app.include_router(detection_stats.router)
+app.include_router(stream.router)
 
 # Expose snapshots folder as static
 # Expose snapshots folder as static
@@ -101,7 +90,6 @@ SNAPSHOT_DIR = "snapshots"
 os.makedirs(SNAPSHOT_DIR, exist_ok=True)
 
 # Hapus mount static default, ganti dengan endpoint custom agar CORS selalu dikirim
-from fastapi.responses import FileResponse
 
 @app.get("/snapshots/{filename}")
 def get_snapshot(filename: str):
@@ -126,6 +114,20 @@ class CORSMiddlewareForStatic(BaseHTTPMiddleware):
 
 app.add_middleware(CORSMiddlewareForStatic)
 
+# ── Prometheus request metrics middleware ─────────────────────
+class MetricsMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        start = time.perf_counter()
+        response = await call_next(request)
+        duration = time.perf_counter() - start
+        endpoint = request.url.path
+        method = request.method
+        REQUEST_COUNT.labels(method=method, endpoint=endpoint, status=response.status_code).inc()
+        REQUEST_DURATION.labels(method=method, endpoint=endpoint).observe(duration)
+        return response
+
+app.add_middleware(MetricsMiddleware)
+
 @app.get("/")
 def root():
     return {"message": "FOD Detection System API", "status": "running"}
@@ -136,3 +138,8 @@ def health():
         "status": "healthy",
         "pipeline_status": pipeline_manager.status.value
     }
+
+@app.get("/metrics")
+def metrics():
+    body, content_type = get_metrics()
+    return Response(content=body, media_type=content_type)

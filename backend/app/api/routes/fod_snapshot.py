@@ -1,16 +1,25 @@
 import datetime
 import logging
+import os
+import io
+import zipfile
 from typing import List, Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Request, Query
-from fastapi.responses import JSONResponse
-from sqlalchemy.orm import Session
+from fastapi.responses import JSONResponse, StreamingResponse
+from sqlalchemy.ext.asyncio import AsyncSession
+from sqlalchemy import select
 
-from app.db import get_db
+from app.db_async import get_async_db
 from app.models.fod_snapshot import FODSnapshot
 from app.schemas.fod_snapshot import FODSnapshotSchema, FODSnapshotValidateSchema
 
 router = APIRouter(prefix="/fod-snapshots", tags=["FOD Snapshots"])
+
+SNAPSHOT_DIR = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))),
+    "snapshots",
+)
 
 _CORS = {
     "Access-Control-Allow-Origin":  "*",
@@ -34,7 +43,7 @@ def _serialize(rows) -> list:
 
 # ── GET /fod-snapshots/ ────────────────────────────────────────────────────
 @router.get("/", response_model=List[FODSnapshotSchema])
-def get_snapshots(
+async def get_snapshots(
     request: Request,
     video_id: Optional[str] = Query(
         default=None,
@@ -44,20 +53,73 @@ def get_snapshots(
         default=None,
         description="Filter status validasi: pending | confirmed | rejected | resolved"
     ),
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_async_db),
 ):
-    query = db.query(FODSnapshot).order_by(FODSnapshot.created_at.desc())
+    stmt = select(FODSnapshot).order_by(FODSnapshot.created_at.desc())
     if video_id:
-        query = query.filter(FODSnapshot.video_id == video_id)
+        stmt = stmt.where(FODSnapshot.video_id == video_id)
     if validation_status:
-        query = query.filter(FODSnapshot.validation_status == validation_status)
-    return JSONResponse(content=_serialize(query.all()), headers=_CORS)
+        stmt = stmt.where(FODSnapshot.validation_status == validation_status)
+    result = await db.execute(stmt)
+    rows = result.scalars().all()
+    return JSONResponse(content=_serialize(rows), headers=_CORS)
+
+
+# ── GET /fod-snapshots/download-zip ────────────────────────────────────────
+@router.get("/download-zip")
+async def download_snapshots_zip(
+    validation_status: Optional[str] = Query(
+        default=None,
+        description="Filter status validasi: pending | confirmed | rejected"
+    ),
+    db: AsyncSession = Depends(get_async_db),
+):
+    """Download gambar snapshot sebagai file ZIP, opsional difilter berdasarkan status."""
+    stmt = select(FODSnapshot).order_by(FODSnapshot.created_at.desc())
+    if validation_status:
+        stmt = stmt.where(FODSnapshot.validation_status == validation_status)
+    result = await db.execute(stmt)
+    rows = result.scalars().all()
+
+    if not rows:
+        raise HTTPException(status_code=404, detail="Tidak ada snapshot untuk diunduh")
+
+    buf = io.BytesIO()
+    added = 0
+    with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
+        for row in rows:
+            filepath = os.path.join(SNAPSHOT_DIR, row.image_path)
+            if os.path.isfile(filepath):
+                arcname = f"{row.validation_status or 'pending'}/{row.image_path}"
+                zf.write(filepath, arcname)
+                added += 1
+
+    if added == 0:
+        raise HTTPException(
+            status_code=404,
+            detail="File gambar snapshot tidak ditemukan di server."
+        )
+
+    buf.seek(0)
+    label = validation_status or "all"
+    filename = f"fod_snapshots_{label}.zip"
+
+    return StreamingResponse(
+        buf,
+        media_type="application/zip",
+        headers={
+            "Content-Disposition": f'attachment; filename="{filename}"',
+            "Access-Control-Allow-Origin": "*",
+        },
+    )
 
 
 # ── GET /fod-snapshots/{id} ────────────────────────────────────────────────
 @router.get("/{snapshot_id}", response_model=FODSnapshotSchema)
-def get_snapshot(snapshot_id: int, db: Session = Depends(get_db)):
-    row = db.query(FODSnapshot).filter(FODSnapshot.id == snapshot_id).first()
+async def get_snapshot(snapshot_id: int, db: AsyncSession = Depends(get_async_db)):
+    stmt = select(FODSnapshot).where(FODSnapshot.id == snapshot_id)
+    result = await db.execute(stmt)
+    row = result.scalar_one_or_none()
     if not row:
         raise HTTPException(status_code=404, detail="Snapshot not found")
     return JSONResponse(
@@ -68,10 +130,10 @@ def get_snapshot(snapshot_id: int, db: Session = Depends(get_db)):
 
 # ── PATCH /fod-snapshots/{id}/validate ────────────────────────────────────
 @router.patch("/{snapshot_id}/validate", response_model=FODSnapshotSchema)
-def validate_snapshot(
+async def validate_snapshot(
     snapshot_id: int,
     body: FODSnapshotValidateSchema,
-    db: Session = Depends(get_db),
+    db: AsyncSession = Depends(get_async_db),
 ):
     """
     Staff endpoint: set validation_status, validated_by, dan validation_notes.
@@ -82,7 +144,9 @@ def validate_snapshot(
     - audit trail keselamatan runway
     - dataset retraining
     """
-    row = db.query(FODSnapshot).filter(FODSnapshot.id == snapshot_id).first()
+    stmt = select(FODSnapshot).where(FODSnapshot.id == snapshot_id)
+    result = await db.execute(stmt)
+    row = result.scalar_one_or_none()
     if not row:
         raise HTTPException(status_code=404, detail="Snapshot not found")
 
@@ -91,8 +155,8 @@ def validate_snapshot(
     row.validated_at      = datetime.datetime.utcnow()
     row.validation_notes  = body.validation_notes
 
-    db.commit()
-    db.refresh(row)
+    await db.commit()
+    await db.refresh(row)
 
     return JSONResponse(
         content=FODSnapshotSchema.model_validate(row.__dict__).model_dump(mode="json"),

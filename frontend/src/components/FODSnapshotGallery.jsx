@@ -1,8 +1,9 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState, useRef, useCallback } from "react";
+import { useSnapshots, useValidateSnapshot } from "../hooks/useQueries";
+import { useVirtualizer } from "@tanstack/react-virtual";
 import "../styles/FODSnapshotGallery.css";
 
 const API_BASE = import.meta.env.VITE_API_BASE || "http://localhost:8000";
-const POLL_INTERVAL_MS = 3000;
 
 /* ── Helpers ─────────────────────────────────────────────────── */
 function getSeverity(confidence) {
@@ -111,57 +112,199 @@ function SkeletonCards({ count = 4 }) {
   );
 }
 
+/* ── Memoized Snapshot Card ──────────────────────────────────── */
+const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
+  const vStatus  = snap.validation_status ?? "pending";
+  const sev      = getSeverity(snap.confidence);
+  const sevColor = sev === "high" ? "#DC2626"
+                 : sev === "medium" ? "#D97706"
+                 : "#059669";
+  const isPending = vStatus === "pending";
+  const isConf    = vStatus === "confirmed";
+
+  return (
+    <div
+      className={`fsg-card fsg-card--${vStatus}`}
+      onClick={() => onSelect(snap)}
+      role="button"
+      tabIndex={0}
+      onKeyDown={e => e.key === "Enter" && onSelect(snap)}
+    >
+      <div className="fsg-card-img-wrap">
+        <ImgWithFallback
+          src={`${API_BASE}/snapshots/${snap.image_path}`}
+          alt={`FOD #${snap.id}`}
+        />
+        <span className="fsg-frame-chip">F#{snap.frame_number}</span>
+        <SeverityBadge confidence={snap.confidence} />
+      </div>
+      <div className="fsg-card-body">
+        <div className="fsg-conf-row">
+          <div className="fsg-conf-top">
+            <span className="fsg-conf-label">Confidence</span>
+            <span className="fsg-conf-val" style={{ color: sevColor }}>
+              {fmtConf(snap.confidence)}
+            </span>
+          </div>
+          <ConfBar confidence={snap.confidence}
+            trackClass="fsg-conf-track" fillClass="fsg-conf-fill" />
+        </div>
+        <div className="fsg-card-divider" />
+        <div className="fsg-meta">
+          <div className="fsg-meta-item">
+            <span className="fsg-meta-label">Waktu</span>
+            <span className="fsg-meta-value">{fmtTime(snap.timestamp)}</span>
+          </div>
+          <div className="fsg-meta-item">
+            <span className="fsg-meta-label">Label</span>
+            <span className="fsg-meta-value">{snap.label ?? "FOD"}</span>
+          </div>
+          <div className="fsg-meta-item">
+            <span className="fsg-meta-label">Ukuran</span>
+            <span className="fsg-meta-value">{bboxSize(snap.bbox)}</span>
+          </div>
+          <div className="fsg-meta-item">
+            <span className="fsg-meta-label">Posisi</span>
+            <span className="fsg-meta-value">
+              {snap.bbox ? `${snap.bbox.x},${snap.bbox.y}` : "—"}
+            </span>
+          </div>
+        </div>
+        <div className="fsg-card-divider" />
+        {isPending ? (
+          <div className="fsg-card-actions" onClick={e => e.stopPropagation()}>
+            <button className="fsg-btn-confirm" onClick={() => onSelect(snap)}
+              title="Buka modal untuk konfirmasi FOD">✓ Konfirmasi</button>
+            <button className="fsg-btn-reject" onClick={() => onSelect(snap)}
+              title="Buka modal untuk tandai false positive">✗ False+</button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", alignItems: "center",
+            justifyContent: "space-between", gap: 6 }}>
+            <VStatusChip status={vStatus} />
+            {snap.validated_by && (
+              <span style={{ fontSize: "9.5px", color: "#9CA3AF",
+                overflow: "hidden", textOverflow: "ellipsis",
+                whiteSpace: "nowrap" }}>{snap.validated_by}</span>
+            )}
+          </div>
+        )}
+        {isConf && (
+          <button className="fsg-btn-resolve" onClick={e => {
+            e.stopPropagation(); onSelect(snap);
+          }}>Tandai Resolved</button>
+        )}
+      </div>
+    </div>
+  );
+});
+
+/* ── Virtualized Grid ────────────────────────────────────────── */
+const CARD_ROW_HEIGHT = 340; // approximate card height in px
+const COLS_MIN_WIDTH = 190;  // matches CSS minmax(190px, 1fr)
+
+function VirtualizedGrid({ visibleSnaps, parentRef, setSelected }) {
+  const [cols, setCols] = useState(2);
+  const measuredRef = useCallback((el) => {
+    parentRef.current = el;
+    if (el) {
+      const w = el.clientWidth;
+      setCols(Math.max(1, Math.floor(w / COLS_MIN_WIDTH)));
+    }
+  }, [parentRef]);
+
+  const rowCount = Math.ceil(visibleSnaps.length / cols);
+
+  const rowVirtualizer = useVirtualizer({
+    count: rowCount,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => CARD_ROW_HEIGHT,
+    overscan: 2,
+  });
+
+  if (visibleSnaps.length === 0) {
+    return (
+      <div className="fsg-grid-area">
+        <div className="fsg-empty" style={{ padding: "28px 20px" }}>
+          <p className="fsg-empty-title" style={{ fontSize: 12 }}>
+            Tidak ada snapshot di tab ini
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div
+      ref={measuredRef}
+      className="fsg-grid-area"
+    >
+      <div style={{
+        height: rowVirtualizer.getTotalSize(),
+        width: "100%",
+        position: "relative",
+      }}>
+        {rowVirtualizer.getVirtualItems().map((virtualRow) => {
+          const startIdx = virtualRow.index * cols;
+          const rowSnaps = visibleSnaps.slice(startIdx, startIdx + cols);
+          return (
+            <div
+              key={virtualRow.key}
+              style={{
+                position: "absolute",
+                top: 0,
+                left: 0,
+                width: "100%",
+                transform: `translateY(${virtualRow.start}px)`,
+              }}
+            >
+              <div className="fsg-grid">
+                {rowSnaps.map(snap => (
+                  <SnapshotCard key={snap.id} snap={snap} onSelect={setSelected} />
+                ))}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
 /* ═══════════════════════════════════════════════════════════════
    DETAIL + VALIDATION MODAL
    ═══════════════════════════════════════════════════════════════ */
-function SnapshotModal({ snap, staffName, onClose, onValidated }) {
+
+
+function SnapshotModal({ snap, onClose, onValidated }) {
   const sev      = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
-  const isPending   = (snap.validation_status ?? "pending") === "pending";
-  const isConfirmed = snap.validation_status === "confirmed";
-
-  // Form state
-  const [formName,   setFormName]   = useState(staffName);
-  const [formNotes,  setFormNotes]  = useState(snap.validation_notes ?? "");
-  const [submitting, setSubmitting] = useState(false);
-  const [revalidate, setRevalidate] = useState(false);  // buka form ulang untuk data yg sudah validated
-
-  const showForm = isPending || revalidate;
+  const validateMutation = useValidateSnapshot();
+  const submitting = validateMutation.isPending;
+  const [validated, setValidated] = useState([
+    'confirmed', 'rejected', 'resolved'
+  ].includes(snap.validation_status));
+  const [showChange, setShowChange] = useState(false);
 
   async function submit(status) {
-    // For "resolved" action, fall back to the person who originally confirmed it
-    const resolvedBy = formName.trim() || snap.validated_by || "";
-    if (!resolvedBy) {
-      document.getElementById("fsg-modal-name-input")?.focus();
-      return;
-    }
-    setSubmitting(true);
     try {
-      const res = await fetch(`${API_BASE}/fod-snapshots/${snap.id}/validate`, {
-        method:  "PATCH",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({
-          validation_status: status,
-          validated_by:      resolvedBy,
-          validation_notes:  formNotes.trim() || null,
-        }),
+      const updated = await validateMutation.mutateAsync({
+        id: snap.id,
+        status,
+        staffName: 'Operator',
+        notes: null,
       });
-      if (!res.ok) throw new Error(`HTTP ${res.status}`);
-      const updated = await res.json();
       onValidated(updated);
-      if (revalidate) setRevalidate(false);
+      setValidated(true);
+      setShowChange(false);
     } catch (e) {
       alert(`Gagal menyimpan validasi: ${e.message}`);
-    } finally {
-      setSubmitting(false);
     }
   }
 
   return (
     <div className="fsg-modal-overlay" onClick={onClose}>
-      <div className="fsg-modal" onClick={e => e.stopPropagation()}>
-
-        {/* ── Image ── */}
+      <div className="fsg-modal" style={{maxWidth: 380}} onClick={e => e.stopPropagation()}>
         <div className="fsg-modal-img-wrap">
           <img className="fsg-modal-img"
             src={`${API_BASE}/snapshots/${snap.image_path}`}
@@ -169,27 +312,18 @@ function SnapshotModal({ snap, staffName, onClose, onValidated }) {
             onError={e => { e.target.style.display = "none"; }}
           />
           <SeverityBadge confidence={snap.confidence} />
-          <button className="fsg-modal-close" onClick={onClose} aria-label="Tutup">
-            <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
-              <path d="M1 1l12 12M13 1L1 13" stroke="currentColor"
-                strokeWidth="2" strokeLinecap="round"/>
+          <button className="fsg-modal-close" onClick={onClose} aria-label="Tutup" style={{background:'rgba(0,0,0,0.45)',border:'none',boxShadow:'none',padding:0,borderRadius:'6px',display:'flex',alignItems:'center',justifyContent:'center'}}>
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
+              <path d="M5 5l10 10M15 5L5 15" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round"/>
             </svg>
           </button>
         </div>
-
-        {/* ── Body ── */}
         <div className="fsg-modal-body">
-
-          {/* Title + status */}
-          <div style={{ display: "flex", alignItems: "center",
-            justifyContent: "space-between", gap: 8 }}>
+          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
             <h4 className="fsg-modal-title">
               FOD Snapshot #{snap.id} — Frame {snap.frame_number}
             </h4>
-            <VStatusChip status={snap.validation_status} />
           </div>
-
-          {/* Conf bar */}
           <div className="fsg-modal-conf-row">
             <div className="fsg-modal-conf-top">
               <span className="fsg-modal-conf-label">Confidence Score</span>
@@ -197,11 +331,8 @@ function SnapshotModal({ snap, staffName, onClose, onValidated }) {
                 {fmtConf(snap.confidence)}
               </span>
             </div>
-            <ConfBar confidence={snap.confidence}
-              trackClass="fsg-modal-conf-track" fillClass="fsg-conf-fill" />
+            <ConfBar confidence={snap.confidence} trackClass="fsg-modal-conf-track" fillClass="fsg-conf-fill" />
           </div>
-
-          {/* Detection detail grid */}
           <div className="fsg-modal-details">
             <div className="fsg-modal-detail-item">
               <span className="fsg-modal-detail-label">Tanggal</span>
@@ -231,121 +362,90 @@ function SnapshotModal({ snap, staffName, onClose, onValidated }) {
             </div>
           </div>
 
-          <div className="fsg-modal-divider" />
-
-          {/* ── SUDAH DIVALIDASI — tampilkan info + opsi re-validate ── */}
-          {!showForm && (
-            <>
-              <div className="fsg-validated-info">
-                <p className="fsg-modal-validate-title" style={{ marginBottom: 4 }}>
-                  Hasil Validasi
-                </p>
-                <div className="fsg-validated-info-row">
-                  <span className="fsg-validated-info-label">Status</span>
-                  <VStatusChip status={snap.validation_status} />
-                </div>
-                <div className="fsg-validated-info-row">
-                  <span className="fsg-validated-info-label">Divalidasi oleh</span>
-                  <span className="fsg-validated-info-value">
-                    {snap.validated_by ?? "—"}
+          {validated ? (
+            <div style={{marginTop:18, marginBottom:2, textAlign:'center'}}>
+              {(() => {
+                let statusText = '';
+                let statusColor = '#059669';
+                if (snap.validation_status === 'confirmed') {
+                  statusText = 'Terkonfirmasi';
+                  statusColor = '#059669'; // hijau
+                } else if (snap.validation_status === 'resolved') {
+                  statusText = 'Resolved';
+                  statusColor = '#2563eb'; // biru
+                } else if (snap.validation_status === 'rejected') {
+                  statusText = 'False Positive';
+                  statusColor = '#DC2626'; // merah
+                } else {
+                  statusText = snap.validation_status;
+                  statusColor = '#374151';
+                }
+                return (
+                  <span style={{fontSize:13, color:statusColor, fontWeight:600}}>
+                    Status: {statusText}
                   </span>
+                );
+              })()}
+              {snap.validation_status === 'confirmed' && (
+                <div style={{marginTop:10}}>
+                  <button
+                    className="fsg-btn-resolve"
+                    style={{width:'auto',padding:'6px 16px',fontSize:12,marginBottom:4}}
+                    disabled={submitting}
+                    onClick={() => submit('resolved')}
+                  >
+                    {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>Tandai Resolved</>}
+                  </button>
                 </div>
-                <div className="fsg-validated-info-row">
-                  <span className="fsg-validated-info-label">Waktu</span>
-                  <span className="fsg-validated-info-value">
-                    {snap.validated_at
-                      ? `${fmtDate(snap.validated_at)}, ${fmtTime(snap.validated_at)}`
-                      : "—"}
-                  </span>
-                </div>
-                {snap.validation_notes && (
-                  <div className="fsg-validated-info-row">
-                    <span className="fsg-validated-info-label">Catatan</span>
-                    <span className="fsg-validated-info-value">{snap.validation_notes}</span>
-                  </div>
-                )}
-              </div>
-
-              {/* Resolve button untuk confirmed */}
-              {isConfirmed && (
-                <button
-                  className="fsg-modal-btn-resolve"
-                  disabled={submitting}
-                  onClick={() => submit("resolved")}
-                >
-                  {submitting
-                    ? <><span className="fsg-spinner" /> Menyimpan...</>
-                    : "Tandai Resolved — FOD Sudah Diangkat"}
-                </button>
               )}
-
-              <p className="fsg-modal-revalidate-hint">
-                Status keliru?{" "}
-                <button onClick={() => { setRevalidate(true); setFormNotes(snap.validation_notes ?? ""); }}>
-                  Ubah validasi
-                </button>
-              </p>
-            </>
-          )}
-
-          {/* ── FORM VALIDASI (pending atau re-validate) ── */}
-          {showForm && (
-            <div className="fsg-modal-validate">
-              <p className="fsg-modal-validate-title">
-                {revalidate ? "Ubah Validasi" : "Validasi Deteksi Ini"}
-              </p>
-
-              <div className="fsg-modal-field">
-                <label htmlFor="fsg-modal-name-input">Nama Staff *</label>
-                <input
-                  id="fsg-modal-name-input"
-                  type="text"
-                  placeholder="Masukkan nama Anda"
-                  value={formName}
-                  onChange={e => setFormName(e.target.value)}
-                  autoFocus={!formName}
-                />
-              </div>
-
-              <div className="fsg-modal-field">
-                <label>Catatan (opsional)</label>
-                <textarea
-                  rows={2}
-                  placeholder="Keterangan tambahan tentang deteksi ini..."
-                  value={formNotes}
-                  onChange={e => setFormNotes(e.target.value)}
-                />
-              </div>
-
-              <div className="fsg-modal-validate-actions">
-                <button
-                  className="fsg-modal-btn-confirm"
-                  disabled={submitting || !formName.trim()}
-                  onClick={() => submit("confirmed")}
-                >
-                  {submitting
-                    ? <><span className="fsg-spinner" /> Menyimpan...</>
-                    : <>✓ Konfirmasi FOD</>}
-                </button>
-                <button
-                  className="fsg-modal-btn-reject"
-                  disabled={submitting || !formName.trim()}
-                  onClick={() => submit("rejected")}
-                >
-                  {submitting
-                    ? <><span className="fsg-spinner" /> Menyimpan...</>
-                    : <>✗ False Positive</>}
-                </button>
-              </div>
-
-              {revalidate && (
-                <p className="fsg-modal-revalidate-hint">
-                  <button onClick={() => setRevalidate(false)}>Batalkan</button>
-                </p>
-              )}
+              <br/>
+              <button style={{marginTop:8, fontSize:12, color:'#2563eb', background:'none', border:'none', cursor:'pointer', textDecoration:'underline'}}
+                onClick={()=>setShowChange(true)}>
+                Ubah Status
+              </button>
+            </div>
+          ) : (
+            <div className="fsg-card-actions" style={{marginTop:18, marginBottom:2}}>
+              <button
+                className="fsg-btn-confirm"
+                disabled={submitting || validated}
+                onClick={() => submit("confirmed")}
+              >
+                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✓ Konfirmasi FOD</>}
+              </button>
+              <button
+                className="fsg-btn-reject"
+                disabled={submitting || validated}
+                onClick={() => submit("rejected")}
+              >
+                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✗ False Positive</>}
+              </button>
             </div>
           )}
 
+          {/* Ubah status jika sudah validasi dan klik "Ubah Status" */}
+          {showChange && (
+            <div className="fsg-card-actions" style={{marginTop:8, marginBottom:2}}>
+              <button
+                className="fsg-btn-confirm"
+                disabled={submitting}
+                onClick={() => submit("confirmed")}
+              >
+                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✓ Konfirmasi FOD</>}
+              </button>
+              <button
+                className="fsg-btn-reject"
+                disabled={submitting}
+                onClick={() => submit("rejected")}
+              >
+                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✗ False Positive</>}
+              </button>
+              <button style={{marginLeft:8, fontSize:12, color:'#6b7280', background:'none', border:'none', cursor:'pointer'}}
+                onClick={()=>setShowChange(false)}>
+                Batal
+              </button>
+            </div>
+          )}
         </div>
       </div>
     </div>
@@ -364,16 +464,15 @@ const TABS = [
 ];
 
 export default function FODSnapshotGallery({ enabled, videoId }) {
-  const [snapshots, setSnapshots]   = useState([]);
-  const [loading,   setLoading]     = useState(false);
-  const [error,     setError]       = useState(null);
+  const { data: snapshots = [], isLoading: loading, error: queryError } = useSnapshots(videoId, enabled);
+  const error = queryError?.message ?? null;
   const [selected,  setSelected]    = useState(null);
   const [activeTab, setActiveTab]   = useState("all");
+  const gridParentRef = useRef(null);
   // Nama staff yang diingat selama sesi (sessionStorage)
   const [staffName, setStaffName]   = useState(
     () => sessionStorage.getItem("fsg_staff_name") ?? ""
   );
-  const intervalRef = useRef(null);
 
   /* ── Persist staffName ke sessionStorage ── */
   function handleStaffName(val) {
@@ -381,49 +480,10 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
     sessionStorage.setItem("fsg_staff_name", val);
   }
 
-  /* ── Fetch snapshots ── */
-  async function fetchSnapshots(vid) {
-    try {
-      const res = await fetch(`${API_BASE}/fod-snapshots/?video_id=${vid}`);
-      if (!res.ok) {
-        let msg = `Gagal fetch snapshot: ${res.status}`;
-        try { msg += "\n" + await res.text(); } catch {}
-        throw new Error(msg);
-      }
-      setSnapshots(await res.json());
-      setError(null);
-    } catch (err) {
-      setError(err.message);
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  useEffect(() => {
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current);
-      intervalRef.current = null;
-    }
-    if (!videoId) {
-      setSnapshots([]);
-      setLoading(false);
-      setError(null);
-      return;
-    }
-    setLoading(true);
-    fetchSnapshots(videoId);
-    if (enabled) {
-      intervalRef.current = setInterval(() => fetchSnapshots(videoId), POLL_INTERVAL_MS);
-    }
-    return () => {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-    };
-  }, [enabled, videoId]);
-
   /* ── Update single snapshot setelah validasi ── */
   function handleValidated(updated) {
-    setSnapshots(prev => prev.map(s => s.id === updated.id ? updated : s));
-    // Sync selected jika modal masih terbuka
+    // TanStack Query auto-invalidates via useValidateSnapshot's onSuccess,
+    // but we also sync the selected modal immediately for responsiveness
     setSelected(prev => prev?.id === updated.id ? updated : prev);
   }
 
@@ -608,141 +668,12 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
           </div>
         </div>
 
-        {/* ── Grid area ── */}
-        <div className="fsg-grid-area">
-          {visibleSnaps.length === 0
-            ? (
-              <div className="fsg-empty" style={{ padding: "28px 20px" }}>
-                <p className="fsg-empty-title" style={{ fontSize: 12 }}>
-                  Tidak ada snapshot di tab ini
-                </p>
-              </div>
-            )
-            : (
-              <div className="fsg-grid">
-                {visibleSnaps.map(snap => {
-                  const vStatus  = snap.validation_status ?? "pending";
-                  const sev      = getSeverity(snap.confidence);
-                  const sevColor = sev === "high" ? "#DC2626"
-                                 : sev === "medium" ? "#D97706"
-                                 : "#059669";
-                  const isPending = vStatus === "pending";
-                  const isConf    = vStatus === "confirmed";
-
-                  return (
-                    <div
-                      key={snap.id}
-                      className={`fsg-card fsg-card--${vStatus}`}
-                      onClick={() => setSelected(snap)}
-                      role="button"
-                      tabIndex={0}
-                      onKeyDown={e => e.key === "Enter" && setSelected(snap)}
-                    >
-                      {/* Image */}
-                      <div className="fsg-card-img-wrap">
-                        <ImgWithFallback
-                          src={`${API_BASE}/snapshots/${snap.image_path}`}
-                          alt={`FOD #${snap.id}`}
-                        />
-                        <span className="fsg-frame-chip">F#{snap.frame_number}</span>
-                        <SeverityBadge confidence={snap.confidence} />
-                      </div>
-
-                      {/* Body */}
-                      <div className="fsg-card-body">
-
-                        {/* Confidence */}
-                        <div className="fsg-conf-row">
-                          <div className="fsg-conf-top">
-                            <span className="fsg-conf-label">Confidence</span>
-                            <span className="fsg-conf-val" style={{ color: sevColor }}>
-                              {fmtConf(snap.confidence)}
-                            </span>
-                          </div>
-                          <ConfBar confidence={snap.confidence}
-                            trackClass="fsg-conf-track" fillClass="fsg-conf-fill" />
-                        </div>
-
-                        <div className="fsg-card-divider" />
-
-                        {/* Metadata */}
-                        <div className="fsg-meta">
-                          <div className="fsg-meta-item">
-                            <span className="fsg-meta-label">Waktu</span>
-                            <span className="fsg-meta-value">{fmtTime(snap.timestamp)}</span>
-                          </div>
-                          <div className="fsg-meta-item">
-                            <span className="fsg-meta-label">Label</span>
-                            <span className="fsg-meta-value">{snap.label ?? "FOD"}</span>
-                          </div>
-                          <div className="fsg-meta-item">
-                            <span className="fsg-meta-label">Ukuran</span>
-                            <span className="fsg-meta-value">{bboxSize(snap.bbox)}</span>
-                          </div>
-                          <div className="fsg-meta-item">
-                            <span className="fsg-meta-label">Posisi</span>
-                            <span className="fsg-meta-value">
-                              {snap.bbox ? `${snap.bbox.x},${snap.bbox.y}` : "—"}
-                            </span>
-                          </div>
-                        </div>
-
-                        <div className="fsg-card-divider" />
-
-                        {/* Validation status chip + quick actions */}
-                        {isPending ? (
-                          <div className="fsg-card-actions"
-                            onClick={e => e.stopPropagation()}>
-                            <button
-                              className="fsg-btn-confirm"
-                              onClick={() => setSelected(snap)}
-                              title="Buka modal untuk konfirmasi FOD"
-                            >
-                              ✓ Konfirmasi
-                            </button>
-                            <button
-                              className="fsg-btn-reject"
-                              onClick={() => setSelected(snap)}
-                              title="Buka modal untuk tandai false positive"
-                            >
-                              ✗ False+
-                            </button>
-                          </div>
-                        ) : (
-                          <div style={{ display: "flex", alignItems: "center",
-                            justifyContent: "space-between", gap: 6 }}>
-                            <VStatusChip status={vStatus} />
-                            {snap.validated_by && (
-                              <span style={{ fontSize: "9.5px", color: "#9CA3AF",
-                                overflow: "hidden", textOverflow: "ellipsis",
-                                whiteSpace: "nowrap" }}>
-                                {snap.validated_by}
-                              </span>
-                            )}
-                          </div>
-                        )}
-
-                        {/* Resolve quick-button untuk confirmed card */}
-                        {isConf && (
-                          <button
-                            className="fsg-btn-resolve"
-                            onClick={e => {
-                              e.stopPropagation();
-                              setSelected(snap);
-                            }}
-                          >
-                            Tandai Resolved
-                          </button>
-                        )}
-
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )
-          }
-        </div>
+        {/* ── Virtualized Grid area ── */}
+        <VirtualizedGrid
+          visibleSnaps={visibleSnaps}
+          parentRef={gridParentRef}
+          setSelected={setSelected}
+        />
 
       </div>
 

@@ -1,0 +1,13 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"label": "Cleanup temp files",
+			"type": "shell",
+			"command": "Get-ChildItem -Path '.' -Filter 'tmpclaude-*' -Directory | Remove-Item -Recurse -Force; Write-Host 'Temp directories removed.'",
+			"options": { "shell": { "executable": "powershell", "args": ["-ExecutionPolicy", "Bypass", "-Command"] } },
+			"group": "none",
+			"presentation": { "reveal": "always", "panel": "shared" }
+		}
+	]
+}

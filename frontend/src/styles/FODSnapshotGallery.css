@@ -117,12 +117,14 @@
 
 /* ── Scrollable Grid Area ── */
 .fsg-grid-area {
+  min-height: 200px;
   max-height: 480px;
   overflow-y: auto;
   overflow-x: hidden;
   padding-right: 4px;
   scrollbar-width: thin;
-  scrollbar-color: #E2E8F0 transparent;
+  scrollbar-color: #374151 transparent;
+  position: relative;
 }
 
 .fsg-grid-area::-webkit-scrollbar {
@@ -262,12 +264,12 @@
   align-items: center;
   justify-content: center;
   gap: 6px;
-  color: rgba(255, 255, 255, 0.35);
+  color: rgba(255, 255, 255, 0.7);
   font-size: 11px;
 }
 
 .fsg-card-noimg svg {
-  opacity: 0.4;
+  opacity: 0.6;
 }
 
 /* ── Card Body ── */
@@ -294,7 +296,7 @@
 .fsg-conf-label {
   font-size: 9.5px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -341,7 +343,7 @@
 .fsg-meta-label {
   font-size: 9px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -479,7 +481,7 @@
 .fsg-modal-conf-label {
   font-size: 10.5px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -523,7 +525,7 @@
 .fsg-modal-detail-label {
   font-size: 9.5px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.08em;
 }
@@ -554,7 +556,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #CBD5E1;
+  color: #6B7280;
 }
 
 .fsg-empty-title {
@@ -566,7 +568,7 @@
 
 .fsg-empty-sub {
   font-size: 11.5px;
-  color: #9CA3AF;
+  color: #6B7280;
   margin: 0;
   max-width: 260px;
   line-height: 1.6;
@@ -838,7 +840,7 @@
 .fsg-modal-validate-title {
   font-size: 11px;
   font-weight: 700;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   margin: 0;
@@ -880,7 +882,7 @@
 
 .fsg-modal-field input::placeholder,
 .fsg-modal-field textarea::placeholder {
-  color: #CBD5E1;
+  color: #6B7280;
 }
 
 .fsg-modal-validate-actions {
@@ -977,7 +979,7 @@
 .fsg-validated-info-label {
   font-size: 10px;
   font-weight: 600;
-  color: #9CA3AF;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.07em;
   flex-shrink: 0;
@@ -994,7 +996,7 @@
 
 .fsg-modal-revalidate-hint {
   font-size: 10.5px;
-  color: #9CA3AF;
+  color: #6B7280;
   text-align: center;
   margin: 0;
 }

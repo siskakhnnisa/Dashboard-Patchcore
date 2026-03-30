@@ -54,7 +54,7 @@
 .sidebar-brand-sub {
   font-size: 10px;
   font-weight: 500;
-  color: #9CA3AF;
+  color: #6B7280;
   letter-spacing: 0.02em;
   line-height: 1;
 }
@@ -133,7 +133,7 @@
 .sidebar-group-label {
   font-size: 10px;
   font-weight: 700;
-  color: #C4C9D4;
+  color: #6B7280;
   text-transform: uppercase;
   letter-spacing: 0.09em;
   padding: 6px 12px 5px;
@@ -147,7 +147,9 @@
   margin-bottom: 1px;
 }
 
-.sidebar-item {
+.sidebar-item,
+.sidebar-item:focus,
+.sidebar-item:focus-visible {
   display: flex;
   align-items: center;
   gap: 9px;
@@ -156,6 +158,8 @@
   border-radius: 7px;
   background: transparent;
   border: none;
+  outline: none;
+  box-shadow: none;
   cursor: pointer;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   font-size: 13px;
@@ -197,7 +201,7 @@
   width: 18px;
   height: 18px;
   flex-shrink: 0;
-  color: #9CA3AF;
+  color: #6B7280;
   transition: color 0.15s ease;
 }
 
@@ -218,7 +222,7 @@
 
 /* ── Item Arrow (for expandable items) ── */
 .sidebar-item-arrow {
-  color: #C4C9D4;
+  color: #6B7280;
   display: flex;
   align-items: center;
   margin-left: auto;
@@ -227,7 +231,7 @@
 }
 
 .sidebar-item:hover .sidebar-item-arrow {
-  color: #9CA3AF;
+  color: #6B7280;
 }
 
 /* ── Children/Submenu ── */
@@ -240,16 +244,20 @@
   margin-bottom: 3px;
 }
 
-.sidebar-child-item {
+.sidebar-child-item,
+.sidebar-child-item:focus,
+.sidebar-child-item:focus-visible {
   display: block;
   width: 100%;
   padding: 6px 10px;
   border-radius: 6px;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
   font-size: 12.5px;
-  color: #9CA3AF;
+  color: #6B7280;
   background: transparent;
   border: none;
+  outline: none;
+  box-shadow: none;
   cursor: pointer;
   text-align: left;
   transition: background 0.15s ease, color 0.15s ease;
@@ -301,7 +309,7 @@
   display: flex;
   align-items: center;
   gap: 7px;
-  color: #C4C9D4;
+  color: #6B7280;
   font-size: 11px;
   font-weight: 500;
   letter-spacing: 0.02em;
@@ -309,7 +317,7 @@
 
 .sidebar-footer-inner svg {
   flex-shrink: 0;
-  stroke: #C4C9D4;
+  stroke: #6B7280;
 }
 
 /* ── Responsive ── */

@@ -50,7 +50,7 @@
 
 .pipeline-count {
   font-size: 11px;
-  color: #94a3b8;
+  color: #64748B;
   background: #f1f5f9;
   padding: 2px 7px;
   border-radius: 999px;
@@ -104,7 +104,7 @@
   border: none;
   cursor: pointer;
   background: transparent;
-  color: #94a3b8;
+  color: #64748B;
   transition: all 0.15s;
 }
 
@@ -122,7 +122,7 @@
 /* ── Section Label ───────────────────────────────────────────────────────────── */
 .pipeline-section-label {
   font-size: 11px;
-  color: #94a3b8;
+  color: #64748B;
   margin-bottom: 6px;
   display: flex;
   align-items: center;
@@ -155,7 +155,7 @@
 
 .pipeline-upload-text {
   font-size: 12px;
-  color: #94a3b8;
+  color: #64748B;
   flex: 1;
 }
 
@@ -238,7 +238,7 @@
 
 .pipeline-stage-desc {
   font-size: 11px;
-  color: #94a3b8;
+  color: #64748B;
   margin-top: 1px;
   white-space: nowrap;
   overflow: hidden;
@@ -319,7 +319,7 @@
   display: flex;
   justify-content: space-between;
   font-size: 11px;
-  color: #94a3b8;
+  color: #64748B;
   margin-bottom: 4px;
 }
 
@@ -360,7 +360,7 @@
 
 .pipeline-btn:disabled {
   background: #f1f5f9 !important;
-  color: #cbd5e1 !important;
+  color: #6B7280 !important;
   border-color: transparent !important;
   cursor: not-allowed;
 }
@@ -398,7 +398,7 @@
   letter-spacing: 0.05em;
 }
 
-.pipeline-badge.idle    { background: #f1f5f9;  color: #94a3b8; }
+.pipeline-badge.idle    { background: #f1f5f9;  color: #64748B; }
 .pipeline-badge.running { background: #dcfce7;  color: #16a34a; }
 .pipeline-badge.stopped { background: #fefce8;  color: #ca8a04; }
 .pipeline-badge.error   { background: #fff1f2;  color: #e11d48; }

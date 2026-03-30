@@ -1,8 +1,6 @@
-import { useEffect, useRef } from "react";
-
-interface BBox {
-  x: number; y: number; w: number; h: number; score: number;
-}
+// Re-export dari lokasi kanonik baru.
+// Implementasi sudah dipindahkan ke components/monitoring/VideoCanvas.tsx
+export { VideoCanvas } from "./monitoring/VideoCanvas";
 
 interface Props {
   frameB64: string | null;
