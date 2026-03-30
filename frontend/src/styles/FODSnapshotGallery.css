@@ -1,3 +1,31 @@
+/* ── Tombol Hapus Snapshot (Trash Icon) ── */
+.fsg-btn-delete {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  z-index: 10;
+  background: #fff;
+  color: #dc2626;
+  border: 1.5px solid #dc2626;
+  border-radius: 6px;
+  padding: 3px 7px;
+  font-size: 15px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.15s;
+  box-shadow: 0 2px 8px rgba(220,38,38,0.07);
+}
+.fsg-btn-delete:hover {
+  background: #dc2626;
+  color: #fff;
+  border-color: #dc2626;
+}
+.fsg-btn-delete:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
 /* ═══════════════════════════════════════════════════
    FOD Snapshot Gallery
    ═══════════════════════════════════════════════════ */

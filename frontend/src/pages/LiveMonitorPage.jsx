@@ -11,8 +11,23 @@ export default function LiveMonitorPage() {
   const persistedVideoId = useDetectionStore((s) => s.persistedVideoId);
 
   const pipelineRunning = lastPayload?.pipeline_status === "running";
-  const pipelineError = lastPayload?.type === "error" ? lastPayload.message : null;
-  const pipelineStatus = lastPayload?.pipeline_status ?? "idle";
+  const pipelineError   = lastPayload?.type === "error" ? lastPayload.message : null;
+  const pipelineStatus  = lastPayload?.pipeline_status ?? "idle";
+
+  /*
+   * activeVideoId — ID video yang sedang/terakhir diproses pipeline.
+   *
+   * Prioritas:
+   *  1. lastPayload.video_id  → video yang sedang aktif di stream (paling fresh)
+   *  2. persistedVideoId      → ID yang disimpan store saat pipeline terakhir
+   *                             dijalankan (fallback ketika stream belum/sudah
+   *                             tidak mengirim payload)
+   *
+   * Nilai ini diteruskan ke FODSnapshotGallery sebagai `videoId` sehingga
+   * galeri HANYA menampilkan snapshot dari sesi deteksi yang relevan,
+   * bukan semua snapshot dari seluruh video.
+   */
+  const activeVideoId = lastPayload?.video_id ?? persistedVideoId ?? null;
 
   return (
     <div className="livefeed">
@@ -47,11 +62,11 @@ export default function LiveMonitorPage() {
         </div>
       </div>
 
-      {/* FOD Snapshot Gallery */}
+      {/* FOD Snapshot Gallery — hanya snapshot dari video aktif */}
       <div className="livefeed-card">
         <FODSnapshotGallery
           enabled={pipelineRunning}
-          videoId={persistedVideoId}
+          videoId={activeVideoId}
         />
       </div>
     </div>

@@ -1,19 +1,18 @@
 import React, { useState, useMemo, useCallback } from "react";
-import { useAllSnapshots, useValidateSnapshot } from "../hooks/useQueries";
+import { useAllSnapshots, useValidateSnapshot, useDeleteSnapshot } from "../hooks/useQueries";
 import {
   Camera,
   Search,
-  Filter,
   CheckCircle2,
   XCircle,
   Clock,
   AlertTriangle,
-  ChevronDown,
   X,
   Image as ImageIcon,
   LayoutGrid,
   List,
   Download,
+  Trash2,
 } from "lucide-react";
 import "../styles/FodSnapshotsPage.css";
 
@@ -105,11 +104,85 @@ function ImgWithFallback({ src, alt }) {
   );
 }
 
+/* ── Delete Button ─────────────────────────────────────────────── */
+// Full inline style — tidak bergantung pada CSS apapun.
+// Tidak ada guard isAdmin — selalu tampil untuk semua user.
+function DeleteButton({ showConfirm, onClick, disabled, size = "md" }) {
+  const isSmall = size === "sm";
+  return (
+    <button
+      title={showConfirm ? "Klik sekali lagi untuk konfirmasi hapus" : "Hapus snapshot"}
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        display:        "inline-flex",
+        alignItems:     "center",
+        justifyContent: "center",
+        gap:            4,
+        background:     showConfirm ? "#DC2626" : "#FEF2F2",
+        color:          showConfirm ? "#ffffff" : "#DC2626",
+        border:         `1px solid ${showConfirm ? "#DC2626" : "#FECACA"}`,
+        borderRadius:   6,
+        padding:        isSmall ? "4px 8px" : "6px 12px",
+        fontSize:       isSmall ? 11 : 12,
+        fontWeight:     600,
+        cursor:         disabled ? "not-allowed" : "pointer",
+        opacity:        disabled ? 0.55 : 1,
+        transition:     "all 0.15s",
+        whiteSpace:     "nowrap",
+        flexShrink:     0,
+        fontFamily:     "inherit",
+      }}
+      onMouseEnter={e => {
+        if (disabled || showConfirm) return;
+        e.currentTarget.style.background = "#DC2626";
+        e.currentTarget.style.color = "#fff";
+        e.currentTarget.style.borderColor = "#DC2626";
+      }}
+      onMouseLeave={e => {
+        if (disabled || showConfirm) return;
+        e.currentTarget.style.background = "#FEF2F2";
+        e.currentTarget.style.color = "#DC2626";
+        e.currentTarget.style.borderColor = "#FECACA";
+      }}
+    >
+      {showConfirm ? (
+        <span>Yakin hapus?</span>
+      ) : (
+        <>
+          <Trash2 size={isSmall ? 12 : 13} />
+          {!isSmall && <span>Hapus</span>}
+        </>
+      )}
+    </button>
+  );
+}
+
 /* ── Snapshot Card ─────────────────────────────────────────────── */
-const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
+const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDeleteDone }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
+  const deleteMut = useDeleteSnapshot();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  function handleDelete(e) {
+    e.stopPropagation();
+    if (!showConfirm) {
+      setShowConfirm(true);
+      return;
+    }
+    deleteMut.mutate(snap.id, {
+      onSuccess: () => {
+        setShowConfirm(false);
+        onDeleteDone?.();
+      },
+      onError: (err) => {
+        alert(`Gagal menghapus: ${err.message}`);
+        setShowConfirm(false);
+      },
+    });
+  }
 
   return (
     <div className={`fsp-card fsp-card--${vStatus}`}
@@ -155,31 +228,63 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
             </span>
           </div>
         </div>
-        {vStatus === "pending" && (
-          <div className="fsp-card-actions" onClick={e => e.stopPropagation()}>
-            <button className="fsp-btn fsp-btn--confirm" onClick={() => onSelect(snap)}>
-              <CheckCircle2 size={13} /> Konfirmasi
-            </button>
-            <button className="fsp-btn fsp-btn--reject" onClick={() => onSelect(snap)}>
-              <XCircle size={13} /> False+
-            </button>
-          </div>
-        )}
-        {snap.validated_by && vStatus !== "pending" && (
-          <div className="fsp-card-validator">
-            oleh {snap.validated_by}
-          </div>
-        )}
+
+        {/* ── Aksi bawah card ── */}
+        <div className="fsp-card-actions" onClick={e => e.stopPropagation()}>
+          {vStatus === "pending" ? (
+            <>
+              <button className="fsp-btn fsp-btn--confirm" onClick={() => onSelect(snap)}>
+                <CheckCircle2 size={13} /> Konfirmasi
+              </button>
+              <button className="fsp-btn fsp-btn--reject" onClick={() => onSelect(snap)}>
+                <XCircle size={13} /> False+
+              </button>
+            </>
+          ) : (
+            snap.validated_by && (
+              <div className="fsp-card-validator">
+                oleh {snap.validated_by}
+              </div>
+            )
+          )}
+          {/* Tombol Hapus — selalu tampil, tanpa guard apapun */}
+          <DeleteButton
+            showConfirm={showConfirm}
+            onClick={handleDelete}
+            disabled={deleteMut.isPending}
+            size="sm"
+          />
+        </div>
       </div>
     </div>
   );
 });
 
-/* ── Snapshot List Row (for list view) ─────────────────────────── */
-const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect }) {
+/* ── Snapshot List Row ─────────────────────────────────────────── */
+const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, onDeleteDone }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
+  const deleteMut = useDeleteSnapshot();
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  function handleDelete(e) {
+    e.stopPropagation();
+    if (!showConfirm) {
+      setShowConfirm(true);
+      return;
+    }
+    deleteMut.mutate(snap.id, {
+      onSuccess: () => {
+        setShowConfirm(false);
+        onDeleteDone?.();
+      },
+      onError: (err) => {
+        alert(`Gagal menghapus: ${err.message}`);
+        setShowConfirm(false);
+      },
+    });
+  }
 
   return (
     <div className={`fsp-row fsp-row--${vStatus}`}
@@ -220,6 +325,13 @@ const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect }) 
         ) : snap.validated_by ? (
           <span className="fsp-row-validator">oleh {snap.validated_by}</span>
         ) : null}
+        {/* Tombol Hapus di list row — selalu tampil */}
+        <DeleteButton
+          showConfirm={showConfirm}
+          onClick={handleDelete}
+          disabled={deleteMut.isPending}
+          size="sm"
+        />
       </div>
     </div>
   );
@@ -230,13 +342,16 @@ function SnapshotModal({ snap, onClose, onValidated }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const validateMut = useValidateSnapshot();
-  const submitting = validateMut.isPending;
-  const vStatus = snap.validation_status ?? "pending";
+  const deleteMut   = useDeleteSnapshot();
+  const submitting  = validateMut.isPending;
+  const vStatus     = snap.validation_status ?? "pending";
+
   const [staffName, setStaffName] = useState(
     () => sessionStorage.getItem("fsp_staff_name") ?? "Operator"
   );
   const [notes, setNotes] = useState("");
   const [showChangeStatus, setShowChangeStatus] = useState(false);
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
 
   function handleStaffChange(val) {
     setStaffName(val);
@@ -258,14 +373,31 @@ function SnapshotModal({ snap, onClose, onValidated }) {
     }
   }
 
+  function handleDelete(e) {
+    e.stopPropagation();
+    if (!showDeleteConfirm) {
+      setShowDeleteConfirm(true);
+      return;
+    }
+    deleteMut.mutate(snap.id, {
+      onSuccess: () => onClose(),
+      onError: (err) => {
+        alert(`Gagal menghapus: ${err.message}`);
+        setShowDeleteConfirm(false);
+      },
+    });
+  }
+
   const isValidated = ["confirmed", "rejected"].includes(vStatus);
 
   return (
     <div className="fsp-modal-overlay" onClick={onClose}>
       <div className="fsp-modal" onClick={e => e.stopPropagation()}>
+        {/* Tombol tutup */}
         <button className="fsp-modal-close" onClick={onClose} aria-label="Tutup">
           <X size={18} />
         </button>
+
         <div className="fsp-modal-img-wrap">
           <img className="fsp-modal-img"
             src={`${API_BASE}/snapshots/${snap.image_path}`}
@@ -274,10 +406,23 @@ function SnapshotModal({ snap, onClose, onValidated }) {
           />
           <SeverityBadge confidence={snap.confidence} />
         </div>
+
         <div className="fsp-modal-body">
+          {/* Header: judul + status + tombol hapus */}
           <div className="fsp-modal-header">
-            <h3 className="fsp-modal-title">FOD #{snap.id}</h3>
-            <StatusBadge status={vStatus} />
+            <div style={{ display: "flex", alignItems: "center", gap: 8, flex: 1, minWidth: 0 }}>
+              <h3 className="fsp-modal-title">FOD #{snap.id}</h3>
+              <StatusBadge status={vStatus} />
+            </div>
+            {/* ── TOMBOL HAPUS DI MODAL ──
+                Selalu tampil, full inline style, tidak ada guard isAdmin.
+                Diletakkan di header modal agar mudah ditemukan. */}
+            <DeleteButton
+              showConfirm={showDeleteConfirm}
+              onClick={handleDelete}
+              disabled={deleteMut.isPending}
+              size="md"
+            />
           </div>
 
           <div className="fsp-modal-conf-row">
@@ -363,7 +508,7 @@ const TABS = [
   { key: "all",       label: "Semua",          icon: Camera },
   { key: "pending",   label: "Pending",        icon: Clock },
   { key: "confirmed", label: "Confirmed",      icon: CheckCircle2 },
-  { key: "rejected",  label: "False Positive",  icon: XCircle },
+  { key: "rejected",  label: "False Positive", icon: XCircle },
 ];
 
 export default function FodSnapshotsPage() {
@@ -398,19 +543,7 @@ export default function FodSnapshotsPage() {
     return items;
   }, [snapshots, search, sortBy]);
 
-  /* ── Counts per status ── */
-  const counts = useMemo(() => {
-    const all = snapshots; // already from backend, but for counts when tab=all we re-count
-    return {
-      all: snapshots.length,
-      pending:   snapshots.filter(s => (s.validation_status ?? "pending") === "pending").length,
-      confirmed: snapshots.filter(s => s.validation_status === "confirmed").length,
-      rejected:  snapshots.filter(s => s.validation_status === "rejected").length,
-    };
-  }, [snapshots]);
-
-  /* Note: when tab is not "all", backend already filters, so counts for other tabs
-     won't be accurate from that subset. We fetch "all" counts separately. */
+  /* ── Global counts ── */
   const { data: allSnaps = [] } = useAllSnapshots(null);
   const globalCounts = useMemo(() => ({
     all:       allSnaps.length,
@@ -419,7 +552,7 @@ export default function FodSnapshotsPage() {
     rejected:  allSnaps.filter(s => s.validation_status === "rejected").length,
   }), [allSnaps]);
 
-  const [downloading, setDownloading] = useState(null); // status key being downloaded
+  const [downloading, setDownloading] = useState(null);
 
   async function handleDownloadZip(statusKey) {
     if (downloading) return;
@@ -579,7 +712,12 @@ export default function FodSnapshotsPage() {
         {!isLoading && !error && filteredSnaps.length > 0 && viewMode === "grid" && (
           <div className="fsp-grid">
             {filteredSnaps.map(snap => (
-              <SnapshotCard key={snap.id} snap={snap} onSelect={setSelected} />
+              <SnapshotCard
+                key={snap.id}
+                snap={snap}
+                onSelect={setSelected}
+                onDeleteDone={() => setSelected(null)}
+              />
             ))}
           </div>
         )}
@@ -596,7 +734,12 @@ export default function FodSnapshotsPage() {
               <div className="fsp-lh-cell">Aksi</div>
             </div>
             {filteredSnaps.map(snap => (
-              <SnapshotListRow key={snap.id} snap={snap} onSelect={setSelected} />
+              <SnapshotListRow
+                key={snap.id}
+                snap={snap}
+                onSelect={setSelected}
+                onDeleteDone={() => setSelected(null)}
+              />
             ))}
           </div>
         )}

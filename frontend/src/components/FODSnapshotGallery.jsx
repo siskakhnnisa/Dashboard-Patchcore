@@ -1,5 +1,5 @@
 import React, { useState, useRef, useCallback } from "react";
-import { useSnapshots, useValidateSnapshot } from "../hooks/useQueries";
+import { useSnapshots, useValidateSnapshot, useDeleteSnapshot } from "../hooks/useQueries";
 import { useVirtualizer } from "@tanstack/react-virtual";
 import "../styles/FODSnapshotGallery.css";
 
@@ -44,31 +44,55 @@ const V_STATUS_LABEL = {
   resolved:  "Resolved",
 };
 
-/* ── Severity Badge ──────────────────────────────────────────── */
-function SeverityBadge({ confidence }) {
-  const s     = getSeverity(confidence);
-  const label = s.charAt(0).toUpperCase() + s.slice(1);
-  return <span className={`fsg-severity fsg-severity--${s}`}>{label}</span>;
+/* ── Confidence Bar ──────────────────────────────────────────── */
+function ConfBar({ confidence, trackClass, fillClass }) {
+  const pct = confidence != null ? Math.round(confidence * 100) : 0;
+  const sev = getSeverity(confidence);
+  const fillColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
+  return (
+    <div className={trackClass} style={{ background: "#E5E7EB", borderRadius: 4, height: 4, width: "100%", marginTop: 4 }}>
+      <div
+        className={fillClass}
+        style={{ width: `${pct}%`, background: fillColor, height: "100%", borderRadius: 4, transition: "width 0.3s" }}
+      />
+    </div>
+  );
 }
 
 /* ── Validation Status Chip ──────────────────────────────────── */
 function VStatusChip({ status }) {
-  const s = status ?? "pending";
+  const label = V_STATUS_LABEL[status] ?? status;
+  const colors = {
+    pending:   { bg: "#FEF3C7", color: "#D97706" },
+    confirmed: { bg: "#D1FAE5", color: "#059669" },
+    rejected:  { bg: "#FEE2E2", color: "#DC2626" },
+    resolved:  { bg: "#DBEAFE", color: "#2563EB" },
+  };
+  const { bg, color } = colors[status] ?? { bg: "#F3F4F6", color: "#6B7280" };
   return (
-    <span className={`fsg-vstatus fsg-vstatus--${s}`}>
-      {V_STATUS_LABEL[s] ?? s}
+    <span style={{
+      fontSize: "10.5px", fontWeight: 600, padding: "2px 8px",
+      borderRadius: 99, background: bg, color,
+    }}>
+      {label}
     </span>
   );
 }
 
-/* ── Confidence Bar ──────────────────────────────────────────── */
-function ConfBar({ confidence, trackClass, fillClass }) {
-  const s   = getSeverity(confidence);
-  const pct = confidence != null ? Math.min(confidence * 100, 100) : 0;
+/* ── Severity Badge ──────────────────────────────────────────── */
+function SeverityBadge({ confidence }) {
+  const sev = getSeverity(confidence);
+  const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
+  const label = sev === "high" ? "High" : sev === "medium" ? "Med" : "Low";
   return (
-    <div className={trackClass}>
-      <div className={`${fillClass} ${fillClass}--${s}`} style={{ width: `${pct}%` }} />
-    </div>
+    <span style={{
+      position: "absolute", bottom: 6, left: 6, zIndex: 2,
+      fontSize: "10px", fontWeight: 700, padding: "2px 6px",
+      borderRadius: 99, background: sevColor, color: "#fff",
+      letterSpacing: "0.03em",
+    }}>
+      {label}
+    </span>
   );
 }
 
@@ -112,13 +136,60 @@ function SkeletonCards({ count = 4 }) {
   );
 }
 
+/* ── Delete Button ───────────────────────────────────────────── */
+// Full inline style — tidak bergantung pada class CSS apapun.
+// Tidak ada guard isAdmin — tombol selalu tampil untuk semua user.
+function DeleteButton({ showConfirm, onClick, disabled }) {
+  return (
+    <button
+      title={showConfirm ? "Klik sekali lagi untuk konfirmasi hapus" : "Hapus snapshot"}
+      onClick={onClick}
+      disabled={disabled}
+      style={{
+        background:     showConfirm ? "#dc2626" : "#ffffff",
+        color:          showConfirm ? "#ffffff" : "#dc2626",
+        border:         "1px solid #dc2626",
+        borderRadius:   4,
+        padding:        "4px 8px",
+        fontSize:       13,
+        cursor:         disabled ? "not-allowed" : "pointer",
+        transition:     "all 0.15s",
+        display:        "flex",
+        alignItems:     "center",
+        justifyContent: "center",
+        gap:            4,
+        flexShrink:     0,
+        opacity:        disabled ? 0.6 : 1,
+        // Pastikan tombol selalu terlihat, tidak dipotong overflow parent
+        position:       "relative",
+        zIndex:         5,
+      }}
+    >
+      {showConfirm ? (
+        <span style={{ fontWeight: 600, whiteSpace: "nowrap", fontSize: 11 }}>Yakin?</span>
+      ) : (
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none"
+          stroke="currentColor" strokeWidth="2"
+          strokeLinecap="round" strokeLinejoin="round">
+          <polyline points="3 6 5 6 21 6"/>
+          <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h2a2 2 0 0 1 2 2v2"/>
+          <line x1="10" y1="11" x2="10" y2="17"/>
+          <line x1="14" y1="11" x2="14" y2="17"/>
+        </svg>
+      )}
+    </button>
+  );
+}
+
 /* ── Memoized Snapshot Card ──────────────────────────────────── */
+// Tidak ada isAdmin — tombol delete selalu tampil untuk semua user.
+// Delete diangkat ke modal untuk menghindari masalah overflow:hidden pada card.
 const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
-  const vStatus  = snap.validation_status ?? "pending";
-  const sev      = getSeverity(snap.confidence);
-  const sevColor = sev === "high" ? "#DC2626"
-                 : sev === "medium" ? "#D97706"
-                 : "#059669";
+  const vStatus   = snap.validation_status ?? "pending";
+  const sev       = getSeverity(snap.confidence);
+  const sevColor  = sev === "high" ? "#DC2626"
+                  : sev === "medium" ? "#D97706"
+                  : "#059669";
   const isPending = vStatus === "pending";
   const isConf    = vStatus === "confirmed";
 
@@ -130,6 +201,7 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
       tabIndex={0}
       onKeyDown={e => e.key === "Enter" && onSelect(snap)}
     >
+      {/* ── Thumbnail ── */}
       <div className="fsg-card-img-wrap">
         <ImgWithFallback
           src={`${API_BASE}/snapshots/${snap.image_path}`}
@@ -138,7 +210,11 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
         <span className="fsg-frame-chip">F#{snap.frame_number}</span>
         <SeverityBadge confidence={snap.confidence} />
       </div>
+
+      {/* ── Body ── */}
       <div className="fsg-card-body">
+
+        {/* Confidence row */}
         <div className="fsg-conf-row">
           <div className="fsg-conf-top">
             <span className="fsg-conf-label">Confidence</span>
@@ -146,62 +222,105 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect }) {
               {fmtConf(snap.confidence)}
             </span>
           </div>
-          <ConfBar confidence={snap.confidence}
-            trackClass="fsg-conf-track" fillClass="fsg-conf-fill" />
+          <ConfBar
+            confidence={snap.confidence}
+            trackClass="fsg-conf-track"
+            fillClass="fsg-conf-fill"
+          />
         </div>
+
         <div className="fsg-card-divider" />
+
+        {/* Timestamp */}
         <div className="fsg-meta">
           <div className="fsg-meta-item">
             <span className="fsg-meta-label">Waktu</span>
             <span className="fsg-meta-value">{fmtTime(snap.timestamp)}</span>
           </div>
-          <div className="fsg-meta-item">
-            <span className="fsg-meta-label">Label</span>
-            <span className="fsg-meta-value">{snap.label ?? "FOD"}</span>
-          </div>
-          <div className="fsg-meta-item">
-            <span className="fsg-meta-label">Ukuran</span>
-            <span className="fsg-meta-value">{bboxSize(snap.bbox)}</span>
-          </div>
-          <div className="fsg-meta-item">
-            <span className="fsg-meta-label">Posisi</span>
-            <span className="fsg-meta-value">
-              {snap.bbox ? `${snap.bbox.x},${snap.bbox.y}` : "—"}
-            </span>
-          </div>
         </div>
+
         <div className="fsg-card-divider" />
-        {isPending ? (
-          <div className="fsg-card-actions" onClick={e => e.stopPropagation()}>
-            <button className="fsg-btn-confirm" onClick={() => onSelect(snap)}
-              title="Buka modal untuk konfirmasi FOD">✓ Konfirmasi</button>
-            <button className="fsg-btn-reject" onClick={() => onSelect(snap)}
-              title="Buka modal untuk tandai false positive">✗ False+</button>
-          </div>
-        ) : (
-          <div style={{ display: "flex", alignItems: "center",
-            justifyContent: "space-between", gap: 6 }}>
-            <VStatusChip status={vStatus} />
-            {snap.validated_by && (
-              <span style={{ fontSize: "9.5px", color: "#9CA3AF",
-                overflow: "hidden", textOverflow: "ellipsis",
-                whiteSpace: "nowrap" }}>{snap.validated_by}</span>
-            )}
-          </div>
-        )}
+
+        {/* Action row — klik buka modal; tombol hapus ada di dalam modal */}
+        <div
+          style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 6 }}
+          onClick={e => e.stopPropagation()}
+        >
+          {isPending ? (
+            <div className="fsg-card-actions">
+              <button
+                className="fsg-btn-confirm"
+                onClick={() => onSelect(snap)}
+                title="Buka modal untuk konfirmasi FOD"
+              >
+                ✓ Konfirmasi
+              </button>
+              <button
+                className="fsg-btn-reject"
+                onClick={() => onSelect(snap)}
+                title="Buka modal untuk tandai false positive"
+              >
+                ✗ False+
+              </button>
+            </div>
+          ) : (
+            <div style={{ display: "flex", alignItems: "center", gap: 6, flex: 1, minWidth: 0 }}>
+              <VStatusChip status={vStatus} />
+              {snap.validated_by && (
+                <span style={{
+                  fontSize: "9.5px", color: "#9CA3AF",
+                  overflow: "hidden", textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                }}>
+                  {snap.validated_by}
+                </span>
+              )}
+            </div>
+          )}
+
+          {/*
+            Tombol hapus di card DIHAPUS dari sini dan dipindah ke modal.
+            Alasan: .fsg-card memiliki overflow:hidden yang memotong elemen
+            dengan positioning, dan virtualizer menyebabkan state showConfirm
+            reset saat re-render. Tombol hapus tetap tersedia di dalam modal.
+          */}
+          <button
+            style={{
+              background: "none",
+              border: "1px solid #E5E7EB",
+              borderRadius: 4,
+              padding: "3px 7px",
+              fontSize: 11,
+              color: "#9CA3AF",
+              cursor: "pointer",
+              flexShrink: 0,
+            }}
+            onClick={() => onSelect(snap)}
+            title="Buka detail untuk hapus"
+          >
+            ···
+          </button>
+        </div>
+
+        {/* Resolve button — hanya untuk snapshot confirmed */}
         {isConf && (
-          <button className="fsg-btn-resolve" onClick={e => {
-            e.stopPropagation(); onSelect(snap);
-          }}>Tandai Resolved</button>
+          <button
+            className="fsg-btn-resolve"
+            style={{ marginTop: 6 }}
+            onClick={e => { e.stopPropagation(); onSelect(snap); }}
+          >
+            Tandai Resolved
+          </button>
         )}
+
       </div>
     </div>
   );
 });
 
 /* ── Virtualized Grid ────────────────────────────────────────── */
-const CARD_ROW_HEIGHT = 340; // approximate card height in px
-const COLS_MIN_WIDTH = 190;  // matches CSS minmax(190px, 1fr)
+const CARD_ROW_HEIGHT = 340;
+const COLS_MIN_WIDTH  = 190;
 
 function VirtualizedGrid({ visibleSnaps, parentRef, setSelected }) {
   const [cols, setCols] = useState(2);
@@ -235,15 +354,8 @@ function VirtualizedGrid({ visibleSnaps, parentRef, setSelected }) {
   }
 
   return (
-    <div
-      ref={measuredRef}
-      className="fsg-grid-area"
-    >
-      <div style={{
-        height: rowVirtualizer.getTotalSize(),
-        width: "100%",
-        position: "relative",
-      }}>
+    <div ref={measuredRef} className="fsg-grid-area">
+      <div style={{ height: rowVirtualizer.getTotalSize(), width: "100%", position: "relative" }}>
         {rowVirtualizer.getVirtualItems().map((virtualRow) => {
           const startIdx = virtualRow.index * cols;
           const rowSnaps = visibleSnaps.slice(startIdx, startIdx + cols);
@@ -251,16 +363,17 @@ function VirtualizedGrid({ visibleSnaps, parentRef, setSelected }) {
             <div
               key={virtualRow.key}
               style={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                width: "100%",
+                position: "absolute", top: 0, left: 0, width: "100%",
                 transform: `translateY(${virtualRow.start}px)`,
               }}
             >
               <div className="fsg-grid">
                 {rowSnaps.map(snap => (
-                  <SnapshotCard key={snap.id} snap={snap} onSelect={setSelected} />
+                  <SnapshotCard
+                    key={snap.id}
+                    snap={snap}
+                    onSelect={setSelected}
+                  />
                 ))}
               </div>
             </div>
@@ -273,25 +386,50 @@ function VirtualizedGrid({ visibleSnaps, parentRef, setSelected }) {
 
 /* ═══════════════════════════════════════════════════════════════
    DETAIL + VALIDATION MODAL
+   ─────────────────────────────────────────────────────────────
+   PERBAIKAN UTAMA:
+   1. Modal sekarang dibungkus dengan overlay (.fsg-modal-overlay)
+      dan container (.fsg-modal) agar muncul sebagai dialog yang
+      benar dengan fixed positioning di atas konten lainnya.
+   2. Tombol hapus (DeleteButton) selalu tampil — tidak ada guard
+      isAdmin.
+   3. staffName diterima sebagai prop dan digunakan di submit().
    ═══════════════════════════════════════════════════════════════ */
-
-
-function SnapshotModal({ snap, onClose, onValidated }) {
-  const sev      = getSeverity(snap.confidence);
-  const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
+function SnapshotModal({ snap, onClose, onValidated, staffName }) {
   const validateMutation = useValidateSnapshot();
-  const submitting = validateMutation.isPending;
-  const [validated, setValidated] = useState([
-    'confirmed', 'rejected', 'resolved'
-  ].includes(snap.validation_status));
-  const [showChange, setShowChange] = useState(false);
+  const deleteMutation   = useDeleteSnapshot();
+  const submitting  = validateMutation.isPending;
+  const [validated, setValidated] = useState(
+    ['confirmed', 'rejected', 'resolved'].includes(snap.validation_status)
+  );
+  const [showChange,  setShowChange]  = useState(false);
+  const [showConfirm, setShowConfirm] = useState(false);
+
+  // Tutup modal saat klik overlay (bukan konten modal)
+  function handleOverlayClick(e) {
+    if (e.target === e.currentTarget) onClose();
+  }
+
+  function handleDelete(e) {
+    e.stopPropagation();
+    if (!showConfirm) {
+      setShowConfirm(true);
+      return;
+    }
+    deleteMutation.mutate(snap.id, {
+      onSuccess: () => {
+        setShowConfirm(false);
+        onClose();
+      },
+    });
+  }
 
   async function submit(status) {
     try {
       const updated = await validateMutation.mutateAsync({
         id: snap.id,
         status,
-        staffName: 'Operator',
+        staffName: staffName || 'Operator',
         notes: null,
       });
       onValidated(updated);
@@ -303,147 +441,195 @@ function SnapshotModal({ snap, onClose, onValidated }) {
   }
 
   return (
-    <div className="fsg-modal-overlay" onClick={onClose}>
-      <div className="fsg-modal" style={{maxWidth: 380}} onClick={e => e.stopPropagation()}>
-        <div className="fsg-modal-img-wrap">
-          <img className="fsg-modal-img"
-            src={`${API_BASE}/snapshots/${snap.image_path}`}
-            alt={`FOD #${snap.id}`}
-            onError={e => { e.target.style.display = "none"; }}
-          />
-          <SeverityBadge confidence={snap.confidence} />
-          <button className="fsg-modal-close" onClick={onClose} aria-label="Tutup" style={{background:'rgba(0,0,0,0.45)',border:'none',boxShadow:'none',padding:0,borderRadius:'6px',display:'flex',alignItems:'center',justifyContent:'center'}}>
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <path d="M5 5l10 10M15 5L5 15" stroke="#DC2626" strokeWidth="2.2" strokeLinecap="round"/>
+    /* ── Overlay: klik di luar modal untuk tutup ── */
+    <div
+      className="fsg-modal-overlay"
+      onClick={handleOverlayClick}
+      style={{
+        position: "fixed",
+        inset: 0,
+        background: "rgba(15, 20, 30, 0.72)",
+        backdropFilter: "blur(4px)",
+        display: "flex",
+        alignItems: "center",
+        justifyContent: "center",
+        zIndex: 1000,
+        padding: 24,
+      }}
+    >
+      {/* ── Modal container ── */}
+      <div
+        className="fsg-modal"
+        onClick={e => e.stopPropagation()}
+        style={{
+          background: "#fff",
+          borderRadius: 14,
+          overflow: "hidden",
+          maxWidth: 520,
+          width: "100%",
+          maxHeight: "90vh",
+          overflowY: "auto",
+          boxShadow: "0 24px 64px rgba(0,0,0,0.22)",
+        }}
+      >
+        {/* Tombol tutup (X) di sudut kiri atas gambar */}
+        <div style={{ position: "relative" }}>
+          <button
+            onClick={onClose}
+            aria-label="Tutup"
+            style={{
+              position: "absolute",
+              top: 10,
+              left: 10,
+              zIndex: 10,
+              width: 30,
+              height: 30,
+              borderRadius: "50%",
+              background: "rgba(0,0,0,0.45)",
+              border: "none",
+              cursor: "pointer",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              color: "#fff",
+              backdropFilter: "blur(4px)",
+            }}
+          >
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+              stroke="currentColor" strokeWidth="2.5"
+              strokeLinecap="round" strokeLinejoin="round">
+              <line x1="18" y1="6" x2="6" y2="18"/>
+              <line x1="6" y1="6" x2="18" y2="18"/>
             </svg>
           </button>
+
+          {/* Gambar snapshot */}
+          <div className="fsg-modal-img-wrap">
+            <img
+              className="fsg-modal-img"
+              src={`${API_BASE}/snapshots/${snap.image_path}`}
+              alt={`FOD #${snap.id}`}
+              onError={e => { e.target.style.display = "none"; }}
+            />
+          </div>
         </div>
+
+        {/* ── Isi modal ── */}
         <div className="fsg-modal-body">
+
+          {/* Header: judul + tombol hapus */}
           <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between", gap: 8 }}>
             <h4 className="fsg-modal-title">
               FOD Snapshot #{snap.id} — Frame {snap.frame_number}
             </h4>
-          </div>
-          <div className="fsg-modal-conf-row">
-            <div className="fsg-modal-conf-top">
-              <span className="fsg-modal-conf-label">Confidence Score</span>
-              <span className="fsg-modal-conf-val" style={{ color: sevColor }}>
-                {fmtConf(snap.confidence)}
-              </span>
-            </div>
-            <ConfBar confidence={snap.confidence} trackClass="fsg-modal-conf-track" fillClass="fsg-conf-fill" />
-          </div>
-          <div className="fsg-modal-details">
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Tanggal</span>
-              <span className="fsg-modal-detail-value">{fmtDate(snap.timestamp)}</span>
-            </div>
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Waktu Deteksi</span>
-              <span className="fsg-modal-detail-value">{fmtTime(snap.timestamp)}</span>
-            </div>
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Label</span>
-              <span className="fsg-modal-detail-value">{snap.label ?? "FOD"}</span>
-            </div>
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Frame #</span>
-              <span className="fsg-modal-detail-value">{snap.frame_number}</span>
-            </div>
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Ukuran BBox</span>
-              <span className="fsg-modal-detail-value">{bboxSize(snap.bbox)}</span>
-            </div>
-            <div className="fsg-modal-detail-item">
-              <span className="fsg-modal-detail-label">Posisi (x, y)</span>
-              <span className="fsg-modal-detail-value">
-                {snap.bbox ? `${snap.bbox.x}, ${snap.bbox.y}` : "—"}
-              </span>
-            </div>
+
+            {/*
+              TOMBOL HAPUS — selalu tampil, tidak ada guard isAdmin.
+              Diletakkan di dalam modal (bukan card) agar:
+              - Tidak dipotong overflow:hidden
+              - State showConfirm tidak di-reset oleh virtualizer
+            */}
+            <DeleteButton
+              showConfirm={showConfirm}
+              onClick={handleDelete}
+              disabled={deleteMutation.isPending}
+            />
           </div>
 
-          {validated ? (
-            <div style={{marginTop:18, marginBottom:2, textAlign:'center'}}>
+          {/* Detail rows */}
+          {[
+            ["Waktu Deteksi", fmtTime(snap.timestamp)],
+            ["Tanggal",       fmtDate(snap.timestamp)],
+            ["Label",         snap.label ?? "FOD"],
+            ["Frame #",       snap.frame_number],
+            ["Ukuran BBox",   bboxSize(snap.bbox)],
+            ["Posisi (x, y)", snap.bbox ? `${snap.bbox.x}, ${snap.bbox.y}` : "—"],
+            ...(snap.video_id ? [["Video", snap.video_id.split(/[\\/]/).pop()]] : []),
+            ...(snap.validated_by ? [["Divalidasi oleh", snap.validated_by]] : []),
+            ...(snap.validation_notes ? [["Catatan", snap.validation_notes]] : []),
+          ].map(([label, value]) => (
+            <div key={label} className="fsg-modal-detail-item">
+              <span className="fsg-modal-detail-label">{label}</span>
+              <span className="fsg-modal-detail-value">{value}</span>
+            </div>
+          ))}
+
+          {/* Validation actions */}
+          {validated && !showChange ? (
+            <div style={{ marginTop: 18, marginBottom: 2, textAlign: "center" }}>
               {(() => {
-                let statusText = '';
-                let statusColor = '#059669';
-                if (snap.validation_status === 'confirmed') {
-                  statusText = 'Terkonfirmasi';
-                  statusColor = '#059669'; // hijau
-                } else if (snap.validation_status === 'resolved') {
-                  statusText = 'Resolved';
-                  statusColor = '#2563eb'; // biru
-                } else if (snap.validation_status === 'rejected') {
-                  statusText = 'False Positive';
-                  statusColor = '#DC2626'; // merah
-                } else {
-                  statusText = snap.validation_status;
-                  statusColor = '#374151';
-                }
+                const map = {
+                  confirmed: { text: "Terkonfirmasi", color: "#059669" },
+                  resolved:  { text: "Resolved",      color: "#2563EB" },
+                  rejected:  { text: "False Positive", color: "#DC2626" },
+                };
+                const { text, color } = map[snap.validation_status]
+                  ?? { text: snap.validation_status, color: "#374151" };
                 return (
-                  <span style={{fontSize:13, color:statusColor, fontWeight:600}}>
-                    Status: {statusText}
+                  <span style={{ fontSize: 13, color, fontWeight: 600 }}>
+                    Status: {text}
                   </span>
                 );
               })()}
-              {snap.validation_status === 'confirmed' && (
-                <div style={{marginTop:10}}>
+              {snap.validation_status === "confirmed" && (
+                <div style={{ marginTop: 10 }}>
                   <button
                     className="fsg-btn-resolve"
-                    style={{width:'auto',padding:'6px 16px',fontSize:12,marginBottom:4}}
+                    style={{ width: "auto", padding: "6px 16px", fontSize: 12, marginBottom: 4 }}
                     disabled={submitting}
-                    onClick={() => submit('resolved')}
+                    onClick={() => submit("resolved")}
                   >
-                    {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>Tandai Resolved</>}
+                    {submitting
+                      ? <><span className="fsg-spinner" /> Menyimpan...</>
+                      : "Tandai Resolved"
+                    }
                   </button>
                 </div>
               )}
-              <br/>
-              <button style={{marginTop:8, fontSize:12, color:'#2563eb', background:'none', border:'none', cursor:'pointer', textDecoration:'underline'}}
-                onClick={()=>setShowChange(true)}>
+              <br />
+              <button
+                style={{
+                  marginTop: 8, fontSize: 12, color: "#2563eb", background: "none",
+                  border: "none", cursor: "pointer", textDecoration: "underline",
+                }}
+                onClick={() => setShowChange(true)}
+              >
                 Ubah Status
               </button>
             </div>
           ) : (
-            <div className="fsg-card-actions" style={{marginTop:18, marginBottom:2}}>
-              <button
-                className="fsg-btn-confirm"
-                disabled={submitting || validated}
-                onClick={() => submit("confirmed")}
-              >
-                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✓ Konfirmasi FOD</>}
-              </button>
-              <button
-                className="fsg-btn-reject"
-                disabled={submitting || validated}
-                onClick={() => submit("rejected")}
-              >
-                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✗ False Positive</>}
-              </button>
-            </div>
-          )}
-
-          {/* Ubah status jika sudah validasi dan klik "Ubah Status" */}
-          {showChange && (
-            <div className="fsg-card-actions" style={{marginTop:8, marginBottom:2}}>
+            <div className="fsg-card-actions" style={{ marginTop: 18, marginBottom: 2 }}>
               <button
                 className="fsg-btn-confirm"
                 disabled={submitting}
                 onClick={() => submit("confirmed")}
               >
-                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✓ Konfirmasi FOD</>}
+                {submitting
+                  ? <><span className="fsg-spinner" /> Menyimpan...</>
+                  : "✓ Konfirmasi FOD"
+                }
               </button>
               <button
                 className="fsg-btn-reject"
                 disabled={submitting}
                 onClick={() => submit("rejected")}
               >
-                {submitting ? <><span className="fsg-spinner" /> Menyimpan...</> : <>✗ False Positive</>}
+                {submitting
+                  ? <><span className="fsg-spinner" /> Menyimpan...</>
+                  : "✗ False Positive"
+                }
               </button>
-              <button style={{marginLeft:8, fontSize:12, color:'#6b7280', background:'none', border:'none', cursor:'pointer'}}
-                onClick={()=>setShowChange(false)}>
-                Batal
-              </button>
+              {showChange && (
+                <button
+                  style={{
+                    marginLeft: 8, fontSize: 12, color: "#6b7280", background: "none",
+                    border: "none", cursor: "pointer",
+                  }}
+                  onClick={() => setShowChange(false)}
+                >
+                  Batal
+                </button>
+              )}
             </div>
           )}
         </div>
@@ -456,34 +642,49 @@ function SnapshotModal({ snap, onClose, onValidated }) {
    MAIN COMPONENT
    ═══════════════════════════════════════════════════════════════ */
 const TABS = [
-  { key: "all",       label: "Semua"        },
-  { key: "pending",   label: "Pending"      },
-  { key: "confirmed", label: "Confirmed"    },
+  { key: "all",       label: "Semua"          },
+  { key: "pending",   label: "Pending"        },
+  { key: "confirmed", label: "Confirmed"      },
   { key: "rejected",  label: "False Positive" },
-  { key: "resolved",  label: "Resolved"     },
+  { key: "resolved",  label: "Resolved"       },
 ];
 
+/*
+ * FODSnapshotGallery
+ *
+ * Props:
+ *   enabled   {boolean}       – apakah pipeline sedang berjalan (live badge)
+ *   videoId   {string|null}   – jika diisi, galeri HANYA menampilkan snapshot
+ *                               dari video tersebut (mode LiveMonitorPage).
+ *                               Jika null, galeri menampilkan semua snapshot
+ *                               (mode halaman FOD Snapshot penuh).
+ *
+ * Tidak ada prop isAdmin — tidak diperlukan selama belum ada auth.
+ */
 export default function FODSnapshotGallery({ enabled, videoId }) {
-  const { data: snapshots = [], isLoading: loading, error: queryError } = useSnapshots(videoId, enabled);
+  /*
+   * useSnapshots(videoId, enabled):
+   *   - Jika videoId diisi → backend memfilter by video_id
+   *   - Jika videoId null  → backend mengembalikan semua snapshot
+   * Filtering sudah terjadi di sisi query/backend, bukan client-side.
+   */
+  const { data: snapshots = [], isLoading: loading, error: queryError } =
+    useSnapshots(videoId, enabled);
   const error = queryError?.message ?? null;
-  const [selected,  setSelected]    = useState(null);
-  const [activeTab, setActiveTab]   = useState("all");
+  const [selected,  setSelected]  = useState(null);
+  const [activeTab, setActiveTab] = useState("all");
   const gridParentRef = useRef(null);
-  // Nama staff yang diingat selama sesi (sessionStorage)
-  const [staffName, setStaffName]   = useState(
+
+  const [staffName, setStaffName] = useState(
     () => sessionStorage.getItem("fsg_staff_name") ?? ""
   );
 
-  /* ── Persist staffName ke sessionStorage ── */
   function handleStaffName(val) {
     setStaffName(val);
     sessionStorage.setItem("fsg_staff_name", val);
   }
 
-  /* ── Update single snapshot setelah validasi ── */
   function handleValidated(updated) {
-    // TanStack Query auto-invalidates via useValidateSnapshot's onSuccess,
-    // but we also sync the selected modal immediately for responsiveness
     setSelected(prev => prev?.id === updated.id ? updated : prev);
   }
 
@@ -494,7 +695,6 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
     ? snapshots.reduce((a, s) => a + (s.confidence ?? 0), 0) / total
     : null;
 
-  /* ── Tab counts ── */
   const counts = {
     all:       total,
     pending:   snapshots.filter(s => (s.validation_status ?? "pending") === "pending").length,
@@ -503,7 +703,6 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
     resolved:  snapshots.filter(s => s.validation_status === "resolved").length,
   };
 
-  /* ── Filtered list untuk grid ── */
   const visibleSnaps = activeTab === "all"
     ? snapshots
     : snapshots.filter(s =>
@@ -512,8 +711,22 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
           : s.validation_status === activeTab
       );
 
-  /* ── Render states ── */
-  if (!videoId && !snapshots.length) {
+  /*
+   * ── Empty state ──
+   *
+   * Dua kondisi berbeda:
+   *
+   * A) videoId ada tapi snapshot kosong → pipeline aktif tapi belum ada
+   *    deteksi untuk video ini. Tampilkan pesan "menunggu deteksi".
+   *
+   * B) videoId tidak ada → galeri belum tahu harus menampilkan video mana
+   *    (pipeline belum pernah dijalankan). Tampilkan pesan "belum ada sesi".
+   *
+   * Kondisi ini TIDAK pernah jatuh ke render utama dengan snapshots kosong,
+   * sehingga tidak ada risiko menampilkan snapshot dari video lain.
+   */
+  if (!loading && !error && snapshots.length === 0) {
+    const isWaitingForDetection = Boolean(videoId);
     return (
       <div className="fsg-widget">
         <div className="fsg-empty">
@@ -525,68 +738,77 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
               <path d="M21 15l-5-5L5 21"/>
             </svg>
           </div>
-          <p className="fsg-empty-title">Belum Ada Sesi Aktif</p>
-          <p className="fsg-empty-sub">
-            Galeri snapshot FOD akan muncul setelah pipeline deteksi berjalan
-            dan objek asing terdeteksi pada runway.
-          </p>
+          {isWaitingForDetection ? (
+            <>
+              <p className="fsg-empty-title">Menunggu Deteksi FOD</p>
+              <p className="fsg-empty-sub">
+                Pipeline aktif — snapshot akan muncul di sini secara otomatis
+                saat objek asing terdeteksi pada video ini.
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="fsg-empty-title">Belum Ada Sesi Aktif</p>
+              <p className="fsg-empty-sub">
+                Galeri snapshot FOD akan muncul setelah pipeline deteksi berjalan
+                dan objek asing terdeteksi pada runway.
+              </p>
+            </>
+          )}
         </div>
       </div>
     );
   }
 
+  /* ── Loading state ── */
   if (loading && !snapshots.length) {
     return <div className="fsg-widget"><SkeletonCards count={4} /></div>;
   }
 
+  /* ── Error state ── */
   if (error) {
     return (
       <div className="fsg-widget">
         <div className="fsg-error">
-          <span className="fsg-error-icon">
-            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="2">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 8v4M12 16h.01"/>
-            </svg>
-          </span>
-          {error}
-        </div>
-      </div>
-    );
-  }
-
-  if (!snapshots.length) {
-    return (
-      <div className="fsg-widget">
-        <div className="fsg-empty">
-          <div className="fsg-empty-icon">
-            <svg width="26" height="26" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" strokeWidth="1.6">
-              <circle cx="12" cy="12" r="10"/>
-              <path d="M12 6v6l4 2"/>
-            </svg>
-          </div>
-          <p className="fsg-empty-title">Menunggu Deteksi FOD</p>
-          <p className="fsg-empty-sub">
-            Pipeline aktif. Snapshot tersimpan otomatis saat objek asing
-            terdeteksi pada runway.
+          <p style={{ color: "#DC2626", fontSize: 13 }}>
+            Gagal memuat data: {error}
           </p>
         </div>
       </div>
     );
   }
 
-  /* ── Full gallery ── */
+  /* ── Main render ── */
   return (
     <>
       <div className="fsg-widget">
-
         {/* ── Header ── */}
         <div className="fsg-header">
           <div className="fsg-header-left">
             <span className="fsg-title">FOD Snapshots</span>
             <span className="fsg-count-badge">{total} objek</span>
+            {/* Label nama video — hanya tampil jika galeri difilter per video */}
+            {videoId && (
+              <span
+                title={videoId}
+                style={{
+                  fontSize: "10.5px",
+                  fontWeight: 500,
+                  color: "#6B7280",
+                  background: "#F1F5F9",
+                  border: "1px solid #E2E8F0",
+                  borderRadius: 999,
+                  padding: "2px 8px",
+                  maxWidth: 200,
+                  overflow: "hidden",
+                  textOverflow: "ellipsis",
+                  whiteSpace: "nowrap",
+                  fontFamily: "monospace",
+                }}
+              >
+                {videoId.split(/[\\/]/).pop()}
+              </span>
+            )}
           </div>
           {enabled
             ? <span className="fsg-live-badge"><span className="fsg-live-dot" />Live</span>
@@ -629,13 +851,12 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
         </div>
 
         {/* ── Staff name + filter tabs row ── */}
-        <div style={{ display: "flex", alignItems: "center",
-          gap: 10, flexWrap: "wrap" }}>
-
-          {/* Staff name badge/input */}
-          <div style={{ display: "flex", alignItems: "center", gap: 6,
-            flexShrink: 0, background: "#F9FAFB", border: "1px solid #E5E7EB",
-            borderRadius: 8, padding: "3px 8px" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: 10, flexWrap: "wrap" }}>
+          <div style={{
+            display: "flex", alignItems: "center", gap: 6, flexShrink: 0,
+            background: "#F9FAFB", border: "1px solid #E5E7EB",
+            borderRadius: 8, padding: "3px 8px",
+          }}>
             <svg width="13" height="13" viewBox="0 0 24 24" fill="none"
               stroke="#9CA3AF" strokeWidth="2">
               <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/>
@@ -646,13 +867,14 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
               placeholder="Nama staff reviewer"
               value={staffName}
               onChange={e => handleStaffName(e.target.value)}
-              style={{ border: "none", background: "transparent", outline: "none",
+              style={{
+                border: "none", background: "transparent", outline: "none",
                 fontSize: "11.5px", color: "#374151", width: 130,
-                fontFamily: "inherit" }}
+                fontFamily: "inherit",
+              }}
             />
           </div>
 
-          {/* Filter tabs */}
           <div className="fsg-tabs" style={{ flex: 1, minWidth: 0 }}>
             {TABS.map(tab => (
               <button
@@ -668,20 +890,19 @@ export default function FODSnapshotGallery({ enabled, videoId }) {
           </div>
         </div>
 
-        {/* ── Virtualized Grid area ── */}
+        {/* ── Virtualized Grid ── */}
         <VirtualizedGrid
           visibleSnaps={visibleSnaps}
           parentRef={gridParentRef}
           setSelected={setSelected}
         />
-
       </div>
 
-      {/* ── Detail + Validation modal ── */}
+      {/* ── Detail + Validation + Delete modal ── */}
       {selected && (
         <SnapshotModal
           snap={selected}
-          staffName={staffName}
+          staffName={staffName}          
           onClose={() => setSelected(null)}
           onValidated={handleValidated}
         />

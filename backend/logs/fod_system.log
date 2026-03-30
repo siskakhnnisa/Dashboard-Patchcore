@@ -3230,3 +3230,173 @@ ConnectionError: Gagal membuka stream: rtsp://192.168.1.100:8554/live
 2026-03-30 10:44:57.227 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
 2026-03-30 10:45:02.884 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
 2026-03-30 10:45:02.932 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:02:56.669 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:02:56.705 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:02:56.769 | INFO     | app.main:lifespan:57 - 🛑 System shutting down...
+2026-03-30 11:02:56.775 | INFO     | app.services.video_reader:release:114 - Video reader dirilis
+2026-03-30 11:02:56.779 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-30 11:02:56.785 | INFO     | app.services.stream_reader:release:280 - Stream reader released
+2026-03-30 11:02:56.786 | INFO     | app.core.stream_pipeline:stop_stream:96 - Stream pipeline stopped
+2026-03-30 11:03:21.078 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:07:04.706 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:09:32.967 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:11:55.293 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:11:56.742 | WARNING  | app.services.stream_reader:<module>:22 - PyAV not installed — falling back to OpenCV for stream reading
+2026-03-30 11:11:56.878 | INFO     | app.main:lifespan:40 - 🚀 FOD Detection System starting up...
+2026-03-30 11:11:56.879 | INFO     | app.ml.inference:load_models:53 - Loading semua model ke memori...
+2026-03-30 11:11:56.880 | INFO     | app.ml.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-30 11:11:57.913 | SUCCESS  | app.ml.segmentation:load:50 - Segmentation model loaded | device=cpu
+2026-03-30 11:11:57.919 | INFO     | app.ml.patchcore:load:34 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-30 11:12:03.188 | INFO     | app.ml.patchcore:load:45 - Feature weights dari model: [0.8, 1.0, 0.6]
+2026-03-30 11:12:06.901 | SUCCESS  | app.ml.patchcore:load:66 - PatchCore loaded | device=cpu | img_size=384
+2026-03-30 11:12:07.201 | INFO     | app.ml.inference:load_models:59 - YOLO model loaded from models_weights/binary_yolo.pt
+2026-03-30 11:12:07.204 | SUCCESS  | app.ml.inference:load_models:62 - Semua model siap digunakan
+2026-03-30 11:12:07.205 | INFO     | app.core.stream_pipeline:initialize:58 - Stream pipeline manager initialized
+2026-03-30 11:12:07.215 | SUCCESS  | app.main:lifespan:52 - ✅ System siap menerima koneksi
+2026-03-30 11:12:08.101 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:12:09.203 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:27:43.625 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:27:43.650 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:27:49.771 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:27:49.827 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:29:13.955 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:29:13.972 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:29:16.554 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:29:16.585 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:29:30.767 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:29:30.774 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:29:30.908 | INFO     | app.main:lifespan:57 - 🛑 System shutting down...
+2026-03-30 11:29:30.916 | INFO     | app.services.video_reader:release:114 - Video reader dirilis
+2026-03-30 11:29:30.918 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-30 11:29:30.923 | INFO     | app.services.stream_reader:release:280 - Stream reader released
+2026-03-30 11:29:30.924 | INFO     | app.core.stream_pipeline:stop_stream:96 - Stream pipeline stopped
+2026-03-30 11:30:03.505 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:30:04.106 | WARNING  | app.services.stream_reader:<module>:22 - PyAV not installed — falling back to OpenCV for stream reading
+2026-03-30 11:30:04.169 | INFO     | app.main:lifespan:40 - 🚀 FOD Detection System starting up...
+2026-03-30 11:30:04.171 | INFO     | app.ml.inference:load_models:53 - Loading semua model ke memori...
+2026-03-30 11:30:04.171 | INFO     | app.ml.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-30 11:30:04.695 | SUCCESS  | app.ml.segmentation:load:50 - Segmentation model loaded | device=cpu
+2026-03-30 11:30:04.696 | INFO     | app.ml.patchcore:load:34 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-30 11:30:07.065 | INFO     | app.ml.patchcore:load:45 - Feature weights dari model: [0.8, 1.0, 0.6]
+2026-03-30 11:30:08.554 | SUCCESS  | app.ml.patchcore:load:66 - PatchCore loaded | device=cpu | img_size=384
+2026-03-30 11:30:08.697 | INFO     | app.ml.inference:load_models:59 - YOLO model loaded from models_weights/binary_yolo.pt
+2026-03-30 11:30:08.698 | SUCCESS  | app.ml.inference:load_models:62 - Semua model siap digunakan
+2026-03-30 11:30:08.698 | INFO     | app.core.stream_pipeline:initialize:58 - Stream pipeline manager initialized
+2026-03-30 11:30:08.698 | SUCCESS  | app.main:lifespan:52 - ✅ System siap menerima koneksi
+2026-03-30 11:30:08.941 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:30:10.438 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:30:50.084 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:30:50.088 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:30:52.879 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:30:52.899 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:37:20.580 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:37:20.616 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:37:24.608 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:37:24.750 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:38:02.862 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:38:02.946 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:38:05.544 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:38:05.587 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:38:25.661 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:38:25.662 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:38:25.771 | INFO     | app.main:lifespan:57 - 🛑 System shutting down...
+2026-03-30 11:38:25.774 | INFO     | app.services.video_reader:release:114 - Video reader dirilis
+2026-03-30 11:38:25.775 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-30 11:38:25.777 | INFO     | app.services.stream_reader:release:280 - Stream reader released
+2026-03-30 11:38:25.777 | INFO     | app.core.stream_pipeline:stop_stream:96 - Stream pipeline stopped
+2026-03-30 11:38:44.575 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 11:38:45.251 | WARNING  | app.services.stream_reader:<module>:22 - PyAV not installed — falling back to OpenCV for stream reading
+2026-03-30 11:38:45.305 | INFO     | app.main:lifespan:40 - 🚀 FOD Detection System starting up...
+2026-03-30 11:38:45.306 | INFO     | app.ml.inference:load_models:53 - Loading semua model ke memori...
+2026-03-30 11:38:45.307 | INFO     | app.ml.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-30 11:38:45.774 | SUCCESS  | app.ml.segmentation:load:50 - Segmentation model loaded | device=cpu
+2026-03-30 11:38:45.775 | INFO     | app.ml.patchcore:load:34 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-30 11:38:48.050 | INFO     | app.ml.patchcore:load:45 - Feature weights dari model: [0.8, 1.0, 0.6]
+2026-03-30 11:38:49.568 | SUCCESS  | app.ml.patchcore:load:66 - PatchCore loaded | device=cpu | img_size=384
+2026-03-30 11:38:49.714 | INFO     | app.ml.inference:load_models:59 - YOLO model loaded from models_weights/binary_yolo.pt
+2026-03-30 11:38:49.715 | SUCCESS  | app.ml.inference:load_models:62 - Semua model siap digunakan
+2026-03-30 11:38:49.716 | INFO     | app.core.stream_pipeline:initialize:58 - Stream pipeline manager initialized
+2026-03-30 11:38:49.716 | SUCCESS  | app.main:lifespan:52 - ✅ System siap menerima koneksi
+2026-03-30 11:38:50.012 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:38:52.523 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:39:12.322 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 11:39:12.339 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 11:39:14.273 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 11:39:14.384 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 11:40:47.423 | INFO     | app.services.video_reader:save_uploaded_video:147 - Video disimpan: uploads\c0f4c11e-46ee-48ed-8650-e160767092b5.MP4 | ID: c0f4c11e-46ee-48ed-8650-e160767092b5
+2026-03-30 13:32:59.090 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 13:32:59.181 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 13:33:52.927 | INFO     | app.main:lifespan:57 - 🛑 System shutting down...
+2026-03-30 13:33:52.933 | INFO     | app.services.video_reader:release:114 - Video reader dirilis
+2026-03-30 13:33:52.935 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-30 13:33:52.940 | INFO     | app.services.stream_reader:release:280 - Stream reader released
+2026-03-30 13:33:52.941 | INFO     | app.core.stream_pipeline:stop_stream:96 - Stream pipeline stopped
+2026-03-30 13:34:18.845 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 13:34:21.107 | WARNING  | app.services.stream_reader:<module>:22 - PyAV not installed — falling back to OpenCV for stream reading
+2026-03-30 13:34:22.137 | INFO     | app.main:lifespan:40 - 🚀 FOD Detection System starting up...
+2026-03-30 13:34:22.139 | INFO     | app.ml.inference:load_models:53 - Loading semua model ke memori...
+2026-03-30 13:34:22.140 | INFO     | app.ml.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-30 13:34:23.141 | SUCCESS  | app.ml.segmentation:load:50 - Segmentation model loaded | device=cpu
+2026-03-30 13:34:23.144 | INFO     | app.ml.patchcore:load:34 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-30 13:34:28.227 | INFO     | app.ml.patchcore:load:45 - Feature weights dari model: [0.8, 1.0, 0.6]
+2026-03-30 13:34:32.768 | SUCCESS  | app.ml.patchcore:load:66 - PatchCore loaded | device=cpu | img_size=384
+2026-03-30 13:34:34.740 | INFO     | app.ml.inference:load_models:59 - YOLO model loaded from models_weights/binary_yolo.pt
+2026-03-30 13:34:34.944 | SUCCESS  | app.ml.inference:load_models:62 - Semua model siap digunakan
+2026-03-30 13:34:35.064 | INFO     | app.core.stream_pipeline:initialize:58 - Stream pipeline manager initialized
+2026-03-30 13:34:35.065 | SUCCESS  | app.main:lifespan:52 - ✅ System siap menerima koneksi
+2026-03-30 13:52:15.515 | INFO     | app.main:lifespan:57 - 🛑 System shutting down...
+2026-03-30 13:52:15.555 | INFO     | app.services.video_reader:release:114 - Video reader dirilis
+2026-03-30 13:52:15.564 | INFO     | app.core.pipeline_manager:stop_pipeline:84 - Pipeline dihentikan
+2026-03-30 13:52:15.576 | INFO     | app.services.stream_reader:release:280 - Stream reader released
+2026-03-30 13:52:15.581 | INFO     | app.core.stream_pipeline:stop_stream:96 - Stream pipeline stopped
+2026-03-30 13:52:38.581 | INFO     | app.services.video_reader:<module>:18 - Decord not installed — falling back to OpenCV VideoCapture
+2026-03-30 13:52:41.075 | WARNING  | app.services.stream_reader:<module>:22 - PyAV not installed — falling back to OpenCV for stream reading
+2026-03-30 13:52:41.186 | INFO     | app.main:lifespan:40 - 🚀 FOD Detection System starting up...
+2026-03-30 13:52:41.189 | INFO     | app.ml.inference:load_models:53 - Loading semua model ke memori...
+2026-03-30 13:52:41.192 | INFO     | app.ml.segmentation:load:30 - Loading segmentation model dari models_weights\runway_segmentation.pth
+2026-03-30 13:52:43.465 | SUCCESS  | app.ml.segmentation:load:50 - Segmentation model loaded | device=cpu
+2026-03-30 13:52:43.468 | INFO     | app.ml.patchcore:load:34 - Loading PatchCore model dari models_weights\patchcore_model_30000.pkl
+2026-03-30 13:52:48.422 | INFO     | app.ml.patchcore:load:45 - Feature weights dari model: [0.8, 1.0, 0.6]
+2026-03-30 13:52:52.991 | SUCCESS  | app.ml.patchcore:load:66 - PatchCore loaded | device=cpu | img_size=384
+2026-03-30 13:52:53.313 | INFO     | app.ml.inference:load_models:59 - YOLO model loaded from models_weights/binary_yolo.pt
+2026-03-30 13:52:53.316 | SUCCESS  | app.ml.inference:load_models:62 - Semua model siap digunakan
+2026-03-30 13:52:53.319 | INFO     | app.core.stream_pipeline:initialize:58 - Stream pipeline manager initialized
+2026-03-30 13:52:53.323 | SUCCESS  | app.main:lifespan:52 - ✅ System siap menerima koneksi
+2026-03-30 14:30:45.031 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 14:30:45.153 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 14:35:37.006 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 14:35:37.118 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 14:35:43.337 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 14:35:43.465 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 14:58:32.817 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 14:58:32.855 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 14:58:40.618 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 14:58:40.684 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 15:06:53.876 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 15:06:53.912 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 15:07:01.180 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 15:07:01.261 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 15:27:53.749 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 15:27:53.850 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 15:28:02.163 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 15:28:02.279 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 15:40:51.994 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 15:40:52.063 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 15:41:11.503 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 15:41:11.624 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 15:55:13.001 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 15:55:13.028 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 15:55:19.758 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 15:55:19.924 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 16:21:49.457 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 16:21:49.478 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 16:21:55.331 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 16:21:55.405 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 16:35:56.207 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 16:35:56.601 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 16:36:06.359 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 16:36:07.197 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1
+2026-03-30 16:36:46.783 | INFO     | app.core.pipeline_manager:remove_client:55 - Client disconnect. Total: 0
+2026-03-30 16:36:46.810 | INFO     | app.core.stream_pipeline:remove_client:66 - Stream client disconnected. Total: 0
+2026-03-30 16:37:20.861 | INFO     | app.core.pipeline_manager:add_client:50 - Client baru terhubung. Total: 1
+2026-03-30 16:37:21.061 | INFO     | app.core.stream_pipeline:add_client:62 - Stream client connected. Total: 1

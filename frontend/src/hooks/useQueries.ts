@@ -1,3 +1,21 @@
+// ── Delete snapshot mutation ───────────────────────────────────────────
+async function deleteSnapshot(id: number) {
+  const res = await fetch(`${API_BASE}/fod-snapshots/${id}`, {
+    method: "DELETE",
+  });
+  if (!res.ok) throw new Error(`Gagal hapus snapshot: ${res.status}`);
+  return res.json();
+}
+
+export function useDeleteSnapshot() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: deleteSnapshot,
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["fod-snapshots"] });
+    },
+  });
+}
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8000";

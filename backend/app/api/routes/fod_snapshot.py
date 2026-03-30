@@ -1,15 +1,15 @@
+
+# --- Router and imports must be at the top ---
+from fastapi import APIRouter, Depends, HTTPException, Request, Query
+from fastapi.responses import JSONResponse, StreamingResponse
 import datetime
 import logging
 import os
 import io
 import zipfile
 from typing import List, Optional
-
-from fastapi import APIRouter, Depends, HTTPException, Request, Query
-from fastapi.responses import JSONResponse, StreamingResponse
 from sqlalchemy.ext.asyncio import AsyncSession
-from sqlalchemy import select
-
+from sqlalchemy import select, delete
 from app.db_async import get_async_db
 from app.models.fod_snapshot import FODSnapshot
 from app.schemas.fod_snapshot import FODSnapshotSchema, FODSnapshotValidateSchema
@@ -26,6 +26,30 @@ _CORS = {
     "Access-Control-Allow-Methods": "GET, PATCH, OPTIONS",
     "Access-Control-Allow-Headers": "*",
 }
+
+# ── DELETE /fod-snapshots/{id} ─────────────────────────────────────────────
+@router.delete("/{snapshot_id}")
+async def delete_snapshot(snapshot_id: int, db: AsyncSession = Depends(get_async_db)):
+    stmt = select(FODSnapshot).where(FODSnapshot.id == snapshot_id)
+    result = await db.execute(stmt)
+    row = result.scalar_one_or_none()
+    if not row:
+        raise HTTPException(status_code=404, detail="Snapshot not found")
+
+    # Hapus file gambar jika ada
+    if row.image_path:
+        img_path = os.path.join(SNAPSHOT_DIR, row.image_path)
+        if os.path.isfile(img_path):
+            try:
+                os.remove(img_path)
+            except Exception as e:
+                logging.warning(f"Gagal menghapus file gambar: {img_path} | {e}")
+
+    # Hapus dari database
+    await db.delete(row)
+    await db.commit()
+
+    return JSONResponse(content={"success": True, "deleted_id": snapshot_id}, headers=_CORS)
 
 
 def _serialize(rows) -> list:
