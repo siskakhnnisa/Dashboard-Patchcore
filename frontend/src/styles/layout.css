@@ -18,3 +18,8 @@
   overflow-y: auto;
   background: var(--bg-main);
 }
+
+/* Suspense placeholder — keeps layout stable during lazy page load */
+.page-suspense {
+  min-height: 100vh;
+}

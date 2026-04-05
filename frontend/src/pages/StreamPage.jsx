@@ -207,7 +207,7 @@ export default function StreamPage() {
         {/* LEFT — Video Feed + Events */}
         <div className="stream-left">
           {/* Video Feed - gunakan LiveMonitorPanel agar konsisten dengan Live Feed */}
-          <div className="stream-card stream-video-card" style={{ padding: 0, background: 'none', border: 'none' }}>
+          <div className="stream-card stream-video-card" style={{ padding: 0, background: 'none' }}>
             <LiveMonitorPanel
               frameBitmap={frameBitmap}
               bboxes={lastPayload?.bboxes ?? []}

@@ -2,6 +2,7 @@ import cv2
 import uuid
 import aiofiles
 import os
+import mimetypes
 import numpy as np
 from pathlib import Path
 from typing import Optional
@@ -122,7 +123,15 @@ class VideoReader:
         return self._current_frame
 
 
-async def save_uploaded_video(file_content: bytes, filename: str) -> dict:
+def _decode_fourcc(value: int) -> str | None:
+    if not value or value < 0:
+        return None
+    chars = [chr((int(value) >> shift) & 0xFF) for shift in (0, 8, 16, 24)]
+    codec = "".join(ch for ch in chars if ch.isprintable()).strip()
+    return codec or None
+
+
+async def save_uploaded_video(file_content: bytes, filename: str, content_type: str | None = None) -> dict:
     """
     Simpan video yang diupload ke folder uploads/.
     Return: metadata video
@@ -141,8 +150,12 @@ async def save_uploaded_video(file_content: bytes, filename: str) -> dict:
     fps = cap.get(cv2.CAP_PROP_FPS)
     width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
     height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+    codec_name = _decode_fourcc(int(cap.get(cv2.CAP_PROP_FOURCC)))
     duration = total_frames / fps if fps > 0 else 0
     cap.release()
+
+    mime_type = content_type or mimetypes.guess_type(filename)[0] or "application/octet-stream"
+    file_extension = Path(filename).suffix.lower() or None
     
     logger.info(f"Video disimpan: {save_path} | ID: {video_id}")
     
@@ -150,6 +163,12 @@ async def save_uploaded_video(file_content: bytes, filename: str) -> dict:
         "video_id": video_id,
         "filename": filename,
         "path": str(save_path),
+        "stored_path": str(save_path),
+        "file_extension": file_extension,
+        "mime_type": mime_type,
+        "codec_name": codec_name,
+        "width_px": width,
+        "height_px": height,
         "total_frames": total_frames,
         "fps": fps,
         "duration_seconds": duration,

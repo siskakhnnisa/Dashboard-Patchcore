@@ -19,10 +19,13 @@ from app.api.routes import fod_snapshot
 from app.api.routes import inspection_log
 from app.api.routes import detection_stats
 from app.api.routes import stream
+from app.api.routes import system_logs
+from app.api.routes import activity_history
 from app.core.stream_pipeline import stream_pipeline
 
 from app.db import Base, engine
 from app.models.fod_snapshot import FODSnapshot
+from app.models.activity_history import ActivityHistory
 
 
 # ── Buat tabel baru & jalankan migrasi ─────────────────────────────────────
@@ -83,6 +86,8 @@ app.include_router(fod_snapshot.router)
 app.include_router(inspection_log.router)
 app.include_router(detection_stats.router)
 app.include_router(stream.router)
+app.include_router(system_logs.router)
+app.include_router(activity_history.router)
 
 # Expose snapshots folder as static
 # Expose snapshots folder as static

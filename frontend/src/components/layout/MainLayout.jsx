@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, Suspense } from "react";
 import { Outlet } from "react-router-dom";
 import Sidebar from "../layout/Sidebar";
 import { useDetectionStore } from "../../stores/useDetectionStore";
@@ -30,7 +30,9 @@ export default function MainLayout() {
       <Sidebar />
       <div className="layout-main">
         <div className="layout-content">
-          <Outlet />
+          <Suspense fallback={<div className="page-suspense" />}>
+            <Outlet />
+          </Suspense>
         </div>
       </div>
     </div>

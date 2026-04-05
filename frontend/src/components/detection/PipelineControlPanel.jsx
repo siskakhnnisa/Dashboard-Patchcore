@@ -4,6 +4,7 @@ import {
   Pause,
   RotateCcw,
   Settings,
+  MapPinned,
   CheckCircle2,
   Circle,
   AlertCircle,
@@ -31,6 +32,7 @@ export default function PipelineControlPanel({
   currentFrame = 478,
   totalFrames: externalTotal,
   videoId: externalVideoId,
+  onOpenMapping,
 }) {
   const [videoId, setVideoId]               = useState(externalVideoId ?? null);
   const [videoMeta, setVideoMeta]           = useState(null);
@@ -105,6 +107,7 @@ export default function PipelineControlPanel({
 
   const progress    = videoProgress ?? 0;
   const totalFrames = externalTotal ?? videoMeta?.total_frames ?? 0;
+  const canOpenMapping = Boolean(videoId) && !isRunning && !uploading;
 
   // ── Render ────────────────────────────────────────────────────────────────────
 
@@ -213,6 +216,22 @@ export default function PipelineControlPanel({
               disabled={!isRunning}
             >
               <span style={{ fontSize: "10px" }}>■</span> STOP
+            </button>
+          </div>
+
+          <div className="pipeline-map-box">
+            <div className="pipeline-map-copy">
+              <div className="pipeline-map-title">FOD Mapping</div>
+              <div className="pipeline-map-desc">
+                Buka peta titik FOD dan rute pengambilan setelah monitoring selesai.
+              </div>
+            </div>
+            <button
+              className="pipeline-btn pipeline-btn-map"
+              onClick={() => onOpenMapping?.(videoId)}
+              disabled={!canOpenMapping}
+            >
+              <MapPinned size={13} /> OPEN MAP
             </button>
           </div>
 

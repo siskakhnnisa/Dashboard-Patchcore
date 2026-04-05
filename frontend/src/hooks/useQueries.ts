@@ -7,12 +7,83 @@ async function deleteSnapshot(id: number) {
   return res.json();
 }
 
+function sortSnapshotsByCreatedAtDesc(items: any[]) {
+  return [...items].sort((a, b) => {
+    const left = new Date(a?.created_at ?? 0).getTime();
+    const right = new Date(b?.created_at ?? 0).getTime();
+    return right - left;
+  });
+}
+
+function shouldIncludeSnapshotInQuery(queryKey: readonly unknown[], snapshot: any) {
+  const scope = queryKey[1];
+  if (scope === "all") {
+    const statusFilter = queryKey[2];
+    return !statusFilter || statusFilter === "all" || statusFilter === snapshot.validation_status;
+  }
+  if (typeof scope === "string") {
+    return snapshot.video_id === scope;
+  }
+  return true;
+}
+
+function mergeSnapshotIntoList(oldData: any, queryKey: readonly unknown[], snapshot: any) {
+  if (!Array.isArray(oldData)) return oldData;
+  const index = oldData.findIndex((item) => item?.id === snapshot.id);
+  const shouldInclude = shouldIncludeSnapshotInQuery(queryKey, snapshot);
+
+  if (index === -1) {
+    return shouldInclude ? sortSnapshotsByCreatedAtDesc([snapshot, ...oldData]) : oldData;
+  }
+  if (!shouldInclude) {
+    return oldData.filter((item) => item?.id !== snapshot.id);
+  }
+
+  const next = [...oldData];
+  next[index] = { ...next[index], ...snapshot };
+  return sortSnapshotsByCreatedAtDesc(next);
+}
+
+function removeSnapshotFromList(oldData: any, snapshotId: number) {
+  if (!Array.isArray(oldData)) return oldData;
+  return oldData.filter((item) => item?.id !== snapshotId);
+}
+
+function syncSnapshotAcrossCaches(qc: ReturnType<typeof useQueryClient>, snapshot: any) {
+  const queries = qc.getQueryCache().findAll({ queryKey: ["fod-snapshots"] });
+  for (const query of queries) {
+    qc.setQueryData(query.queryKey, (oldData: any) => mergeSnapshotIntoList(oldData, query.queryKey, snapshot));
+  }
+}
+
+function removeSnapshotAcrossCaches(qc: ReturnType<typeof useQueryClient>, snapshotId: number) {
+  const queries = qc.getQueryCache().findAll({ queryKey: ["fod-snapshots"] });
+  for (const query of queries) {
+    qc.setQueryData(query.queryKey, (oldData: any) => removeSnapshotFromList(oldData, snapshotId));
+  }
+}
+
 export function useDeleteSnapshot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: deleteSnapshot,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["fod-snapshots"] });
+    onMutate: async (snapshotId) => {
+      await qc.cancelQueries({ queryKey: ["fod-snapshots"] });
+      const queries = qc.getQueryCache().findAll({ queryKey: ["fod-snapshots"] });
+      const previous = queries.map((query) => ({
+        queryKey: query.queryKey,
+        data: qc.getQueryData(query.queryKey),
+      }));
+      removeSnapshotAcrossCaches(qc, snapshotId);
+      return { previous };
+    },
+    onError: (_error, _snapshotId, context) => {
+      for (const entry of context?.previous ?? []) {
+        qc.setQueryData(entry.queryKey, entry.data);
+      }
+    },
+    onSuccess: (_data, snapshotId) => {
+      removeSnapshotAcrossCaches(qc, snapshotId);
     },
   });
 }
@@ -64,8 +135,38 @@ export function useValidateSnapshot() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: validateSnapshot,
-    onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ["fod-snapshots"] });
+    onMutate: async (variables) => {
+      await qc.cancelQueries({ queryKey: ["fod-snapshots"] });
+      const queries = qc.getQueryCache().findAll({ queryKey: ["fod-snapshots"] });
+      const previous = queries.map((query) => ({
+        queryKey: query.queryKey,
+        data: qc.getQueryData(query.queryKey),
+      }));
+
+      const current = queries
+        .map((query) => qc.getQueryData<any>(query.queryKey))
+        .find((data) => Array.isArray(data) && data.some((item) => item?.id === variables.id))
+        ?.find((item: any) => item?.id === variables.id);
+
+      if (current) {
+        syncSnapshotAcrossCaches(qc, {
+          ...current,
+          validation_status: variables.status,
+          validated_by: variables.staffName || current.validated_by || "Operator",
+          validated_at: new Date().toISOString(),
+          validation_notes: variables.notes ?? current.validation_notes ?? null,
+        });
+      }
+
+      return { previous };
+    },
+    onError: (_error, _variables, context) => {
+      for (const entry of context?.previous ?? []) {
+        qc.setQueryData(entry.queryKey, entry.data);
+      }
+    },
+    onSuccess: (updated) => {
+      syncSnapshotAcrossCaches(qc, updated);
     },
   });
 }
@@ -79,12 +180,15 @@ async function fetchAllSnapshots(validationStatus?: string | null): Promise<any[
   return res.json();
 }
 
-export function useAllSnapshots(validationStatus?: string | null) {
+export function useAllSnapshots(
+  validationStatus?: string | null,
+  options?: { refetchInterval?: number | false }
+) {
   return useQuery({
     queryKey: ["fod-snapshots", "all", validationStatus ?? "all"],
     queryFn: () => fetchAllSnapshots(validationStatus),
     staleTime: 5000,
-    refetchInterval: 10000,
+    refetchInterval: options?.refetchInterval ?? 10000,
   });
 }
 
@@ -304,5 +408,163 @@ export function useTopFrames(videoId?: string | null, limit = 10) {
     },
     staleTime: 5000,
     refetchInterval: 10000,
+  });
+}
+
+// ── System Logs ─────────────────────────────────────────────────────────
+interface SystemLogEntry {
+  timestamp: string;
+  level: string;
+  source: string;
+  message: string;
+}
+
+interface SystemLogResponse {
+  logs: SystemLogEntry[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+interface SystemLogStats {
+  total_entries: number;
+  by_level: Record<string, number>;
+  file_size_bytes: number;
+  file_size_mb: number;
+  errors_24h: number;
+  warnings_24h: number;
+  recent_errors: SystemLogEntry[];
+  recent_warnings: SystemLogEntry[];
+  last_error_time: string | null;
+  last_startup_time: string | null;
+  total_restarts: number;
+  uptime: string | null;
+}
+
+export function useSystemLogs(params: {
+  level?: string | null;
+  search?: string | null;
+  limit?: number;
+  offset?: number;
+}) {
+  const { level, search, limit = 200, offset = 0 } = params;
+  const qs = new URLSearchParams();
+  if (level) qs.set("level", level);
+  if (search) qs.set("search", search);
+  qs.set("limit", String(limit));
+  qs.set("offset", String(offset));
+
+  return useQuery<SystemLogResponse>({
+    queryKey: ["system-logs", level, search, limit, offset],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/api/system-logs/?${qs}`);
+      if (!res.ok) throw new Error(`Gagal fetch system logs: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 5000,
+    refetchInterval: 10000,
+  });
+}
+
+export function useSystemLogStats() {
+  return useQuery<SystemLogStats>({
+    queryKey: ["system-log-stats"],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/api/system-logs/stats`);
+      if (!res.ok) throw new Error(`Gagal fetch log stats: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 10000,
+    refetchInterval: 30000,
+  });
+}
+
+interface ActivityHistoryEntry {
+  id: number;
+  activity_type: "upload" | "stream";
+  title: string;
+  status: string;
+  video_id: string | null;
+  filename: string | null;
+  stream_name: string | null;
+  stream_url: string | null;
+  resolution: string | null;
+  file_extension: string | null;
+  mime_type: string | null;
+  codec_name: string | null;
+  stored_path: string | null;
+  width_px: number | null;
+  height_px: number | null;
+  fps: number | null;
+  total_frames: number | null;
+  duration_seconds: number | null;
+  size_mb: number | null;
+  detected_fod_count: number | null;
+  error_message: string | null;
+  started_at: string;
+  ended_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+interface ActivityHistoryResponse {
+  items: ActivityHistoryEntry[];
+  total: number;
+  limit: number;
+  offset: number;
+}
+
+interface ActivityHistorySummary {
+  total_uploads: number;
+  total_stream_sessions: number;
+  uploads_last_7d: number;
+  streams_last_7d: number;
+  active_streams: number;
+  completed_streams: number;
+  failed_streams: number;
+  last_upload_at: string | null;
+  last_stream_at: string | null;
+}
+
+export function useActivityHistorySummary() {
+  return useQuery<ActivityHistorySummary>({
+    queryKey: ["activity-history-summary"],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/api/activity-history/summary`);
+      if (!res.ok) throw new Error(`Gagal fetch activity history summary: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 30000,
+    refetchInterval: 60000,
+  });
+}
+
+export function useActivityHistoryEntries(params: {
+  activityType?: string | null;
+  status?: string | null;
+  search?: string | null;
+  dateFrom?: string | null;
+  dateTo?: string | null;
+  limit?: number;
+  offset?: number;
+}) {
+  const { activityType, status, search, dateFrom, dateTo, limit = 20, offset = 0 } = params;
+  const qs = new URLSearchParams();
+  if (activityType) qs.set("activity_type", activityType);
+  if (status) qs.set("status", status);
+  if (search) qs.set("search", search);
+  if (dateFrom) qs.set("date_from", dateFrom);
+  if (dateTo) qs.set("date_to", dateTo);
+  qs.set("limit", String(limit));
+  qs.set("offset", String(offset));
+
+  return useQuery<ActivityHistoryResponse>({
+    queryKey: ["activity-history-entries", activityType, status, search, dateFrom, dateTo, limit, offset],
+    queryFn: async () => {
+      const res = await fetch(`${API_BASE}/api/activity-history/entries?${qs}`);
+      if (!res.ok) throw new Error(`Gagal fetch activity history entries: ${res.status}`);
+      return res.json();
+    },
+    staleTime: 30000,
   });
 }

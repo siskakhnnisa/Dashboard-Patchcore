@@ -6,6 +6,7 @@ from pydantic import BaseModel
 from typing import Optional
 from app.core.stream_pipeline import stream_pipeline
 from app.core.logger import logger
+from app.services.activity_history import record_stream_start
 import json
 
 router = APIRouter(prefix="/api/stream", tags=["Stream"])
@@ -33,6 +34,8 @@ async def start_stream(request: StreamStartRequest):
     if stream_pipeline.inference and request.anomaly_threshold:
         stream_pipeline.inference.threshold = request.anomaly_threshold
 
+    history_id = record_stream_start(request.stream_name, request.stream_url)
+    stream_pipeline.history_entry_id = history_id
     await stream_pipeline.start_stream(request.stream_url, request.stream_name)
 
     return {

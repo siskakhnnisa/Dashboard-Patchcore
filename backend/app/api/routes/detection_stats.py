@@ -74,7 +74,10 @@ async def get_overview(
     severity_counts = {"HIGH": 0, "MEDIUM": 0, "LOW": 0}
     all_r = await db.execute(select(FODSnapshot.confidence).select_from(base.subquery()))
     for (conf,) in all_r.all():
-        severity_counts[_severity(conf)] += 1
+        try:
+            severity_counts[_severity(float(conf) if conf is not None else None)] += 1
+        except (ValueError, TypeError):
+            severity_counts["LOW"] += 1
 
     confirmed = status_counts.get("confirmed", 0)
     rejected = status_counts.get("rejected", 0)

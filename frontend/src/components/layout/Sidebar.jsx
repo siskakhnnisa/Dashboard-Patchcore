@@ -1,33 +1,31 @@
-import React, { useState } from "react";
+import React, { memo, startTransition, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import {
   LayoutDashboard,
   MonitorPlay,
-  Clock,
   Camera,
+  Map,
   BarChart2,
-  SlidersHorizontal,
+  History,
   FileText,
-  ChevronDown,
-  ChevronRight,
   Plane,
   Shield,
-  Cpu,
+  ScrollText,
   FolderSearch,
   Radio,
 } from "lucide-react";
 import "../../styles/Sidebar.css";
+import { preloadRoute } from "../../utils/routePreloaders";
 
 const ROUTE_MAP = {
-  "overview":          "/",
+  "home":              "/",
   "live-monitor":      "/live-monitor",
   "stream":            "/stream",
-  "event-timeline":    "/event-timeline",
   "fod-snapshots":     "/fod-snapshots",
+  "fod-mapping":       "/fod-mapping",
+  "activity-history":  "/activity-history",
   "detection-stats":   "/detection-stats",
   "inspection-log":    "/inspection-log",
-  "pipeline-control":  "/pipeline/control",
-  "pipeline-config":   "/pipeline/config",
   "pipeline-log":      "/pipeline/log",
   "reports":           "/reports",
 };
@@ -36,11 +34,11 @@ const NAV_GROUPS = [
   {
     label: "Monitoring",
     items: [
-      { id: "overview",       label: "Overview",       icon: LayoutDashboard },
+      { id: "home",           label: "Home",           icon: LayoutDashboard },
       { id: "live-monitor",   label: "Live Feed",      icon: MonitorPlay },
       { id: "stream",         label: "Stream",         icon: Radio },
-      { id: "event-timeline", label: "Event Timeline", icon: Clock },
       { id: "fod-snapshots",  label: "FOD Snapshots",  icon: Camera },
+      { id: "fod-mapping",    label: "FOD Mapping",    icon: Map },
     ],
   },
   {
@@ -53,17 +51,9 @@ const NAV_GROUPS = [
   {
     label: "System",
     items: [
-      {
-        id: "pipeline",
-        label: "Pipeline",
-        icon: Cpu,
-        children: [
-          { id: "pipeline-control", label: "Control Panel" },
-          { id: "pipeline-config",  label: "Configuration" },
-          { id: "pipeline-log",     label: "Run History" },
-        ],
-      },
-      { id: "reports",  label: "Reports",   icon: FileText },
+      { id: "activity-history", label: "Activity History", icon: History },
+      { id: "pipeline-log",  label: "System Log",  icon: ScrollText },
+      { id: "reports",       label: "Reports",     icon: FileText },
     ],
   },
 ];
@@ -71,20 +61,21 @@ const NAV_GROUPS = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
-  const [expandedItems, setExpandedItems] = useState({});
 
   const currentId = Object.entries(ROUTE_MAP).find(
     ([, path]) => path === location.pathname
-  )?.[0] ?? "overview";
+  )?.[0] ?? "home";
 
-  const handleNavigate = (id) => {
+  const handleIntent = useCallback((id) => {
+    preloadRoute(id);
+  }, []);
+
+  const handleNavigate = useCallback((id) => {
     const path = ROUTE_MAP[id];
-    if (path) navigate(path);
-  };
-
-  const toggleExpand = (id) => {
-    setExpandedItems((prev) => ({ ...prev, [id]: !prev[id] }));
-  };
+    if (!path || path === location.pathname) return;
+    preloadRoute(id);
+    startTransition(() => navigate(path));
+  }, [location.pathname, navigate]);
 
   return (
     <aside className="sidebar">
@@ -116,8 +107,7 @@ export default function Sidebar() {
                 item={item}
                 activePage={currentId}
                 onNavigate={handleNavigate}
-                expanded={expandedItems[item.id]}
-                onToggle={toggleExpand}
+                onIntent={handleIntent}
               />
             ))}
           </div>
@@ -135,19 +125,19 @@ export default function Sidebar() {
   );
 }
 
-function SidebarItem({ item, activePage, onNavigate, expanded, onToggle }) {
+const SidebarItem = memo(function SidebarItem({ item, activePage, onNavigate, onIntent }) {
   const Icon = item.icon;
-  const hasChildren = item.children && item.children.length > 0;
   const isActive = activePage === item.id;
 
   return (
     <div className="sidebar-item-wrapper">
       <button
+        type="button"
         className={`sidebar-item ${isActive ? "active" : ""}`}
-        onClick={() => {
-          if (hasChildren) onToggle(item.id);
-          else onNavigate?.(item.id);
-        }}
+        onPointerEnter={() => onIntent?.(item.id)}
+        onFocus={() => onIntent?.(item.id)}
+        onMouseDown={() => onIntent?.(item.id)}
+        onClick={() => onNavigate?.(item.id)}
       >
         {Icon && (
           <span className="sidebar-item-icon">
@@ -155,26 +145,7 @@ function SidebarItem({ item, activePage, onNavigate, expanded, onToggle }) {
           </span>
         )}
         <span className="sidebar-item-label">{item.label}</span>
-        {hasChildren && (
-          <span className="sidebar-item-arrow">
-            {expanded ? <ChevronDown size={13} /> : <ChevronRight size={13} />}
-          </span>
-        )}
       </button>
-
-      {hasChildren && expanded && (
-        <div className="sidebar-children">
-          {item.children.map((child) => (
-            <button
-              key={child.id}
-              className={`sidebar-child-item ${activePage === child.id ? "active" : ""}`}
-              onClick={() => onNavigate?.(child.id)}
-            >
-              {child.label}
-            </button>
-          ))}
-        </div>
-      )}
     </div>
   );
-}
+});

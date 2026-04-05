@@ -1,55 +1,493 @@
-import React from "react";
-import StatsRow from "../components/dashboard/StatsRow";
-import DetectionStatistics from "../components/detection/DetectionStatistic";
-import { useDetectionStream } from "../hooks/useDetectionStream";
+import React, { useCallback, useEffect, useState, startTransition } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Plane, MonitorPlay, Camera, BarChart2, FolderSearch,
+  FileText, Activity, Wifi, WifiOff, AlertTriangle, CheckCircle2,
+  Layers, TrendingUp, Radio, Clock, ScrollText, History,
+} from "lucide-react";
 import { useDetectionStore } from "../stores/useDetectionStore";
-import "../styles/DashboardPage.css";
+import {
+  useActivityHistoryEntries,
+  useActivityHistorySummary,
+  useDetectionStatsOverview,
+  useDetectionStatsPerSession,
+  usePipelineStatus,
+} from "../hooks/useQueries";
+import { preloadRoute } from "../utils/routePreloaders";
 
-export default function DashboardPage() {
+/* ── helpers ── */
+function fmt(v, decimals = 0) {
+  if (v == null) return "—";
+  return typeof v === "number" ? v.toFixed(decimals) : v;
+}
+function fmtPct(v) { return v != null ? `${(v * 100).toFixed(1)}%` : "—"; }
+function fmtConf(v) { return v != null ? `${(v * 100).toFixed(1)}%` : "—"; }
 
-  // useDetectionStream hanya dipanggil untuk memastikan WS aktif;
-  // data sebenarnya dibaca langsung dari Zustand store (shared, no double state)
-  useDetectionStream();
+/* ── KPI Card ── */
+function KpiCard({ icon: Icon, iconBg, iconColor, label, value, sub, subColor }) {
+  return (
+    <div style={{
+      background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+      padding: "18px 20px", display: "flex", alignItems: "center", gap: 14,
+      boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+    }}>
+      <div style={{
+        width: 44, height: 44, borderRadius: 11, background: iconBg,
+        display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0,
+      }}>
+        <Icon size={20} color={iconColor} />
+      </div>
+      <div style={{ minWidth: 0 }}>
+        <div style={{ fontSize: "0.72rem", color: "#64748B", fontWeight: 500, marginBottom: 2 }}>{label}</div>
+        <div style={{ fontSize: "1.45rem", fontWeight: 700, color: "#1E293B", lineHeight: 1.15 }}>{value}</div>
+        {sub && <div style={{ fontSize: "0.7rem", color: subColor ?? "#94A3B8", marginTop: 2 }}>{sub}</div>}
+      </div>
+    </div>
+  );
+}
 
-  const lastPayload = useDetectionStore((s) => s.lastPayload);
+/* ── Quick Nav Card ── */
+const NavCard = React.memo(function NavCard({ icon: Icon, iconColor, iconBg, title, desc, to, onNavigate }) {
+  return (
+    <button
+      type="button"
+      onPointerEnter={() => preloadRoute(to)}
+      onFocus={() => preloadRoute(to)}
+      onMouseDown={() => preloadRoute(to)}
+      onClick={() => onNavigate(to)}
+      style={{
+        background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+        padding: "18px 18px", textAlign: "left", cursor: "pointer",
+        display: "flex", flexDirection: "column", gap: 10,
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+      }}
+    >
+      <div style={{
+        width: 38, height: 38, borderRadius: 10, background: iconBg,
+        display: "flex", alignItems: "center", justifyContent: "center",
+      }}>
+        <Icon size={17} color={iconColor} />
+      </div>
+      <div>
+        <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1E293B", marginBottom: 3 }}>{title}</div>
+        <div style={{ fontSize: "0.72rem", color: "#64748B", lineHeight: 1.4 }}>{desc}</div>
+      </div>
+    </button>
+  );
+});
 
-  const stats = [
-    { key: "views",       component: <StatsRow statKey="views" />,       bgColor: "#E8E9F3" },
-    { key: "visits",      component: <StatsRow statKey="visits" />,      bgColor: "#E3F2FD" },
-    { key: "newUsers",    component: <StatsRow statKey="newUsers" />,    bgColor: "#FFF9E6" },
-    { key: "activeUsers", component: <StatsRow statKey="activeUsers" />, bgColor: "#E8F5E9" },
-  ];
+const DashboardHero = React.memo(function DashboardHero({ connected }) {
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const timer = setInterval(() => setNow(new Date()), 1000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const hour = now.getHours();
+  const greeting = hour < 12 ? "Selamat Pagi" : hour < 17 ? "Selamat Siang" : "Selamat Malam";
+  const dateStr = now.toLocaleDateString("id-ID", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
+  const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   return (
-    <div className="dashboard">
-      {/* Header */}
-      <div className="dashboard-header">
-        <h1 className="dashboard-title">Overview</h1>
+    <div style={{
+      background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
+      border: "1px solid #E2E8F0",
+      borderRadius: 16,
+      padding: "24px 28px",
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "space-between",
+      gap: 16,
+      flexWrap: "wrap",
+      boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+    }}>
+      <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+        <div style={{
+          width: 52,
+          height: 52,
+          borderRadius: 14,
+          background: "#EFF6FF",
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+          border: "1px solid #BFDBFE",
+        }}>
+          <Plane size={26} color="#2563EB" />
+        </div>
+        <div>
+          <div style={{ fontSize: "0.78rem", color: "#64748B", marginBottom: 4 }}>{greeting}</div>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "#1E293B", letterSpacing: "-0.02em" }}>
+            FOD Detection Dashboard
+          </h1>
+          <p style={{ margin: "4px 0 0", fontSize: "0.78rem", color: "#64748B" }}>
+            Runway Safety Intelligence System
+          </p>
+        </div>
+      </div>
+      <div style={{ textAlign: "right" }}>
+        <div style={{ fontSize: "1.8rem", fontWeight: 700, color: "#1E293B", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
+          {timeStr}
+        </div>
+        <div style={{ fontSize: "0.75rem", color: "#64748B", marginTop: 2 }}>{dateStr}</div>
+        <div style={{
+          marginTop: 8,
+          display: "inline-flex",
+          alignItems: "center",
+          gap: 6,
+          padding: "4px 10px",
+          borderRadius: 20,
+          background: connected ? "#F0FDF4" : "#FEF2F2",
+          border: `1px solid ${connected ? "#BBF7D0" : "#FECACA"}`,
+        }}>
+          {connected
+            ? <><Wifi size={12} color="#16A34A" /><span style={{ fontSize: "0.72rem", color: "#16A34A", fontWeight: 600 }}>Stream Terhubung</span></>
+            : <><WifiOff size={12} color="#DC2626" /><span style={{ fontSize: "0.72rem", color: "#DC2626", fontWeight: 600 }}>Stream Terputus</span></>
+          }
+        </div>
+      </div>
+    </div>
+  );
+});
+
+export default function DashboardPage() {
+  const navigate = useNavigate();
+  const navigateFast = useCallback((to) => {
+    preloadRoute(to);
+    startTransition(() => navigate(to));
+  }, [navigate]);
+
+  /* ── Store ── */
+  const connected   = useDetectionStore((s) => s.connected);
+  const lastPayload = useDetectionStore((s) => s.lastPayload);
+
+  /* ── Queries ── */
+  const overviewQ  = useDetectionStatsOverview();
+  const sessionsQ  = useDetectionStatsPerSession();
+  const pipelineQ  = usePipelineStatus();
+  const historySummaryQ = useActivityHistorySummary();
+  const historyEntriesQ = useActivityHistoryEntries({ limit: 5, offset: 0 });
+
+  const ov       = overviewQ.data ?? {};
+  const sessions = sessionsQ.data?.sessions ?? [];
+  const ps       = pipelineQ.data;
+  const historySummary = historySummaryQ.data;
+  const recentHistory = historyEntriesQ.data?.items ?? [];
+
+  const pipelineRunning = ps?.status === "running";
+  const anomalyScore    = lastPayload?.anomaly_score ?? null;
+  const isAnomaly       = lastPayload?.anomaly_detected ?? false;
+
+  const S = {
+    page: {
+      display: "flex", flexDirection: "column", gap: 22,
+      padding: "24px 28px 48px", maxWidth: 1280, margin: "0 auto",
+      background: "#F9FAFB", minHeight: "100vh",
+      fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif",
+    },
+    sectionLabel: {
+      fontSize: "0.7rem", fontWeight: 700, color: "#94A3B8",
+      textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10,
+    },
+  };
+
+  return (
+    <div style={S.page}>
+
+      {/* ── Hero Header ── */}
+      <DashboardHero connected={connected} />
+
+      {/* ── System Status Bar ── */}
+      <div style={{
+        display: "flex", gap: 12, flexWrap: "wrap",
+        background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12,
+        padding: "14px 20px", alignItems: "center",
+        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+      }}>
+        <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginRight: 4 }}>
+          Status Sistem:
+        </span>
+
+        {/* Pipeline */}
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          padding: "4px 12px", borderRadius: 20, fontSize: "0.75rem", fontWeight: 600,
+          background: pipelineRunning ? "#F0FDF4" : "#F8FAFC",
+          border: `1px solid ${pipelineRunning ? "#86EFAC" : "#E2E8F0"}`,
+          color: pipelineRunning ? "#16A34A" : "#64748B",
+        }}>
+          <Activity size={11} />
+          Pipeline: {ps ? (pipelineRunning ? "Running" : ps.status ?? "Idle") : "—"}
+        </span>
+
+        {/* Anomaly state */}
+        <span style={{
+          display: "inline-flex", alignItems: "center", gap: 5,
+          padding: "4px 12px", borderRadius: 20, fontSize: "0.75rem", fontWeight: 600,
+          background: isAnomaly ? "#FEF2F2" : "#F0FDF4",
+          border: `1px solid ${isAnomaly ? "#FECACA" : "#86EFAC"}`,
+          color: isAnomaly ? "#DC2626" : "#16A34A",
+        }}>
+          {isAnomaly ? <AlertTriangle size={11} /> : <CheckCircle2 size={11} />}
+          {isAnomaly ? "Anomali Terdeteksi" : "Runway Aman"}
+        </span>
+
+        {/* Anomaly score */}
+        {anomalyScore != null && (
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: "4px 12px", borderRadius: 20, fontSize: "0.75rem", fontWeight: 600,
+            background: "#F5F3FF", border: "1px solid #DDD6FE", color: "#7C3AED",
+          }}>
+            <TrendingUp size={11} />
+            Score: {anomalyScore.toFixed(3)}
+          </span>
+        )}
+
+        {/* FPS */}
+        {lastPayload?.fps != null && (
+          <span style={{
+            display: "inline-flex", alignItems: "center", gap: 5,
+            padding: "4px 12px", borderRadius: 20, fontSize: "0.75rem", fontWeight: 600,
+            background: "#EFF6FF", border: "1px solid #BFDBFE", color: "#2563EB",
+          }}>
+            <Clock size={11} />
+            {lastPayload.fps.toFixed(1)} FPS
+          </span>
+        )}
       </div>
 
-      {/* Stats Row */}
-      <div className="dashboard-stats-row">
-        {stats.map((stat) => (
-          <div
-            className="dashboard-card stats-card"
-            key={stat.key}
-            style={{ backgroundColor: stat.bgColor }}
-          >
-            {stat.component}
+      {/* ── KPI Row ── */}
+      <div>
+        <div style={S.sectionLabel}>Statistik Keseluruhan</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: 14 }}>
+          <KpiCard
+            icon={AlertTriangle} iconBg="#FEF2F2" iconColor="#EF4444"
+            label="Total Deteksi FOD"
+            value={fmt(ov.total)}
+            sub="semua sesi"
+          />
+          <KpiCard
+            icon={Layers} iconBg="#EEF2FF" iconColor="#6366F1"
+            label="Sesi Diproses"
+            value={fmt(ov.total_sessions)}
+            sub="video unik"
+          />
+          <KpiCard
+            icon={BarChart2} iconBg="#FFF7ED" iconColor="#F97316"
+            label="Avg Confidence"
+            value={fmtConf(ov.avg_confidence)}
+            sub="seluruh deteksi"
+          />
+          <KpiCard
+            icon={CheckCircle2} iconBg="#F0FDF4" iconColor="#22C55E"
+            label="Confirmation Rate"
+            value={fmtPct(ov.confirmation_rate)}
+            sub="true positive"
+            subColor="#16A34A"
+          />
+        </div>
+      </div>
+
+      {/* ── Quick Navigation ── */}
+      <div>
+        <div style={S.sectionLabel}>Navigasi Cepat</div>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 14 }}>
+          <NavCard
+            icon={MonitorPlay} iconBg="#EEF2FF" iconColor="#6366F1"
+            title="Live Feed"
+            desc="Monitor kamera secara real-time dengan deteksi FOD aktif"
+            to="/live-monitor" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={Radio} iconBg="#F0FDF4" iconColor="#22C55E"
+            title="Stream"
+            desc="Kelola sumber video stream untuk analisis pipeline"
+            to="/stream" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={Camera} iconBg="#FFF7ED" iconColor="#F97316"
+            title="FOD Snapshots"
+            desc="Galeri foto deteksi FOD beserta validasi petugas"
+            to="/fod-snapshots" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={BarChart2} iconBg="#F5F3FF" iconColor="#7C3AED"
+            title="Detection Stats"
+            desc="Statistik & analitik mendetail hasil deteksi FOD"
+            to="/detection-stats" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={FolderSearch} iconBg="#EFF6FF" iconColor="#2563EB"
+            title="Inspection Log"
+            desc="Riwayat lengkap log inspeksi dan pemeriksaan runway"
+            to="/inspection-log" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={FileText} iconBg="#F0FDF4" iconColor="#0EA5E9"
+            title="Laporan"
+            desc="Generate dan ekspor laporan deteksi FOD per sesi"
+            to="/reports" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={ScrollText} iconBg="#FFFBEB" iconColor="#D97706"
+            title="System Log"
+            desc="Pantau log aktivitas sistem dan pipeline secara detail"
+            to="/pipeline/log" onNavigate={navigateFast}
+          />
+          <NavCard
+            icon={History} iconBg="#EFF6FF" iconColor="#2563EB"
+            title="Activity History"
+            desc="Riwayat upload video dan sesi streaming yang tersusun rapi"
+            to="/activity-history" onNavigate={navigateFast}
+          />
+        </div>
+      </div>
+
+      <div>
+        <div style={S.sectionLabel}>Riwayat Upload & Streaming</div>
+        <div style={{
+          background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+          overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        }}>
+          <div style={{
+            padding: "14px 16px", borderBottom: "1px solid #E2E8F0",
+            display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
+          }}>
+            <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
+              <span style={{ padding: "6px 10px", borderRadius: 999, background: "#EFF6FF", color: "#2563EB", fontSize: "0.76rem", fontWeight: 700 }}>
+                Upload: {historySummary?.total_uploads ?? "—"}
+              </span>
+              <span style={{ padding: "6px 10px", borderRadius: 999, background: "#ECFDF5", color: "#059669", fontSize: "0.76rem", fontWeight: 700 }}>
+                Stream: {historySummary?.total_stream_sessions ?? "—"}
+              </span>
+              <span style={{ padding: "6px 10px", borderRadius: 999, background: "#FFFBEB", color: "#D97706", fontSize: "0.76rem", fontWeight: 700 }}>
+                Aktif: {historySummary?.active_streams ?? "—"}
+              </span>
+            </div>
+            <button
+              type="button"
+              onPointerEnter={() => preloadRoute("/activity-history")}
+              onFocus={() => preloadRoute("/activity-history")}
+              onMouseDown={() => preloadRoute("/activity-history")}
+              onClick={() => navigateFast("/activity-history")}
+              style={{
+                padding: "8px 12px", borderRadius: 10, border: "1px solid #CBD5E1",
+                background: "#F8FAFC", color: "#1E293B", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer",
+              }}
+            >
+              Lihat Semua History
+            </button>
           </div>
-        ))}
+
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #E2E8F0", background: "#F8FAFC" }}>
+                {['Tipe', 'Nama', 'Status', 'Waktu', 'Metadata'].map((h) => (
+                  <th key={h} style={{
+                    textAlign: "left", padding: "10px 16px",
+                    color: "#64748B", fontSize: "0.7rem", fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap",
+                  }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {recentHistory.length ? recentHistory.map((item) => {
+                const statusStyle = item.status === "error"
+                  ? { bg: "#FEF2F2", color: "#DC2626" }
+                  : item.status === "running"
+                    ? { bg: "#ECFDF5", color: "#059669" }
+                    : item.status === "uploaded"
+                      ? { bg: "#EFF6FF", color: "#2563EB" }
+                      : { bg: "#FFFBEB", color: "#D97706" };
+                return (
+                  <tr key={item.id} style={{ borderBottom: "1px solid #F1F5F9" }}>
+                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#334155" }}>{item.activity_type === "upload" ? "Upload" : "Stream"}</td>
+                    <td style={{ padding: "10px 16px", color: "#1E293B" }}>{item.title}</td>
+                    <td style={{ padding: "10px 16px" }}>
+                      <span style={{ padding: "4px 8px", borderRadius: 999, background: statusStyle.bg, color: statusStyle.color, fontWeight: 700, fontSize: "0.74rem" }}>
+                        {item.status}
+                      </span>
+                    </td>
+                    <td style={{ padding: "10px 16px", color: "#64748B" }}>{item.started_at ? new Date(item.started_at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+                    <td style={{ padding: "10px 16px", color: "#64748B" }}>
+                      {item.activity_type === "upload"
+                        ? `${item.resolution ?? "—"} · ${item.total_frames ?? 0} frame`
+                        : `${item.stream_name ?? "Live Stream"}${item.detected_fod_count != null ? ` · ${item.detected_fod_count} FOD` : ""}`}
+                    </td>
+                  </tr>
+                );
+              }) : (
+                <tr>
+                  <td colSpan={5} style={{ padding: "34px 16px", textAlign: "center", color: "#94A3B8" }}>
+                    Belum ada history upload atau streaming.
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      {/* Detection Statistics */}
-      <div className="dashboard-card dashboard-traffic-col">
-        <DetectionStatistics
-          scoreHistory={lastPayload?.score_history ?? []}
-          totalFodCount={lastPayload?.total_fod_count ?? 0}
-          anomalyScore={lastPayload?.anomaly_score ?? 0}
-          recentEvents={lastPayload?.recent_events ?? []}
-          runwayAreaPct={lastPayload?.runway_area_pct ?? 0}
-        />
+      {/* ── Recent Sessions Table ── */}
+      <div>
+        <div style={S.sectionLabel}>Sesi Deteksi Terakhir</div>
+        <div style={{
+          background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+          overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        }}>
+          <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
+            <thead>
+              <tr style={{ borderBottom: "1px solid #E2E8F0", background: "#F8FAFC" }}>
+                {["#", "Sesi ID", "Tanggal Pertama Deteksi", "Jumlah FOD", "Avg Confidence"].map((h) => (
+                  <th key={h} style={{
+                    textAlign: "left", padding: "10px 16px",
+                    color: "#64748B", fontSize: "0.7rem", fontWeight: 700,
+                    textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap",
+                  }}>{h}</th>
+                ))}
+              </tr>
+            </thead>
+            <tbody>
+              {sessions.length > 0 ? sessions.slice(0, 8).map((s, i) => (
+                <tr key={s.video_id} style={{ borderBottom: "1px solid #F1F5F9" }}>
+                  <td style={{ padding: "10px 16px", color: "#6366F1", fontWeight: 700 }}>{i + 1}</td>
+                  <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: "0.75rem", color: "#374151" }}>
+                    {s.short_id?.toUpperCase() ?? s.video_id}
+                  </td>
+                  <td style={{ padding: "10px 16px", color: "#64748B" }}>
+                    {s.first_detection
+                      ? new Date(s.first_detection).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
+                      : "—"}
+                  </td>
+                  <td style={{ padding: "10px 16px", fontWeight: 700, color: "#1E293B" }}>{s.count}</td>
+                  <td style={{ padding: "10px 16px" }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
+                      <div style={{ flex: 1, height: 6, background: "#F1F5F9", borderRadius: 999, overflow: "hidden", minWidth: 60 }}>
+                        <div style={{
+                          height: "100%",
+                          width: `${(s.avg_confidence ?? 0) * 100}%`,
+                          background: (s.avg_confidence ?? 0) >= 0.7 ? "#EF4444" : (s.avg_confidence ?? 0) >= 0.4 ? "#F59E0B" : "#22C55E",
+                          borderRadius: 999,
+                        }} />
+                      </div>
+                      <span style={{ fontWeight: 700, color: "#374151", minWidth: 40 }}>{fmtConf(s.avg_confidence)}</span>
+                    </div>
+                  </td>
+                </tr>
+              )) : (
+                <tr>
+                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>
+                    Belum ada data sesi…
+                  </td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
       </div>
+
     </div>
   );
 }

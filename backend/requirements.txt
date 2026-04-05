@@ -12,7 +12,10 @@ torchvision==0.18.0
 opencv-python==4.9.0.80
 numpy==1.26.4
 scikit-learn==1.4.2          # PatchCore biasanya pakai sklearn
+scipy>=1.13.0                # morphological ops (ndimage.label, gaussian_laplace)
 Pillow==10.3.0
+ultralytics>=8.2.0           # YOLOv8 inference
+segmentation-models-pytorch>=0.3.3  # U-Net runway segmentation
 faiss-cpu                    # 10-100x faster kNN scoring (PatchCore)
 decord>=0.6.0                # 2-3x faster video decoding (GPU-capable)
 av>=12.0.0                   # PyAV — fast RTSP/RTMP stream decoding

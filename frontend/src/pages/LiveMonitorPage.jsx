@@ -1,4 +1,5 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
 import LiveMonitorPanel from "../components/monitoring/LiveMonitorPanel";
 import PipelineControlPanel from "../components/detection/PipelineControlPanel";
 import FODSnapshotGallery from "../components/FODSnapshotGallery";
@@ -7,6 +8,7 @@ import { useDetectionStore } from "../stores/useDetectionStore";
 import "../styles/LiveMonitorPage.css";
 
 export default function LiveMonitorPage() {
+  const navigate = useNavigate();
   const { connected, lastPayload, fps, frameBitmap } = useDetectionStream();
   const persistedVideoId = useDetectionStore((s) => s.persistedVideoId);
 
@@ -58,6 +60,7 @@ export default function LiveMonitorPage() {
             totalFrames={lastPayload?.total_frames ?? 0}
             elapsedSeconds={lastPayload?.elapsed_seconds ?? 0}
             videoId={lastPayload?.video_id ?? persistedVideoId}
+            onOpenMapping={(videoId) => navigate(`/fod-mapping?videoId=${encodeURIComponent(videoId)}`)}
           />
         </div>
       </div>

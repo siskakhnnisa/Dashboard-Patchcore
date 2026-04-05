@@ -56,6 +56,11 @@ const STATUS_CONFIG = {
   rejected:  { label: "False Positive", icon: XCircle,      color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
 };
 
+function getQuickValidationStaffName() {
+  const stored = sessionStorage.getItem("fsp_staff_name")?.trim();
+  return stored || "Operator";
+}
+
 /* ── Status Badge ──────────────────────────────────────────────── */
 function StatusBadge({ status }) {
   const cfg = STATUS_CONFIG[status] || STATUS_CONFIG.pending;
@@ -159,12 +164,13 @@ function DeleteButton({ showConfirm, onClick, disabled, size = "md" }) {
 }
 
 /* ── Snapshot Card ─────────────────────────────────────────────── */
-const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDeleteDone }) {
+const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDeleteDone, onQuickValidate, quickPendingId }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
   const deleteMut = useDeleteSnapshot();
   const [showConfirm, setShowConfirm] = useState(false);
+  const quickPending = quickPendingId === snap.id;
 
   function handleDelete(e) {
     e.stopPropagation();
@@ -182,6 +188,13 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDelete
         setShowConfirm(false);
       },
     });
+  }
+
+  function handleQuickValidate(status) {
+    return (e) => {
+      e.stopPropagation();
+      onQuickValidate?.(snap, status);
+    };
   }
 
   return (
@@ -233,11 +246,11 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDelete
         <div className="fsp-card-actions" onClick={e => e.stopPropagation()}>
           {vStatus === "pending" ? (
             <>
-              <button className="fsp-btn fsp-btn--confirm" onClick={() => onSelect(snap)}>
-                <CheckCircle2 size={13} /> Konfirmasi
+              <button className="fsp-btn fsp-btn--confirm" onClick={handleQuickValidate("confirmed")} disabled={quickPending}>
+                <CheckCircle2 size={13} /> {quickPending ? "Menyimpan..." : "Konfirmasi"}
               </button>
-              <button className="fsp-btn fsp-btn--reject" onClick={() => onSelect(snap)}>
-                <XCircle size={13} /> False+
+              <button className="fsp-btn fsp-btn--reject" onClick={handleQuickValidate("rejected")} disabled={quickPending}>
+                <XCircle size={13} /> {quickPending ? "Menyimpan..." : "False+"}
               </button>
             </>
           ) : (
@@ -261,12 +274,13 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDelete
 });
 
 /* ── Snapshot List Row ─────────────────────────────────────────── */
-const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, onDeleteDone }) {
+const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, onDeleteDone, onQuickValidate, quickPendingId }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
   const deleteMut = useDeleteSnapshot();
   const [showConfirm, setShowConfirm] = useState(false);
+  const quickPending = quickPendingId === snap.id;
 
   function handleDelete(e) {
     e.stopPropagation();
@@ -284,6 +298,13 @@ const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, on
         setShowConfirm(false);
       },
     });
+  }
+
+  function handleQuickValidate(status) {
+    return (e) => {
+      e.stopPropagation();
+      onQuickValidate?.(snap, status);
+    };
   }
 
   return (
@@ -315,11 +336,11 @@ const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, on
       <div className="fsp-row-cell fsp-row-cell--actions" onClick={e => e.stopPropagation()}>
         {vStatus === "pending" ? (
           <>
-            <button className="fsp-btn fsp-btn--confirm fsp-btn--sm" onClick={() => onSelect(snap)}>
-              <CheckCircle2 size={12} /> Konfirmasi
+            <button className="fsp-btn fsp-btn--confirm fsp-btn--sm" onClick={handleQuickValidate("confirmed")} disabled={quickPending}>
+              <CheckCircle2 size={12} /> {quickPending ? "Menyimpan..." : "Konfirmasi"}
             </button>
-            <button className="fsp-btn fsp-btn--reject fsp-btn--sm" onClick={() => onSelect(snap)}>
-              <XCircle size={12} /> False+
+            <button className="fsp-btn fsp-btn--reject fsp-btn--sm" onClick={handleQuickValidate("rejected")} disabled={quickPending}>
+              <XCircle size={12} /> {quickPending ? "Menyimpan..." : "False+"}
             </button>
           </>
         ) : snap.validated_by ? (
@@ -517,9 +538,12 @@ export default function FodSnapshotsPage() {
   const [selected, setSelected] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("list");
+  const [quickPendingId, setQuickPendingId] = useState(null);
+  const validateMut = useValidateSnapshot();
 
   const { data: snapshots = [], isLoading, error } = useAllSnapshots(
-    activeTab === "all" ? null : activeTab
+    activeTab === "all" ? null : activeTab,
+    { refetchInterval: false }
   );
 
   /* ── Search filter ── */
@@ -544,7 +568,7 @@ export default function FodSnapshotsPage() {
   }, [snapshots, search, sortBy]);
 
   /* ── Global counts ── */
-  const { data: allSnaps = [] } = useAllSnapshots(null);
+  const { data: allSnaps = [] } = useAllSnapshots(null, { refetchInterval: false });
   const globalCounts = useMemo(() => ({
     all:       allSnaps.length,
     pending:   allSnaps.filter(s => (s.validation_status ?? "pending") === "pending").length,
@@ -585,6 +609,24 @@ export default function FodSnapshotsPage() {
   function handleValidated(updated) {
     setSelected(prev => prev?.id === updated.id ? updated : prev);
   }
+
+  const handleQuickValidate = useCallback(async (snap, status) => {
+    if (!snap || quickPendingId != null) return;
+    setQuickPendingId(snap.id);
+    try {
+      const updated = await validateMut.mutateAsync({
+        id: snap.id,
+        status,
+        staffName: getQuickValidationStaffName(),
+        notes: null,
+      });
+      handleValidated(updated);
+    } catch (e) {
+      alert(`Gagal menyimpan validasi: ${e.message}`);
+    } finally {
+      setQuickPendingId(null);
+    }
+  }, [quickPendingId, validateMut]);
 
   return (
     <div className="fsp">
@@ -717,6 +759,8 @@ export default function FodSnapshotsPage() {
                 snap={snap}
                 onSelect={setSelected}
                 onDeleteDone={() => setSelected(null)}
+                onQuickValidate={handleQuickValidate}
+                quickPendingId={quickPendingId}
               />
             ))}
           </div>
@@ -739,6 +783,8 @@ export default function FodSnapshotsPage() {
                 snap={snap}
                 onSelect={setSelected}
                 onDeleteDone={() => setSelected(null)}
+                onQuickValidate={handleQuickValidate}
+                quickPendingId={quickPendingId}
               />
             ))}
           </div>

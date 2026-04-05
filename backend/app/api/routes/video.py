@@ -1,5 +1,6 @@
 from fastapi import APIRouter, UploadFile, File, HTTPException
 from app.services.video_reader import save_uploaded_video
+from app.services.activity_history import record_upload_history
 from app.schemas.detection import UploadResponse
 from app.config import settings
 
@@ -29,7 +30,8 @@ async def upload_video(file: UploadFile = File(...)):
         )
     
     # Simpan file
-    metadata = await save_uploaded_video(content, file.filename)
+    metadata = await save_uploaded_video(content, file.filename, file.content_type)
+    record_upload_history(metadata, size_mb=size_mb)
     
     return UploadResponse(
         success=True,

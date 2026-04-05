@@ -15,6 +15,7 @@ from fastapi import WebSocket
 from app.services.stream_reader import StreamReader
 from app.services.frame_processor import FrameProcessor
 from app.services.event_logger import FODEventLogger
+from app.services.activity_history import finalize_stream_history
 from app.schemas.detection import PipelineStatus
 from app.config import settings
 from app.core.logger import logger
@@ -44,6 +45,7 @@ class StreamPipelineManager:
         self._running = False
         self._task: Optional[asyncio.Task] = None
         self._paused = False
+        self.history_entry_id: Optional[int] = None
 
         # Metrics
         self._start_time: float = 0
@@ -93,6 +95,8 @@ class StreamPipelineManager:
                 pass
         self.reader.release()
         self.status = PipelineStatus.STOPPED
+        finalize_stream_history(self.history_entry_id, "stopped", self.get_status())
+        self.history_entry_id = None
         logger.info("Stream pipeline stopped")
         await self._broadcast({"type": "status", "status": "stopped", "stream_name": self.stream_name})
 
@@ -227,6 +231,8 @@ class StreamPipelineManager:
             tb = traceback.format_exc()
             logger.error(f"Stream pipeline error: {e}\n{tb}")
             self.status = PipelineStatus.ERROR
+            finalize_stream_history(self.history_entry_id, "error", self.get_status(), error_message=str(e))
+            self.history_entry_id = None
             await self._broadcast({
                 "type": "error",
                 "pipeline_status": "error",
