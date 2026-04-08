@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime, JSON, Float
+from sqlalchemy import Column, Integer, String, DateTime, JSON, Float, Index
 from app.db import Base
 import datetime
 
@@ -23,3 +23,9 @@ class FODSnapshot(Base):
     validated_by      = Column(String,   nullable=True)    # nama staff
     validated_at      = Column(DateTime, nullable=True)
     validation_notes  = Column(String,   nullable=True)    # catatan opsional
+
+    __table_args__ = (
+        Index('ix_fod_snapshots_created_at', 'created_at'),
+        Index('ix_fod_snapshots_validation_status', 'validation_status'),
+        Index('ix_fod_snapshots_video_id', 'video_id'),
+    )

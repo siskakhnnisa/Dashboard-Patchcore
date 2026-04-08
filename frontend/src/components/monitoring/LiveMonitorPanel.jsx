@@ -3,7 +3,8 @@ import React, { useEffect, useRef } from "react";
 import "../../styles/LiveMonitorPanel.css";
 
 const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
-  frameBitmap, anomalyDetected, bboxes, fps, connected, pipelineError, pipelineStatus
+  frameBitmap, anomalyDetected, bboxes, fps, connected, pipelineError, pipelineStatus,
+  hideHeader = false, variant = "live", uploading = false,
 }) {
   const canvasRef = useRef(null);
 
@@ -39,13 +40,19 @@ const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
   });
 
   return (
-    <div className={`live-monitor${anomalyDetected ? " alert-state" : ""}`}>
+    <div className={`live-monitor variant-${variant}${anomalyDetected ? " alert-state" : ""}`}>
 
-      {/* ── Header ── */}
+      {/* ── Header (hidden in toolbar mode) ── */}
+      {!hideHeader && (
       <div className="monitor-header">
         <div className="monitor-header-left">
           <span className={`monitor-live-dot${connected ? " live" : ""}`} />
-          <span className="monitor-title">Runway Live Monitor</span>
+          <span
+            className="monitor-title"
+            style={{ color: connected ? "#22C55E" : undefined }}
+          >
+            Runway Live Monitor
+          </span>
           {connected && fps > 0 && (
             <span className="monitor-meta">
               <span className="monitor-meta-sep">·</span> {fps} FPS
@@ -72,6 +79,7 @@ const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
           )}
         </div>
       </div>
+      )}
 
       {/* ── Video Feed ── */}
       <div className="monitor-feed">
@@ -94,8 +102,38 @@ const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
           }}
         />
 
-        {/* Placeholder when no frame */}
-        {!frameBitmap && (
+        {/* Upload overlay — centered, prominent */}
+        {uploading && (
+          <div className="monitor-overlay monitor-overlay--uploading">
+            <div className="monitor-overlay-spinner" />
+            <span className="monitor-overlay-title">Mengupload Video</span>
+            <span className="monitor-overlay-desc">Mohon tunggu, file sedang diunggah ke server…</span>
+          </div>
+        )}
+
+        {/* Processing overlay — when pipeline started but no frame yet */}
+        {!uploading && !frameBitmap && pipelineStatus === "running" && (
+          <div className="monitor-overlay monitor-overlay--processing">
+            <div className="monitor-overlay-spinner monitor-overlay-spinner--green" />
+            <span className="monitor-overlay-title" style={{ color: "#22c55e" }}>Memproses Video</span>
+            <span className="monitor-overlay-desc">Pipeline sedang berjalan, menunggu frame pertama…</span>
+          </div>
+        )}
+
+        {/* Paused overlay */}
+        {!uploading && pipelineStatus === "paused" && (
+          <div className="monitor-overlay monitor-overlay--paused">
+            <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="rgba(234,179,8,0.7)" strokeWidth="1.5">
+              <rect x="6" y="4" width="4" height="16" rx="1" />
+              <rect x="14" y="4" width="4" height="16" rx="1" />
+            </svg>
+            <span className="monitor-overlay-title" style={{ color: "#eab308" }}>Pipeline Di-pause</span>
+            <span className="monitor-overlay-desc">Tekan RESUME untuk melanjutkan deteksi</span>
+          </div>
+        )}
+
+        {/* Placeholder when no frame (and not uploading/processing/paused) */}
+        {!uploading && !frameBitmap && pipelineStatus !== "running" && pipelineStatus !== "paused" && (
           <div style={{
             position: "absolute",
             inset: 0,
@@ -103,50 +141,38 @@ const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
             flexDirection: "column",
             alignItems: "center",
             justifyContent: "center",
-            gap: 10,
+            gap: 14,
           }}>
             {pipelineError ? (
               <>
-                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
                   stroke="rgba(255,60,60,0.7)" strokeWidth="1.5">
                   <circle cx="12" cy="12" r="10"/>
                   <path d="M12 8v4M12 16h.01"/>
                 </svg>
-                <span className="hud-text" style={{ fontSize: "11px", color: "#ff5555" }}>
+                <span className="hud-text" style={{ fontSize: "16px", fontWeight: 600, color: "#ff5555", letterSpacing: "-0.01em" }}>
                   Pipeline Error
                 </span>
-                <span className="hud-text" style={{ fontSize: "10px", opacity: 0.6, maxWidth: 280, textAlign: "center" }}>
+                <span className="hud-text" style={{ fontSize: "12px", opacity: 0.65, maxWidth: 300, textAlign: "center", lineHeight: 1.5 }}>
                   {pipelineError}
                 </span>
               </>
             ) : !connected ? (
               <>
-                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
                   stroke="rgba(255,200,0,0.5)" strokeWidth="1.2">
                   <circle cx="12" cy="12" r="10"/>
                   <path d="M12 8v4M12 16h.01"/>
                 </svg>
-                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
+                <span className="hud-text" style={{ fontSize: "15px", opacity: 0.75 }}>
                   Menghubungkan ke server…
-                </span>
-              </>
-            ) : pipelineStatus === "running" ? (
-              <>
-                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
-                  stroke="rgba(100,220,100,0.35)" strokeWidth="1.2">
-                  <circle cx="12" cy="12" r="10"/>
-                  <circle cx="12" cy="12" r="6"/>
-                  <circle cx="12" cy="12" r="2"/>
-                </svg>
-                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
-                  Loading frame pertama…
                 </span>
               </>
             ) : (
               <>
                 {/* Animated radar icon */}
-                <svg width="38" height="38" viewBox="0 0 24 24" fill="none"
-                  stroke="rgba(100,220,100,0.35)" strokeWidth="1.2">
+                <svg width="52" height="52" viewBox="0 0 24 24" fill="none"
+                  stroke="rgba(100,220,100,0.45)" strokeWidth="1.2">
                   <circle cx="12" cy="12" r="10"/>
                   <circle cx="12" cy="12" r="6"/>
                   <circle cx="12" cy="12" r="2"/>
@@ -155,7 +181,7 @@ const LiveMonitorPanel = React.memo(function LiveMonitorPanel({
                   <line x1="2"  y1="12" x2="6"  y2="12"/>
                   <line x1="18" y1="12" x2="22" y2="12"/>
                 </svg>
-                <span className="hud-text" style={{ fontSize: "11px", opacity: 0.6 }}>
+                <span className="hud-text" style={{ fontSize: "14px", opacity: 0.8, maxWidth: 280, textAlign: "center", lineHeight: 1.5 }}>
                   Upload video dan tekan START untuk memulai deteksi
                 </span>
               </>

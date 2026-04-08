@@ -44,6 +44,18 @@ async def stop_pipeline():
     await pipeline_manager.stop_pipeline()
     return {"success": True, "message": "Pipeline dihentikan"}
 
+@router.post("/pause")
+async def pause_pipeline():
+    """Pause pipeline yang sedang berjalan."""
+    await pipeline_manager.pause_pipeline()
+    return {"success": True, "message": "Pipeline di-pause"}
+
+@router.post("/resume")
+async def resume_pipeline():
+    """Resume pipeline dari pause."""
+    await pipeline_manager.resume_pipeline()
+    return {"success": True, "message": "Pipeline di-resume"}
+
 @router.get("/status", response_model=PipelineStatusResponse)
 async def get_status():
     """

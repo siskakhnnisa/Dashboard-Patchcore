@@ -1,5 +1,8 @@
-import React, { useState, useMemo, useCallback } from "react";
-import { useAllSnapshots, useValidateSnapshot, useDeleteSnapshot } from "../hooks/useQueries";
+import React, { useState, useMemo, useCallback, useRef, useEffect } from "react";
+import {
+  useAllSnapshots, useValidateSnapshot, useDeleteSnapshot,
+  useBulkValidateSnapshots, useBulkDeleteSnapshots,
+} from "../hooks/useQueries";
 import {
   Camera,
   Search,
@@ -13,6 +16,9 @@ import {
   List,
   Download,
   Trash2,
+  Square,
+  CheckSquare,
+  MinusSquare,
 } from "lucide-react";
 import "../styles/FodSnapshotsPage.css";
 
@@ -56,10 +62,7 @@ const STATUS_CONFIG = {
   rejected:  { label: "False Positive", icon: XCircle,      color: "#DC2626", bg: "#FEF2F2", border: "#FECACA" },
 };
 
-function getQuickValidationStaffName() {
-  const stored = sessionStorage.getItem("fsp_staff_name")?.trim();
-  return stored || "Operator";
-}
+
 
 /* ── Status Badge ──────────────────────────────────────────────── */
 function StatusBadge({ status }) {
@@ -164,44 +167,24 @@ function DeleteButton({ showConfirm, onClick, disabled, size = "md" }) {
 }
 
 /* ── Snapshot Card ─────────────────────────────────────────────── */
-const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDeleteDone, onQuickValidate, quickPendingId }) {
+const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, isSelected, onToggleSelect }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
-  const deleteMut = useDeleteSnapshot();
-  const [showConfirm, setShowConfirm] = useState(false);
-  const quickPending = quickPendingId === snap.id;
-
-  function handleDelete(e) {
-    e.stopPropagation();
-    if (!showConfirm) {
-      setShowConfirm(true);
-      return;
-    }
-    deleteMut.mutate(snap.id, {
-      onSuccess: () => {
-        setShowConfirm(false);
-        onDeleteDone?.();
-      },
-      onError: (err) => {
-        alert(`Gagal menghapus: ${err.message}`);
-        setShowConfirm(false);
-      },
-    });
-  }
-
-  function handleQuickValidate(status) {
-    return (e) => {
-      e.stopPropagation();
-      onQuickValidate?.(snap, status);
-    };
-  }
 
   return (
-    <div className={`fsp-card fsp-card--${vStatus}`}
+    <div className={`fsp-card fsp-card--${vStatus}${isSelected ? " fsp-card--selected" : ""}`}
       onClick={() => onSelect(snap)} role="button" tabIndex={0}
       onKeyDown={e => e.key === "Enter" && onSelect(snap)}>
       <div className="fsp-card-img-wrap">
+        <button
+          className={`fsp-card-check${isSelected ? " fsp-card-check--on" : ""}`}
+          onClick={e => { e.stopPropagation(); onToggleSelect?.(snap.id); }}
+          aria-label={isSelected ? "Batalkan pilih" : "Pilih"}
+          tabIndex={-1}
+        >
+          {isSelected ? <CheckSquare size={16} /> : <Square size={16} />}
+        </button>
         <ImgWithFallback
           src={`${API_BASE}/snapshots/${snap.image_path}`}
           alt={`FOD #${snap.id}`}
@@ -242,75 +225,36 @@ const SnapshotCard = React.memo(function SnapshotCard({ snap, onSelect, onDelete
           </div>
         </div>
 
-        {/* ── Aksi bawah card ── */}
-        <div className="fsp-card-actions" onClick={e => e.stopPropagation()}>
-          {vStatus === "pending" ? (
-            <>
-              <button className="fsp-btn fsp-btn--confirm" onClick={handleQuickValidate("confirmed")} disabled={quickPending}>
-                <CheckCircle2 size={13} /> {quickPending ? "Menyimpan..." : "Konfirmasi"}
-              </button>
-              <button className="fsp-btn fsp-btn--reject" onClick={handleQuickValidate("rejected")} disabled={quickPending}>
-                <XCircle size={13} /> {quickPending ? "Menyimpan..." : "False+"}
-              </button>
-            </>
-          ) : (
-            snap.validated_by && (
-              <div className="fsp-card-validator">
-                oleh {snap.validated_by}
-              </div>
-            )
-          )}
-          {/* Tombol Hapus — selalu tampil, tanpa guard apapun */}
-          <DeleteButton
-            showConfirm={showConfirm}
-            onClick={handleDelete}
-            disabled={deleteMut.isPending}
-            size="sm"
-          />
-        </div>
+        {snap.validated_by && (
+          <div className="fsp-card-validator">
+            oleh {snap.validated_by}
+          </div>
+        )}
       </div>
     </div>
   );
 });
 
 /* ── Snapshot List Row ─────────────────────────────────────────── */
-const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, onDeleteDone, onQuickValidate, quickPendingId }) {
+const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, isSelected, onToggleSelect }) {
   const sev = getSeverity(snap.confidence);
   const sevColor = sev === "high" ? "#DC2626" : sev === "medium" ? "#D97706" : "#059669";
   const vStatus = snap.validation_status ?? "pending";
-  const deleteMut = useDeleteSnapshot();
-  const [showConfirm, setShowConfirm] = useState(false);
-  const quickPending = quickPendingId === snap.id;
-
-  function handleDelete(e) {
-    e.stopPropagation();
-    if (!showConfirm) {
-      setShowConfirm(true);
-      return;
-    }
-    deleteMut.mutate(snap.id, {
-      onSuccess: () => {
-        setShowConfirm(false);
-        onDeleteDone?.();
-      },
-      onError: (err) => {
-        alert(`Gagal menghapus: ${err.message}`);
-        setShowConfirm(false);
-      },
-    });
-  }
-
-  function handleQuickValidate(status) {
-    return (e) => {
-      e.stopPropagation();
-      onQuickValidate?.(snap, status);
-    };
-  }
 
   return (
-    <div className={`fsp-row fsp-row--${vStatus}`}
+    <div className={`fsp-row fsp-row--${vStatus}${isSelected ? " fsp-row--selected" : ""}`}
       onClick={() => onSelect(snap)} role="button" tabIndex={0}
       onKeyDown={e => e.key === "Enter" && onSelect(snap)}>
+      <div className="fsp-row-check" onClick={e => e.stopPropagation()}>
+        <button
+          className={`fsp-check-btn${isSelected ? " fsp-check-btn--on" : ""}`}
+          onClick={() => onToggleSelect?.(snap.id)}
+          tabIndex={-1}
+          aria-label={isSelected ? "Batalkan pilih" : "Pilih"}
+        >
+          {isSelected ? <CheckSquare size={15} /> : <Square size={15} />}
+        </button>
+      </div>
       <div className="fsp-row-thumb">
         <ImgWithFallback
           src={`${API_BASE}/snapshots/${snap.image_path}`}
@@ -332,27 +276,9 @@ const SnapshotListRow = React.memo(function SnapshotListRow({ snap, onSelect, on
       </div>
       <div className="fsp-row-cell fsp-row-cell--status">
         <StatusBadge status={vStatus} />
-      </div>
-      <div className="fsp-row-cell fsp-row-cell--actions" onClick={e => e.stopPropagation()}>
-        {vStatus === "pending" ? (
-          <>
-            <button className="fsp-btn fsp-btn--confirm fsp-btn--sm" onClick={handleQuickValidate("confirmed")} disabled={quickPending}>
-              <CheckCircle2 size={12} /> {quickPending ? "Menyimpan..." : "Konfirmasi"}
-            </button>
-            <button className="fsp-btn fsp-btn--reject fsp-btn--sm" onClick={handleQuickValidate("rejected")} disabled={quickPending}>
-              <XCircle size={12} /> {quickPending ? "Menyimpan..." : "False+"}
-            </button>
-          </>
-        ) : snap.validated_by ? (
+        {snap.validated_by && (
           <span className="fsp-row-validator">oleh {snap.validated_by}</span>
-        ) : null}
-        {/* Tombol Hapus di list row — selalu tampil */}
-        <DeleteButton
-          showConfirm={showConfirm}
-          onClick={handleDelete}
-          disabled={deleteMut.isPending}
-          size="sm"
-        />
+        )}
       </div>
     </div>
   );
@@ -521,7 +447,97 @@ function DetailRow({ label, value }) {
     </div>
   );
 }
+/* ── Bulk Action Bar ───────────────────────────────────────────────── */
+function BulkActionBar({
+  selectedCount, pageCount, allPageSelected,
+  onSelectPage, onClearAll,
+  onConfirm, onReject, onDelete,
+  isPending, pendingAction,
+}) {
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [staffInput, setStaffInput] = useState(
+    () => sessionStorage.getItem("fsp_staff_name") ?? "Operator"
+  );
 
+  function handleStaffChange(val) {
+    setStaffInput(val);
+    sessionStorage.setItem("fsp_staff_name", val);
+  }
+
+  function handleDeleteClick() {
+    if (!deleteConfirm) { setDeleteConfirm(true); return; }
+    setDeleteConfirm(false);
+    onDelete();
+  }
+
+  useEffect(() => {
+    if (!isPending) setDeleteConfirm(false);
+  }, [isPending]);
+
+  return (
+    <div className="fsp-bulk-bar">
+      <div className="fsp-bulk-bar-left">
+        <span className="fsp-bulk-count">
+          <CheckSquare size={14} />
+          {selectedCount} item dipilih
+        </span>
+        <div className="fsp-bulk-links">
+          {!allPageSelected && (
+            <button className="fsp-bulk-link" onClick={onSelectPage}>
+              Pilih semua {pageCount} di halaman ini
+            </button>
+          )}
+          <button className="fsp-bulk-link fsp-bulk-link--clear" onClick={onClearAll}>
+            <X size={11} /> Batalkan
+          </button>
+        </div>
+      </div>
+
+      <div className="fsp-bulk-bar-mid">
+        <label className="fsp-bulk-staff-label">Staff:</label>
+        <input
+          className="fsp-bulk-staff-input"
+          value={staffInput}
+          onChange={e => handleStaffChange(e.target.value)}
+          placeholder="Nama operator..."
+          disabled={isPending}
+        />
+      </div>
+
+      <div className="fsp-bulk-bar-right">
+        {isPending ? (
+          <div className="fsp-bulk-pending">
+            <div className="fsp-spinner fsp-spinner--sm" />
+            <span>{pendingAction === "delete" ? "Menghapus..." : "Memvalidasi..."}</span>
+          </div>
+        ) : (
+          <>
+            <button
+              className="fsp-bulk-btn fsp-bulk-btn--confirm"
+              onClick={() => onConfirm(staffInput)}
+            >
+              <CheckCircle2 size={13} /> Konfirmasi FOD
+            </button>
+            <button
+              className="fsp-bulk-btn fsp-bulk-btn--reject"
+              onClick={() => onReject(staffInput)}
+            >
+              <XCircle size={13} /> False Positive
+            </button>
+            <button
+              className={`fsp-bulk-btn ${deleteConfirm ? "fsp-bulk-btn--delete-confirm" : "fsp-bulk-btn--delete"}`}
+              onClick={handleDeleteClick}
+              title={deleteConfirm ? "Klik lagi untuk konfirmasi hapus" : "Hapus semua yang dipilih"}
+            >
+              <Trash2 size={13} />
+              {deleteConfirm ? `Hapus ${selectedCount}? Konfirmasi` : `Hapus (${selectedCount})`}
+            </button>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
 /* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
@@ -538,17 +554,23 @@ export default function FodSnapshotsPage() {
   const [selected, setSelected] = useState(null);
   const [sortBy, setSortBy] = useState("newest");
   const [viewMode, setViewMode] = useState("list");
-  const [quickPendingId, setQuickPendingId] = useState(null);
-  const validateMut = useValidateSnapshot();
+  const [page, setPage] = useState(0);
+  const [selectedIds, setSelectedIds] = useState(() => new Set());
+  const [bulkPending, setBulkPending] = useState(false);
+  const [bulkPendingAction, setBulkPendingAction] = useState(null);
+  const bulkValidateMut = useBulkValidateSnapshots();
+  const bulkDeleteMut = useBulkDeleteSnapshots();
 
-  const { data: snapshots = [], isLoading, error } = useAllSnapshots(
-    activeTab === "all" ? null : activeTab,
-    { refetchInterval: false }
-  );
+  const PAGE_SIZE = 50;
 
-  /* ── Search filter ── */
+  // Single query — fetch all snapshots, filter client-side to avoid duplicate requests
+  const { data: allSnaps = [], isLoading, error } = useAllSnapshots(null, { refetchInterval: false });
+
+  /* ── Search + tab filter ── */
   const filteredSnaps = useMemo(() => {
-    let items = [...snapshots];
+    let items = activeTab === "all"
+      ? [...allSnaps]
+      : allSnaps.filter(s => (s.validation_status ?? "pending") === activeTab);
     if (search.trim()) {
       const q = search.toLowerCase();
       items = items.filter(s =>
@@ -565,10 +587,23 @@ export default function FodSnapshotsPage() {
       items.sort((a, b) => (b.confidence ?? 0) - (a.confidence ?? 0));
     }
     return items;
-  }, [snapshots, search, sortBy]);
+  }, [allSnaps, activeTab, search, sortBy]);
 
-  /* ── Global counts ── */
-  const { data: allSnaps = [] } = useAllSnapshots(null, { refetchInterval: false });
+  // Reset ke halaman pertama jika filter/tab/search berubah
+  const prevFilterKey = useRef(null);
+  const filterKey = `${activeTab}|${search}|${sortBy}`;
+  if (prevFilterKey.current !== filterKey) {
+    prevFilterKey.current = filterKey;
+    if (page !== 0) setPage(0);
+  }
+
+  const totalPages = Math.ceil(filteredSnaps.length / PAGE_SIZE);
+  const pagedSnaps = filteredSnaps.slice(page * PAGE_SIZE, (page + 1) * PAGE_SIZE);
+
+  const allPageSelected = pagedSnaps.length > 0 && pagedSnaps.every(s => selectedIds.has(s.id));
+  const somePageSelected = pagedSnaps.some(s => selectedIds.has(s.id));
+
+  /* ── Global counts (derived from same dataset — no second fetch) ── */
   const globalCounts = useMemo(() => ({
     all:       allSnaps.length,
     pending:   allSnaps.filter(s => (s.validation_status ?? "pending") === "pending").length,
@@ -610,23 +645,56 @@ export default function FodSnapshotsPage() {
     setSelected(prev => prev?.id === updated.id ? updated : prev);
   }
 
-  const handleQuickValidate = useCallback(async (snap, status) => {
-    if (!snap || quickPendingId != null) return;
-    setQuickPendingId(snap.id);
+  const toggleSelect = useCallback((id) => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      next.has(id) ? next.delete(id) : next.add(id);
+      return next;
+    });
+  }, []);
+
+  const selectPage = useCallback(() => {
+    setSelectedIds(prev => {
+      const next = new Set(prev);
+      pagedSnaps.forEach(s => next.add(s.id));
+      return next;
+    });
+  }, [pagedSnaps]);
+
+  const clearSelection = useCallback(() => setSelectedIds(new Set()), []);
+
+  const handleBulkValidate = useCallback(async (status, staffName) => {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    setBulkPending(true);
+    setBulkPendingAction(status === "confirmed" ? "confirm" : "reject");
     try {
-      const updated = await validateMut.mutateAsync({
-        id: snap.id,
-        status,
-        staffName: getQuickValidationStaffName(),
-        notes: null,
-      });
-      handleValidated(updated);
+      await bulkValidateMut.mutateAsync({ ids, status, staffName });
+      clearSelection();
     } catch (e) {
-      alert(`Gagal menyimpan validasi: ${e.message}`);
+      alert(`Gagal validasi massal: ${e.message}`);
     } finally {
-      setQuickPendingId(null);
+      setBulkPending(false);
+      setBulkPendingAction(null);
     }
-  }, [quickPendingId, validateMut]);
+  }, [selectedIds, bulkValidateMut, clearSelection]);
+
+  const handleBulkDelete = useCallback(async () => {
+    const ids = [...selectedIds];
+    if (!ids.length) return;
+    setBulkPending(true);
+    setBulkPendingAction("delete");
+    try {
+      await bulkDeleteMut.mutateAsync(ids);
+      clearSelection();
+      setSelected(null);
+    } catch (e) {
+      alert(`Gagal hapus massal: ${e.message}`);
+    } finally {
+      setBulkPending(false);
+      setBulkPendingAction(null);
+    }
+  }, [selectedIds, bulkDeleteMut, clearSelection]);
 
   return (
     <div className="fsp">
@@ -753,14 +821,13 @@ export default function FodSnapshotsPage() {
         )}
         {!isLoading && !error && filteredSnaps.length > 0 && viewMode === "grid" && (
           <div className="fsp-grid">
-            {filteredSnaps.map(snap => (
+            {pagedSnaps.map(snap => (
               <SnapshotCard
                 key={snap.id}
                 snap={snap}
                 onSelect={setSelected}
-                onDeleteDone={() => setSelected(null)}
-                onQuickValidate={handleQuickValidate}
-                quickPendingId={quickPendingId}
+                isSelected={selectedIds.has(snap.id)}
+                onToggleSelect={toggleSelect}
               />
             ))}
           </div>
@@ -768,6 +835,20 @@ export default function FodSnapshotsPage() {
         {!isLoading && !error && filteredSnaps.length > 0 && viewMode === "list" && (
           <div className="fsp-list">
             <div className="fsp-list-header">
+              <div className="fsp-lh-check">
+                <button
+                  className={`fsp-check-btn${allPageSelected ? " fsp-check-btn--on" : somePageSelected ? " fsp-check-btn--partial" : ""}`}
+                  onClick={allPageSelected ? clearSelection : selectPage}
+                  title={allPageSelected ? "Batalkan pilih semua di halaman ini" : "Pilih semua di halaman ini"}
+                  tabIndex={-1}
+                >
+                  {allPageSelected
+                    ? <CheckSquare size={15} />
+                    : somePageSelected
+                      ? <MinusSquare size={15} />
+                      : <Square size={15} />}
+                </button>
+              </div>
               <div className="fsp-lh-thumb" />
               <div className="fsp-lh-id">ID</div>
               <div className="fsp-lh-cell">Label</div>
@@ -775,21 +856,58 @@ export default function FodSnapshotsPage() {
               <div className="fsp-lh-cell">Tanggal</div>
               <div className="fsp-lh-cell">Video</div>
               <div className="fsp-lh-cell">Status</div>
-              <div className="fsp-lh-cell">Aksi</div>
             </div>
-            {filteredSnaps.map(snap => (
+            {pagedSnaps.map(snap => (
               <SnapshotListRow
                 key={snap.id}
                 snap={snap}
                 onSelect={setSelected}
-                onDeleteDone={() => setSelected(null)}
-                onQuickValidate={handleQuickValidate}
-                quickPendingId={quickPendingId}
+                isSelected={selectedIds.has(snap.id)}
+                onToggleSelect={toggleSelect}
               />
             ))}
           </div>
         )}
-      </div>
+
+        {/* ── Pagination ── */}
+        {!isLoading && !error && totalPages > 1 && (
+          <div className="fsp-pagination">
+            <button
+              className="fsp-page-btn"
+              disabled={page === 0}
+              onClick={() => setPage(p => Math.max(0, p - 1))}>
+              ← Sebelumnya
+            </button>
+            <span className="fsp-page-info">
+              Halaman {page + 1} / {totalPages}
+              <span className="fsp-page-count"> ({filteredSnaps.length} total)</span>
+            </span>
+            <button
+              className="fsp-page-btn"
+              disabled={page >= totalPages - 1}
+              onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}>
+              Berikutnya →
+            </button>
+          </div>
+        )}
+
+      </div>{/* end fsp-content */}
+
+      {/* ── Bulk Action Bar (floating fixed) ── */}
+      {selectedIds.size > 0 && (
+        <BulkActionBar
+          selectedCount={selectedIds.size}
+          pageCount={pagedSnaps.length}
+          allPageSelected={allPageSelected}
+          onSelectPage={selectPage}
+          onClearAll={clearSelection}
+          onConfirm={(staff) => handleBulkValidate("confirmed", staff)}
+          onReject={(staff) => handleBulkValidate("rejected", staff)}
+          onDelete={handleBulkDelete}
+          isPending={bulkPending}
+          pendingAction={bulkPendingAction}
+        />
+      )}
 
       {/* ── Modal ── */}
       {selected && (

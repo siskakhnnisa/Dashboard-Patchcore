@@ -1,10 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import { useStreamDetection } from "../hooks/useStreamDetection";
-import { useStreamStore } from "../stores/useStreamStore";
 import {
-  Radio, Play, Square, Pause, PlayCircle, Wifi, WifiOff,
+  Radio, Play, Square, Pause, PlayCircle, Wifi,
   AlertTriangle, Shield, Clock, Zap, Eye, Settings2,
   RefreshCw, CheckCircle2, TrendingUp, Activity, Link2,
+  ChevronLeft, ChevronRight,
 } from "lucide-react";
 
 import LiveMonitorPanel from "../components/monitoring/LiveMonitorPanel";
@@ -31,96 +31,31 @@ const PRESET_STREAMS = [
 
 
 /* ═══════════════════════════════════════════════════════════════
-   SCORE SPARKLINE — Real-time anomaly score mini-chart
-   ═══════════════════════════════════════════════════════════════ */
-function ScoreSparkline({ scoreHistory, threshold = 0.5 }) {
-  const data = (scoreHistory || []).map((v, i) => ({ idx: i, score: v }));
-  if (data.length === 0) return <div className="stream-sparkline-empty">No data</div>;
-  return (
-    <ResponsiveContainer width="100%" height={80}>
-      <AreaChart data={data} margin={{ top: 4, right: 4, left: 4, bottom: 4 }}>
-        <defs>
-          <linearGradient id="sparkGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor="#6366F1" stopOpacity={0.4} />
-            <stop offset="95%" stopColor="#6366F1" stopOpacity={0} />
-          </linearGradient>
-        </defs>
-        <Area type="monotone" dataKey="score" stroke="#6366F1" fill="url(#sparkGrad)" strokeWidth={1.5} dot={false} />
-        <ReferenceLine y={threshold} stroke="#EF4444" strokeDasharray="4 4" strokeWidth={1} />
-        <Tooltip
-          contentStyle={{ background: "#1E293B", border: "1px solid rgba(255,255,255,0.1)", borderRadius: 8, fontSize: 11, padding: "4px 8px" }}
-          labelStyle={{ display: "none" }}
-          formatter={(v) => [(v * 100).toFixed(1) + "%", "Score"]}
-        />
-      </AreaChart>
-    </ResponsiveContainer>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
-   RECENT EVENT LIST
-   ═══════════════════════════════════════════════════════════════ */
-function RecentEventsList({ events }) {
-  const list = events || [];
-  if (list.length === 0) {
-    return (
-      <div className="stream-events-empty">
-        <Clock size={16} />
-        <span>Menunggu deteksi FOD...</span>
-      </div>
-    );
-  }
-  return (
-    <div className="stream-events-list">
-      {list.slice(0, 8).map((evt, i) => {
-        const sev = evt.severity || "LOW";
-        const color = sev === "HIGH" ? "#EF4444" : sev === "MEDIUM" ? "#F59E0B" : "#22C55E";
-        return (
-          <div key={i} className="stream-event-item">
-            <div className="stream-event-dot" style={{ background: color }} />
-            <div className="stream-event-body">
-              <span className="stream-event-time">{evt.time_str}</span>
-              <span className="stream-event-text">
-                Frame #{evt.frame_id} — {evt.fod_count} FOD — {(evt.max_score * 100).toFixed(0)}%
-              </span>
-            </div>
-            <span className="stream-event-badge" style={{ color, background: color + "18" }}>
-              {sev}
-            </span>
-          </div>
-        );
-      })}
-    </div>
-  );
-}
-
-/* ═══════════════════════════════════════════════════════════════
    MAIN PAGE
    ═══════════════════════════════════════════════════════════════ */
+
 export default function StreamPage() {
   const [streamUrl, setStreamUrl] = useState("");
   const [streamName, setStreamName] = useState("Drone Feed");
   const [threshold, setThreshold] = useState(0.5);
   const [testing, setTesting] = useState(false);
   const [testResult, setTestResult] = useState(null);
-  const [streamStatus, setStreamStatus] = useState(null);
+  const [configOpen, setConfigOpen] = useState(true);
+  const [starting, setStarting] = useState(false);
 
   const { connected, lastPayload, fps, frameBitmap } = useStreamDetection(true);
 
-  const pipelineStatus = lastPayload?.pipeline_status ?? streamStatus?.status ?? "idle";
-  const isRunning = pipelineStatus === "running";
-  const isPaused = streamStatus?.paused ?? false;
+  // Stream status is received live via WebSocket in lastPayload; no separate poll needed
+  const streamStatus = null;
 
-  // Poll stream status
+  const pipelineStatus = lastPayload?.pipeline_status ?? "idle";
+  const isRunning = pipelineStatus === "running";
+  const isPaused = pipelineStatus === "paused";
+
+  // Clear starting indicator once pipeline actually runs
   useEffect(() => {
-    const interval = setInterval(async () => {
-      try {
-        const res = await fetch(`${API_BASE}/api/stream/status`);
-        if (res.ok) setStreamStatus(await res.json());
-      } catch { /* ignore */ }
-    }, 3000);
-    return () => clearInterval(interval);
-  }, []);
+    if (isRunning) setStarting(false);
+  }, [isRunning]);
 
   // Test stream connection
   const handleTest = async () => {
@@ -144,6 +79,7 @@ export default function StreamPage() {
   // Start stream pipeline
   const handleStart = async () => {
     if (!streamUrl.trim()) return;
+    setStarting(true);
     try {
       const res = await fetch(`${API_BASE}/api/stream/start`, {
         method: "POST",
@@ -155,8 +91,12 @@ export default function StreamPage() {
         }),
       });
       const data = await res.json();
-      if (!data.success) alert(data.message || "Gagal start stream");
+      if (!data.success) {
+        setStarting(false);
+        alert(data.message || "Gagal start stream");
+      }
     } catch (e) {
+      setStarting(false);
       alert("Error: " + e.message);
     }
   };
@@ -183,7 +123,7 @@ export default function StreamPage() {
 
   return (
     <div className="stream-page">
-      {/* Header */}
+      {/* ── Header ── */}
       <div className="stream-page-header">
         <div className="stream-page-header-left">
           <Radio size={20} />
@@ -197,96 +137,70 @@ export default function StreamPage() {
         <div className="stream-page-header-right">
           <span className={`stream-status-pill${isRunning ? " running" : isPaused ? " paused" : ""}`}>
             <span className="stream-status-dot" />
-            {isRunning ? (isPaused ? "Paused" : "Streaming") : "Idle"}
+            {isPaused ? "Paused" : isRunning ? "Streaming" : "Idle"}
           </span>
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="stream-content">
-        {/* LEFT — Video Feed + Events */}
-        <div className="stream-left">
-          {/* Video Feed - gunakan LiveMonitorPanel agar konsisten dengan Live Feed */}
-          <div className="stream-card stream-video-card" style={{ padding: 0, background: 'none' }}>
-            <LiveMonitorPanel
-              frameBitmap={frameBitmap}
-              bboxes={lastPayload?.bboxes ?? []}
-              anomalyDetected={lastPayload?.anomaly_detected ?? false}
-              fps={fps}
-              connected={connected}
-              pipelineStatus={pipelineStatus}
-              pipelineError={lastPayload?.pipeline_error}
-            />
-          </div>
+      {/* ── Monitor + Drawer Wrapper ── */}
+      <div className="stream-workspace">
 
-          {/* Metrics Row */}
-          <div className="stream-metrics-row">
-            <MetricPill icon={Zap} label="FPS" value={fps || 0} color="#6366F1" />
-            <MetricPill
-              icon={Activity}
-              label="Score"
-              value={lastPayload?.anomaly_score != null ? (lastPayload.anomaly_score * 100).toFixed(1) + "%" : "—"}
-              color={lastPayload?.anomaly_detected ? "#EF4444" : "#22C55E"}
-            />
-            <MetricPill icon={Eye} label="FOD Total" value={lastPayload?.total_fod_count ?? 0} color="#F59E0B" />
-            <MetricPill
-              icon={Clock}
-              label="Uptime"
-              value={fmtDuration(lastPayload?.elapsed_seconds || streamStatus?.elapsed_seconds)}
-              color="#3B82F6"
-            />
-            <MetricPill
-              icon={TrendingUp}
-              label="Stream FPS"
-              value={lastPayload?.stream_fps ?? streamStatus?.stream_info?.actual_fps ?? 0}
-              color="#8B5CF6"
-            />
-            <MetricPill
-              icon={RefreshCw}
-              label="Reconnects"
-              value={lastPayload?.stream_reconnects ?? streamStatus?.stream_info?.reconnect_attempts ?? 0}
-              color="#64748B"
-            />
-          </div>
+        {/* ── Monitor row: video col + config drawer side by side ── */}
+        <div className={`stream-monitor-row${configOpen ? " drawer-open" : ""}`}>
 
-          {/* Score chart + Events (two columns) */}
-          <div className="stream-bottom-grid">
-            <div className="stream-card">
-              <div className="stream-card-header">
-                <TrendingUp size={14} />
-                <span>Anomaly Score (Last 60 Frames)</span>
-              </div>
-              <div className="stream-card-body">
-                <ScoreSparkline scoreHistory={lastPayload?.score_history} threshold={threshold} />
-              </div>
+          {/* Video column — grows to fill available width */}
+          <div className="stream-video-col">
+            <div className="stream-card stream-video-card" style={{ padding: 0, background: "none", position: "relative", height: "100%" }}>
+              <LiveMonitorPanel
+                variant="stream"
+                frameBitmap={frameBitmap}
+                bboxes={lastPayload?.bboxes ?? []}
+                anomalyDetected={lastPayload?.anomaly_detected ?? false}
+                fps={fps}
+                connected={connected}
+                pipelineStatus={pipelineStatus}
+                pipelineError={lastPayload?.pipeline_error}
+              />
+
+              {/* Floating toggle tab — anchored to right edge of video */}
+              <button
+                className={`stream-drawer-tab${configOpen ? " open" : ""}`}
+                onClick={() => setConfigOpen((v) => !v)}
+                title={configOpen ? "Minimize configuration" : "Expand configuration"}
+              >
+                {configOpen ? <ChevronRight size={14} /> : <ChevronLeft size={14} />}
+                <Settings2 size={13} />
+                {!configOpen && <span className="stream-drawer-tab-label">CONFIG</span>}
+              </button>
             </div>
+          </div>
 
-            <div className="stream-card">
-              <div className="stream-card-header">
-                <Activity size={14} />
-                <span>Recent Detections</span>
+          {/* ── Config Drawer — inline beside monitor ── */}
+          <div className={`stream-config-drawer${configOpen ? " open" : ""}`}>
+            {/* Drawer Header */}
+            <div className="stream-config-header">
+              <div className="stream-config-header-info">
+                <span className="stream-config-header-icon"><Settings2 size={15} /></span>
+                <span className="stream-config-header-title">Stream Configuration</span>
                 {isRunning && (
-                  <span className="stream-live-badge">
-                    <span className="stream-live-dot" /> LIVE
+                  <span className="stream-config-running-badge">
+                    <span className="stream-config-running-dot" />
+                    LIVE
                   </span>
                 )}
               </div>
-              <div className="stream-card-body stream-events-body">
-                <RecentEventsList events={lastPayload?.recent_events} />
-              </div>
+              <button
+                className="stream-config-collapse-btn"
+                onClick={() => setConfigOpen(false)}
+                title="Minimize panel"
+              >
+                <ChevronRight size={14} />
+              </button>
             </div>
-          </div>
-        </div>
 
-        {/* RIGHT — Control Panel */}
-        <div className="stream-right">
-          {/* Stream Configuration */}
-          <div className="stream-card stream-control-card">
-            <div className="stream-card-header">
-              <Settings2 size={14} />
-              <span>Stream Configuration</span>
-            </div>
-            <div className="stream-card-body">
+            {/* Drawer Body */}
+            <div className="stream-config-body">
+
               {/* Stream Name */}
               <div className="stream-field">
                 <label>Stream Name</label>
@@ -326,20 +240,16 @@ export default function StreamPage() {
               {testResult && (
                 <div className={`stream-test-result${testResult.success ? " success" : " fail"}`}>
                   {testResult.success ? (
-                    <>
-                      <CheckCircle2 size={13} />
-                      <span>Connected — {testResult.width}x{testResult.height} @ {testResult.fps?.toFixed(0)}fps ({testResult.codec})</span>
-                    </>
+                    <><CheckCircle2 size={13} /><span>Connected — {testResult.width}x{testResult.height} @ {testResult.fps?.toFixed(0)}fps ({testResult.codec})</span></>
                   ) : (
-                    <>
-                      <AlertTriangle size={13} />
-                      <span>{testResult.error || "Gagal konek"}</span>
-                    </>
+                    <><AlertTriangle size={13} /><span>{testResult.error || "Gagal konek"}</span></>
                   )}
                 </div>
               )}
 
-              {/* Presets */}
+              <div className="stream-config-divider" />
+
+              {/* Quick Presets */}
               <div className="stream-field">
                 <label>Quick Presets</label>
                 <div className="stream-presets">
@@ -353,32 +263,36 @@ export default function StreamPage() {
 
               {/* Threshold */}
               <div className="stream-field">
-                <label>Anomaly Threshold: <strong>{(threshold * 100).toFixed(0)}%</strong></label>
+                <label>
+                  Anomaly Threshold
+                  <strong className="stream-threshold-val">{(threshold * 100).toFixed(0)}%</strong>
+                </label>
                 <input
-                  type="range"
-                  min="0.1"
-                  max="0.95"
-                  step="0.05"
+                  type="range" min="0.1" max="0.95" step="0.05"
                   value={threshold}
                   onChange={(e) => setThreshold(parseFloat(e.target.value))}
                   disabled={isRunning}
                   className="stream-slider"
                 />
                 <div className="stream-slider-labels">
-                  <span>Sensitif</span>
-                  <span>Konservatif</span>
+                  <span>Sensitif</span><span>Konservatif</span>
                 </div>
               </div>
 
-              {/* Action buttons */}
+              <div className="stream-config-divider" />
+
+              {/* Action Buttons */}
               <div className="stream-actions">
                 {!isRunning ? (
                   <button
-                    className="stream-btn stream-btn-start"
+                    className={`stream-btn stream-btn-start${starting ? " starting" : ""}`}
                     onClick={handleStart}
-                    disabled={!streamUrl.trim()}
+                    disabled={!streamUrl.trim() || starting}
                   >
-                    <Play size={15} /> Start Stream
+                    {starting
+                      ? <><RefreshCw size={15} className="stream-spin" /> Menghubungkan...</>
+                      : <><Play size={15} /> Start Stream</>
+                    }
                   </button>
                 ) : (
                   <>
@@ -392,9 +306,24 @@ export default function StreamPage() {
                   </>
                 )}
               </div>
+
             </div>
           </div>
 
+        </div>{/* end stream-monitor-row */}
+
+        {/* ── Metrics Row (full width, below monitor row) ── */}
+        <div className="stream-metrics-row">
+          <MetricPill icon={Zap}        label="FPS"        value={fps || 0}                                                      color="#6366F1" />
+          <MetricPill icon={Activity}   label="Score"      value={lastPayload?.anomaly_score != null ? (lastPayload.anomaly_score * 100).toFixed(1) + "%" : "—"} color={lastPayload?.anomaly_detected ? "#EF4444" : "#22C55E"} />
+          <MetricPill icon={Eye}        label="FOD Total"  value={lastPayload?.total_fod_count ?? 0}                             color="#F59E0B" />
+          <MetricPill icon={Clock}      label="Uptime"     value={fmtDuration(lastPayload?.elapsed_seconds || streamStatus?.elapsed_seconds)} color="#3B82F6" />
+          <MetricPill icon={TrendingUp} label="Stream FPS" value={lastPayload?.stream_fps ?? streamStatus?.stream_info?.actual_fps ?? 0} color="#8B5CF6" />
+          <MetricPill icon={RefreshCw}  label="Reconnects" value={lastPayload?.stream_reconnects ?? streamStatus?.stream_info?.reconnect_attempts ?? 0} color="#64748B" />
+        </div>
+
+        {/* ── Stream Info + Detection Summary ── */}
+        <div className="stream-bottom-grid">
           {/* Stream Info */}
           <div className="stream-card">
             <div className="stream-card-header">
@@ -413,16 +342,10 @@ export default function StreamPage() {
                     {streamStatus?.stream_url || lastPayload?.stream_url || "—"}
                   </span>
                 } />
-                <InfoRow label="Resolution" value={
-                  lastPayload?.stream_resolution || streamStatus?.stream_info?.resolution || "—"
-                } />
-                <InfoRow label="Stream FPS" value={
-                  lastPayload?.stream_fps ?? streamStatus?.stream_info?.actual_fps ?? "—"
-                } />
-                <InfoRow label="Frames Processed" value={
-                  lastPayload?.total_frames_processed ?? streamStatus?.total_frames_processed ?? 0
-                } />
-                <InfoRow label="Connection" value={
+                <InfoRow label="Resolution"        value={lastPayload?.stream_resolution || streamStatus?.stream_info?.resolution || "—"} />
+                <InfoRow label="Stream FPS"        value={lastPayload?.stream_fps ?? streamStatus?.stream_info?.actual_fps ?? "—"} />
+                <InfoRow label="Frames Processed"  value={lastPayload?.total_frames_processed ?? streamStatus?.total_frames_processed ?? 0} />
+                <InfoRow label="Connection"        value={
                   <span style={{ color: connected ? "#22C55E" : "#EF4444" }}>
                     {connected ? "WebSocket OK" : "Disconnected"}
                   </span>
@@ -439,19 +362,16 @@ export default function StreamPage() {
             </div>
             <div className="stream-card-body">
               <div className="stream-summary-grid">
-                <SummaryItem label="Total FOD" value={lastPayload?.total_fod_count ?? streamStatus?.total_fod_detected ?? 0} color="#EF4444" />
-                <SummaryItem label="Runway" value={
-                  lastPayload?.runway_area_pct != null
-                    ? (lastPayload.runway_area_pct * 100).toFixed(1) + "%"
-                    : "—"
-                } color="#3B82F6" />
-                <SummaryItem label="Elapsed" value={fmtDuration(lastPayload?.elapsed_seconds || streamStatus?.elapsed_seconds)} color="#8B5CF6" />
+                <SummaryItem label="Total FOD"  value={lastPayload?.total_fod_count ?? streamStatus?.total_fod_detected ?? 0} color="#EF4444" />
+                <SummaryItem label="Runway"     value={lastPayload?.runway_area_pct != null ? (lastPayload.runway_area_pct * 100).toFixed(1) + "%" : "—"} color="#3B82F6" />
+                <SummaryItem label="Elapsed"    value={fmtDuration(lastPayload?.elapsed_seconds || streamStatus?.elapsed_seconds)} color="#8B5CF6" />
                 <SummaryItem label="Reconnects" value={lastPayload?.stream_reconnects ?? 0} color="#64748B" />
               </div>
             </div>
           </div>
         </div>
-      </div>
+
+      </div>{/* end stream-workspace */}
     </div>
   );
 }

@@ -15,22 +15,11 @@
   display: flex;
   flex-direction: column;
   transition: box-shadow var(--transition);
+  flex: 1; /* fill remaining height in .livefeed-workspace */
 }
 
-.live-monitor.alert-state {
-  box-shadow: 0 0 0 2px var(--accent-red), var(--shadow-md);
-  animation: alert-pulse 2s ease infinite;
-}
-
-@keyframes alert-pulse {
-  0%,
-  100% {
-    box-shadow: 0 0 0 2px var(--accent-red), var(--shadow-md);
-  }
-  50% {
-    box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.4), var(--shadow-md);
-  }
-}
+/* alert-state glow is now handled by .livefeed-workspace.alert-state */
+.live-monitor.alert-state { /* kept for standalone usage */ }
 
 /* ── Header ── */
 .monitor-header {
@@ -122,9 +111,20 @@
 .monitor-feed {
   position: relative;
   flex: 1;
-  min-height: 220px;
+  min-height: 340px;
   overflow: hidden;
-  background: #fff;
+  background: #0c0f14; /* default (live feed) — dark green-black */
+}
+
+/* Stream page variant — dark navy/indigo, distinct from live feed */
+.live-monitor.variant-stream .monitor-feed {
+  background: #0C1426;
+}
+
+/* Header background adapts to variant */
+.live-monitor.variant-stream .monitor-header {
+  background: #0D1532;
+  border-bottom-color: rgba(99, 102, 241, 0.2);
 }
 
 /* Subtle vignette over the video */
@@ -322,8 +322,8 @@
 .live-monitor-panel button,
 .dashboard-monitor-col button {
   background: transparent;
-  border: 1.5px solid #374151;
-  color: #374151;
+  border: 1.5px solid var(--text-primary);
+  color: var(--text-primary);
   border-radius: 6px;
   padding: 8px 16px;
   font-size: 14px;
@@ -335,77 +335,77 @@
 
 .live-monitor-panel button:hover,
 .dashboard-monitor-col button:hover {
-  background: #F3F4F6;
-  border-color: #1F2937;
-  color: #1F2937;
+  background: var(--bg-hover);
+  border-color: var(--text-primary);
+  color: var(--text-primary);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
 }
 
 .live-monitor-panel button:active,
 .dashboard-monitor-col button:active {
-  background: #E5E7EB;
+  background: var(--border-default);
   transform: translateY(1px);
 }
 
 /* Button variants dengan warna berbeda */
 .live-monitor-panel button.primary,
 .dashboard-monitor-col button.primary {
-  border-color: #3B82F6;
-  color: #3B82F6;
+  border-color: var(--color-blue);
+  color: var(--color-blue);
 }
 
 .live-monitor-panel button.primary:hover,
 .dashboard-monitor-col button.primary:hover {
-  background: #EFF6FF;
-  border-color: #2563EB;
-  color: #2563EB;
+  background: var(--color-blue-bg);
+  border-color: var(--color-blue-text);
+  color: var(--color-blue-text);
 }
 
 .live-monitor-panel button.success,
 .dashboard-monitor-col button.success {
-  border-color: #10B981;
-  color: #10B981;
+  border-color: var(--color-green);
+  color: var(--color-green);
 }
 
 .live-monitor-panel button.success:hover,
 .dashboard-monitor-col button.success:hover {
-  background: #ECFDF5;
-  border-color: #059669;
-  color: #059669;
+  background: var(--color-green-bg);
+  border-color: var(--color-green-text);
+  color: var(--color-green-text);
 }
 
 .live-monitor-panel button.warning,
 .dashboard-monitor-col button.warning {
-  border-color: #F59E0B;
-  color: #F59E0B;
+  border-color: var(--color-yellow);
+  color: var(--color-yellow);
 }
 
 .live-monitor-panel button.warning:hover,
 .dashboard-monitor-col button.warning:hover {
-  background: #FFFBEB;
-  border-color: #D97706;
-  color: #D97706;
+  background: var(--color-yellow-bg);
+  border-color: var(--color-yellow-text);
+  color: var(--color-yellow-text);
 }
 
 .live-monitor-panel button.danger,
 .dashboard-monitor-col button.danger {
-  border-color: #EF4444;
-  color: #EF4444;
+  border-color: var(--color-red);
+  color: var(--color-red);
 }
 
 .live-monitor-panel button.danger:hover,
 .dashboard-monitor-col button.danger:hover {
-  background: #FEF2F2;
-  border-color: #DC2626;
-  color: #DC2626;
+  background: var(--color-red-bg);
+  border-color: var(--color-red-text);
+  color: var(--color-red-text);
 }
 
 /* Disabled state */
 .live-monitor-panel button:disabled,
 .dashboard-monitor-col button:disabled {
   background: transparent;
-  border-color: #6B7280;
-  color: #6B7280;
+  border-color: var(--text-muted);
+  color: var(--text-muted);
   cursor: not-allowed;
   opacity: 0.6;
 }
@@ -413,8 +413,8 @@
 .live-monitor-panel button:disabled:hover,
 .dashboard-monitor-col button:disabled:hover {
   background: transparent;
-  border-color: #6B7280;
-  color: #6B7280;
+  border-color: var(--text-muted);
+  color: var(--text-muted);
   box-shadow: none;
   transform: none;
 }
@@ -435,4 +435,64 @@
 @keyframes blink {
   0%, 49% { opacity: 1; }
   50%,100% { opacity: 0; }
+}
+
+/* ── Monitor Overlays (Upload / Processing / Paused) ── */
+.monitor-overlay {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  z-index: 20;
+  pointer-events: none;
+}
+
+.monitor-overlay--uploading {
+  background: rgba(0, 0, 0, 0.75);
+}
+
+.monitor-overlay--processing {
+  background: rgba(0, 0, 0, 0.65);
+}
+
+.monitor-overlay--paused {
+  background: rgba(0, 0, 0, 0.55);
+}
+
+.monitor-overlay-title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #60a5fa;
+  letter-spacing: -0.01em;
+  font-family: 'DM Sans', system-ui, sans-serif;
+}
+
+.monitor-overlay-desc {
+  font-size: 13px;
+  color: rgba(255, 255, 255, 0.6);
+  text-align: center;
+  max-width: 320px;
+  line-height: 1.5;
+}
+
+/* Spinner */
+.monitor-overlay-spinner {
+  width: 44px;
+  height: 44px;
+  border: 3px solid rgba(96, 165, 250, 0.2);
+  border-top-color: #60a5fa;
+  border-radius: 50%;
+  animation: monitor-spin 0.8s linear infinite;
+}
+
+.monitor-overlay-spinner--green {
+  border-color: rgba(34, 197, 94, 0.2);
+  border-top-color: #22c55e;
+}
+
+@keyframes monitor-spin {
+  to { transform: rotate(360deg); }
 }

@@ -1,5 +1,5 @@
 from pydantic import BaseModel, field_validator
-from typing import Literal, Optional, Dict
+from typing import Literal, Optional, Dict, List
 from datetime import datetime
 
 
@@ -48,5 +48,17 @@ VALID_STATUSES = Literal['confirmed', 'rejected', 'resolved']
 
 class FODSnapshotValidateSchema(BaseModel):
     validation_status: VALID_STATUSES
-    validated_by:      str                # wajib — nama / username staff
+    validated_by:      Optional[str] = None
     validation_notes:  Optional[str] = None
+
+
+# ── Bulk operation schemas ─────────────────────────────────────────────────
+class BulkValidateSchema(BaseModel):
+    ids:               List[int]
+    validation_status: VALID_STATUSES
+    validated_by:      Optional[str] = None
+    validation_notes:  Optional[str] = None
+
+
+class BulkDeleteSchema(BaseModel):
+    ids: List[int]

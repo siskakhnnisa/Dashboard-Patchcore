@@ -1,0 +1,1560 @@
+/* ═══════════════════════════════════════════════════
+   Dark Mode Overrides — Global
+   Maps every hardcoded color in page/component CSS
+   to theme variables under [data-theme="dark"].
+   ═══════════════════════════════════════════════════ */
+
+/* ─────────────────────────────────────────────────── 
+   Page root backgrounds
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .livefeed,
+[data-theme="dark"] .ah-page,
+[data-theme="dark"] .ds-page,
+[data-theme="dark"] .fsp,
+[data-theme="dark"] .fsp-page,
+[data-theme="dark"] .ilog,
+[data-theme="dark"] .slog,
+[data-theme="dark"] .stream-page,
+[data-theme="dark"] .fodmap-page {
+  background: var(--bg-page) !important;
+  color: var(--text-primary);
+}
+
+/* ─────────────────────────────────────────────────── 
+   Generic card & panel overrides
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .livefeed-card,
+[data-theme="dark"] .ah-card,
+[data-theme="dark"] .stream-card,
+[data-theme="dark"] .ds-kpi-card,
+[data-theme="dark"] .ds-chart-card,
+[data-theme="dark"] .ilog-topbar,
+[data-theme="dark"] .ilog-stat,
+[data-theme="dark"] .ilog-panel,
+[data-theme="dark"] .slog-topbar,
+[data-theme="dark"] .slog-stat,
+[data-theme="dark"] .slog-panel,
+[data-theme="dark"] .slog-tabs,
+[data-theme="dark"] .slog-live-controls,
+[data-theme="dark"] .fsp-header,
+[data-theme="dark"] .fsp-card,
+[data-theme="dark"] .fsp-stat-card,
+[data-theme="dark"] .fsp-tabs,
+[data-theme="dark"] .fodmap-toolbar,
+[data-theme="dark"] .fodmap-stat-card,
+[data-theme="dark"] .fodmap-card,
+[data-theme="dark"] .pipeline-panel,
+[data-theme="dark"] .ds-widget,
+[data-theme="dark"] .ds-tooltip,
+[data-theme="dark"] .fsg-card,
+[data-theme="dark"] .fsg-summary {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary);
+}
+
+/* ── Card hover ── */
+[data-theme="dark"] .livefeed-card:hover,
+[data-theme="dark"] .stream-card:hover,
+[data-theme="dark"] .ds-kpi-card:hover,
+[data-theme="dark"] .fsp-card:hover,
+[data-theme="dark"] .fsg-card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+/* ── card-header borders ── */
+[data-theme="dark"] .stream-card-header,
+[data-theme="dark"] .ds-chart-header,
+[data-theme="dark"] .fsg-header,
+[data-theme="dark"] .ilog-panel-head,
+[data-theme="dark"] .slog-panel-head,
+[data-theme="dark"] .pipeline-divider {
+  border-color: var(--border-default) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Headings & Titles
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .livefeed-title,
+[data-theme="dark"] .ah-title,
+[data-theme="dark"] .stream-page-title,
+[data-theme="dark"] .ds-title,
+[data-theme="dark"] .ds-kpi-value,
+[data-theme="dark"] .fsp-page-title,
+[data-theme="dark"] .fodmap-title,
+[data-theme="dark"] .pipeline-title,
+[data-theme="dark"] .pipeline-map-title,
+[data-theme="dark"] .ilog-bold,
+[data-theme="dark"] .ilog-stat-val,
+[data-theme="dark"] .slog-stat-val,
+[data-theme="dark"] .fsg-title,
+[data-theme="dark"] .fsg-summary-val,
+[data-theme="dark"] .fsg-conf-val,
+[data-theme="dark"] .fsg-meta-value,
+[data-theme="dark"] .ds-summary-val,
+[data-theme="dark"] .ds-sev-count,
+[data-theme="dark"] .ds-runway-val,
+[data-theme="dark"] .ds-score-pill-val,
+[data-theme="dark"] .fodmap-stat-value,
+[data-theme="dark"] .fsp-card-id,
+[data-theme="dark"] .fsp-conf-val,
+[data-theme="dark"] .fsp-meta-value,
+[data-theme="dark"] .fsp-modal-title,
+[data-theme="dark"] .fsp-modal-conf-val,
+[data-theme="dark"] .ah-summary-value,
+[data-theme="dark"] .ah-activity-cell strong,
+[data-theme="dark"] .ah-source-block strong,
+[data-theme="dark"] .ah-modal-title,
+[data-theme="dark"] h1, [data-theme="dark"] h2, [data-theme="dark"] h3 {
+  color: var(--text-heading) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Secondary / muted text
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .stream-page-subtitle,
+[data-theme="dark"] .ds-subtitle,
+[data-theme="dark"] .ds-kpi-label,
+[data-theme="dark"] .ds-kpi-sub,
+[data-theme="dark"] .ds-tooltip-label,
+[data-theme="dark"] .ds-tooltip-row,
+[data-theme="dark"] .ds-section-label,
+[data-theme="dark"] .ds-sev-label,
+[data-theme="dark"] .ds-sev-pct,
+[data-theme="dark"] .ds-score-pill-lbl,
+[data-theme="dark"] .ds-runway-label,
+[data-theme="dark"] .ds-runway-unit,
+[data-theme="dark"] .ds-runway-scale,
+[data-theme="dark"] .ds-sparkline-empty,
+[data-theme="dark"] .ds-summary-lbl,
+[data-theme="dark"] .ds-threshold-lbl,
+[data-theme="dark"] .fsp-stat-label,
+[data-theme="dark"] .fsp-conf-label,
+[data-theme="dark"] .fsp-meta-label,
+[data-theme="dark"] .fsp-modal-conf-label,
+[data-theme="dark"] .fsp-form-label,
+[data-theme="dark"] .fodmap-subtitle,
+[data-theme="dark"] .fodmap-label,
+[data-theme="dark"] .fodmap-stat-label,
+[data-theme="dark"] .fodmap-stat-sub,
+[data-theme="dark"] .pipeline-section-label,
+[data-theme="dark"] .pipeline-count,
+[data-theme="dark"] .pipeline-upload-text,
+[data-theme="dark"] .pipeline-threshold-val,
+[data-theme="dark"] .pipeline-stage-desc,
+[data-theme="dark"] .pipeline-progress-row,
+[data-theme="dark"] .pipeline-map-desc,
+[data-theme="dark"] .ilog-stat-label,
+[data-theme="dark"] .ilog-mono,
+[data-theme="dark"] .ilog-panel-title,
+[data-theme="dark"] .slog-stat-label,
+[data-theme="dark"] .slog-mono,
+[data-theme="dark"] .slog-msg,
+[data-theme="dark"] .slog-issue-msg,
+[data-theme="dark"] .slog-panel-title,
+[data-theme="dark"] .slog-panel-info,
+[data-theme="dark"] .slog-pg-info,
+[data-theme="dark"] .slog-source,
+[data-theme="dark"] .fsg-conf-label,
+[data-theme="dark"] .fsg-meta-label,
+[data-theme="dark"] .fsg-summary-lbl,
+[data-theme="dark"] .fsg-count-badge,
+[data-theme="dark"] .stream-metric-label,
+[data-theme="dark"] .stream-summary-label,
+[data-theme="dark"] .stream-event-time,
+[data-theme="dark"] .stream-info-label,
+[data-theme="dark"] .stream-card-header,
+[data-theme="dark"] .ah-subtitle,
+[data-theme="dark"] .ah-summary-label,
+[data-theme="dark"] .ah-activity-cell div,
+[data-theme="dark"] .ah-filter-group label,
+[data-theme="dark"] .ah-table th {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .ah-summary-sub,
+[data-theme="dark"] .ah-no-action,
+[data-theme="dark"] .ds-chart-empty {
+  color: var(--text-muted) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Normal text overrides (text that was #374151)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ilog-tbl td,
+[data-theme="dark"] .slog-tbl td,
+[data-theme="dark"] .ilog-chip,
+[data-theme="dark"] .ilog-dist-name,
+[data-theme="dark"] .slog-health-chip,
+[data-theme="dark"] .stream-event-text,
+[data-theme="dark"] .stream-info-value,
+[data-theme="dark"] .stream-metric-val,
+[data-theme="dark"] .stream-summary-value,
+[data-theme="dark"] .pipeline-stage-label,
+[data-theme="dark"] .fodmap-select,
+[data-theme="dark"] .fodmap-chip {
+  color: var(--text-primary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Table headers
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ah-table th,
+[data-theme="dark"] .ilog-tbl th,
+[data-theme="dark"] .slog-tbl th {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-default) !important;
+}
+
+/* ── Table cell borders ── */
+[data-theme="dark"] .ah-table td,
+[data-theme="dark"] .ilog-tbl td,
+[data-theme="dark"] .slog-tbl td {
+  border-bottom-color: var(--border-light) !important;
+}
+
+/* ── Table row hover ── */
+[data-theme="dark"] .ah-table tbody tr:hover,
+[data-theme="dark"] .ilog-tbl tbody tr:hover,
+[data-theme="dark"] .slog-tbl tbody tr:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Generic form inputs, selects, search
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] select,
+[data-theme="dark"] input[type="text"],
+[data-theme="dark"] input[type="search"],
+[data-theme="dark"] input[type="date"],
+[data-theme="dark"] input[type="number"],
+[data-theme="dark"] textarea,
+[data-theme="dark"] .ilog-sel,
+[data-theme="dark"] .slog-sel,
+[data-theme="dark"] .slog-search,
+[data-theme="dark"] .fsp-search,
+[data-theme="dark"] .fsp-sort,
+[data-theme="dark"] .fsp-form-input,
+[data-theme="dark"] .fodmap-select,
+[data-theme="dark"] .ds-session-filter,
+[data-theme="dark"] .ds-session-filter select,
+[data-theme="dark"] .stream-url-input,
+[data-theme="dark"] .stream-field input,
+[data-theme="dark"] .stream-field select,
+[data-theme="dark"] .pipeline-range,
+[data-theme="dark"] .ah-filter-group select,
+[data-theme="dark"] .ah-search-wrap input,
+[data-theme="dark"] .ah-date-input,
+[data-theme="dark"] .ah-search-wrap {
+  background: var(--bg-input) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] select:focus,
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus {
+  border-color: var(--color-indigo) !important;
+  outline-color: var(--color-indigo);
+}
+
+/* ─────────────────────────────────────────────────── 
+   Soft backgrounds (card-soft equivalents)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ds-sparkline-wrap,
+[data-theme="dark"] .ds-score-pill,
+[data-theme="dark"] .ds-runway,
+[data-theme="dark"] .ds-sev-bar-wrap,
+[data-theme="dark"] .ds-summary,
+[data-theme="dark"] .fsg-conf-track,
+[data-theme="dark"] .fsp-conf-track,
+[data-theme="dark"] .fsp-search,
+[data-theme="dark"] .fsp-sort,
+[data-theme="dark"] .ilog-chip,
+[data-theme="dark"] .ilog-dist-track,
+[data-theme="dark"] .slog-filter-hint,
+[data-theme="dark"] .stream-metric-pill,
+[data-theme="dark"] .stream-preset-btn,
+[data-theme="dark"] .stream-info-grid,
+[data-theme="dark"] .stream-summary-grid,
+[data-theme="dark"] .pipeline-upload-box,
+[data-theme="dark"] .pipeline-map-box,
+[data-theme="dark"] .pipeline-stage:hover,
+[data-theme="dark"] .pipeline-stage.active,
+[data-theme="dark"] .pipeline-progress-track,
+[data-theme="dark"] .ds-runway-track,
+[data-theme="dark"] .fsg-card-divider,
+[data-theme="dark"] .fsp-card-divider,
+[data-theme="dark"] .fodmap-chip,
+[data-theme="dark"] .fodmap-check-chip {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+[data-theme="dark"] .ds-score-pill--current {
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* ── summary gradient fix ── */
+[data-theme="dark"] .ds-summary,
+[data-theme="dark"] .fsg-summary {
+  background: var(--bg-card-soft) !important;
+}
+
+/* ── dividers ── */
+[data-theme="dark"] .ds-summary-div,
+[data-theme="dark"] .fsg-summary-div {
+  background: var(--border-medium) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Borders (general)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ah-hero,
+[data-theme="dark"] .ah-toolbar,
+[data-theme="dark"] .ah-modal-header,
+[data-theme="dark"] .ah-modal-footer,
+[data-theme="dark"] .ds-header,
+[data-theme="dark"] .fsp-page-header,
+[data-theme="dark"] .pipeline-connector-line {
+  border-color: var(--border-default) !important;
+}
+
+[data-theme="dark"] .pipeline-connector-line {
+  background: var(--border-default) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Buttons
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ah-pagination button,
+[data-theme="dark"] .slog-pg-btn,
+[data-theme="dark"] .slog-btn,
+[data-theme="dark"] .ilog-pager button,
+[data-theme="dark"] .fsp-view-btn {
+  background: var(--bg-card) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ah-pagination button:hover,
+[data-theme="dark"] .slog-pg-btn:hover,
+[data-theme="dark"] .slog-btn:hover,
+[data-theme="dark"] .fsp-view-btn:hover {
+  background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .pipeline-btn:disabled {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .ilog-csv-btn {
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+  color: var(--color-indigo-text) !important;
+}
+
+[data-theme="dark"] .ds-log-btn {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Modals & Overlays
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ah-modal-overlay,
+[data-theme="dark"] .fsp-modal-overlay,
+[data-theme="dark"] .ilog-modal-overlay,
+[data-theme="dark"] .fsg-modal-overlay {
+  background: var(--bg-overlay) !important;
+}
+
+[data-theme="dark"] .ah-modal,
+[data-theme="dark"] .fsp-modal,
+[data-theme="dark"] .ilog-modal,
+[data-theme="dark"] .fsg-modal {
+  background: var(--bg-modal) !important;
+  border: 1px solid var(--border-default) !important;
+}
+
+[data-theme="dark"] .ah-modal-close,
+[data-theme="dark"] .fsp-modal-close {
+  background: var(--bg-card-soft);
+  border-color: var(--border-default);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .ah-modal-close:hover,
+[data-theme="dark"] .fsp-modal-close:hover {
+  background: var(--color-red-bg);
+  color: var(--color-red-text);
+  border-color: var(--color-red-border);
+}
+
+[data-theme="dark"] .ah-modal-dl-btn {
+  background: var(--color-indigo);
+  color: #fff;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Status Pills & Badges (Activity History)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ah-hero-pill {
+  background: var(--color-blue-bg);
+  color: var(--color-blue-text);
+  border-color: var(--color-blue-border);
+}
+
+[data-theme="dark"] .ah-active-filters span,
+[data-theme="dark"] .ah-meta-list span {
+  background: var(--bg-card-soft);
+  color: var(--text-secondary);
+  border-color: var(--border-default);
+}
+
+[data-theme="dark"] .ah-action-preview {
+  background: var(--color-blue-bg);
+  color: var(--color-blue-text);
+  border-color: var(--color-blue-border);
+}
+
+[data-theme="dark"] .ah-action-download {
+  background: var(--color-green-bg);
+  color: var(--color-green-text);
+  border-color: var(--color-green-border);
+}
+
+/* ─────────────────────────────────────────────────── 
+   Pipeline badges
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .pipeline-badge.idle {
+  background: var(--bg-card-soft);
+  color: var(--text-secondary);
+}
+[data-theme="dark"] .pipeline-badge.running {
+  background: var(--color-green-bg);
+  color: var(--color-green-text);
+}
+[data-theme="dark"] .pipeline-badge.stopped {
+  background: var(--color-yellow-bg);
+  color: var(--color-yellow-text);
+}
+[data-theme="dark"] .pipeline-badge.error {
+  background: var(--color-red-bg);
+  color: var(--color-red-text);
+}
+
+/* ─────────────────────────────────────────────────── 
+   FOD Mapping extra
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fodmap-page {
+  background: var(--bg-page) !important;
+}
+[data-theme="dark"] .fodmap-hero {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .fodmap-kicker {
+  color: var(--color-indigo) !important;
+}
+[data-theme="dark"] .fodmap-select {
+  background: var(--bg-input) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .fodmap-empty-state,
+[data-theme="dark"] .fodmap-empty-inline {
+  color: var(--text-muted) !important;
+}
+[data-theme="dark"] .fodmap-route-item {
+  border-color: var(--border-light) !important;
+}
+[data-theme="dark"] .fodmap-route-item.is-selected {
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   FOD Snapshots Page specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fsp-stat-count {
+  color: var(--text-heading) !important;
+}
+[data-theme="dark"] .fsp-tab {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .fsp-tab.active,
+[data-theme="dark"] .fsp-tab:hover {
+  color: var(--text-primary) !important;
+  background: var(--bg-card-soft) !important;
+}
+[data-theme="dark"] .fsp-card-body {
+  background: var(--bg-card) !important;
+}
+[data-theme="dark"] .fsp-modal-body {
+  background: var(--bg-card) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   PIPELINE CONTROL PANEL — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Toggle button states */
+[data-theme="dark"] .pipeline-toggle-btn.running {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .pipeline-toggle-btn.running:hover {
+  background: rgba(16, 185, 129, 0.22) !important;
+}
+[data-theme="dark"] .pipeline-toggle-btn.stopped {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .pipeline-toggle-btn.stopped:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* Icon button */
+[data-theme="dark"] .pipeline-icon-btn {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .pipeline-icon-btn:hover {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Divider line */
+[data-theme="dark"] .pipeline-divider {
+  background: var(--border-default) !important;
+}
+
+/* Toggle switch (off state) */
+[data-theme="dark"] .pipeline-stage-toggle.off {
+  background: var(--border-medium) !important;
+}
+
+/* Upload box hover */
+[data-theme="dark"] .pipeline-upload-box:hover {
+  border-color: var(--color-blue-border) !important;
+  background: var(--color-blue-bg) !important;
+}
+
+/* Upload success text */
+[data-theme="dark"] .pipeline-upload-success {
+  color: var(--color-green-text) !important;
+}
+
+/* Stop button */
+[data-theme="dark"] .pipeline-btn-stop {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+  border-color: var(--color-red-border) !important;
+}
+[data-theme="dark"] .pipeline-btn-stop:hover:not(:disabled) {
+  background: rgba(239, 68, 68, 0.22) !important;
+}
+
+/* Map button */
+[data-theme="dark"] .pipeline-btn-map {
+  background: var(--color-blue-bg) !important;
+  color: var(--color-blue-text) !important;
+  border-color: var(--color-blue-border) !important;
+}
+[data-theme="dark"] .pipeline-btn-map:hover {
+  background: rgba(59, 130, 246, 0.22) !important;
+}
+
+/* Pipeline toolbar status indicator dots */
+[data-theme="dark"] .pipeline-toolbar--running::before { background: var(--color-green) !important; }
+[data-theme="dark"] .pipeline-toolbar--stopped::before  { background: var(--color-yellow) !important; }
+[data-theme="dark"] .pipeline-toolbar--error::before    { background: var(--color-red) !important; }
+
+/* ── ptb upload section ── */
+[data-theme="dark"] .ptb-field-label {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .ptb-pct {
+  color: var(--color-blue) !important;
+}
+[data-theme="dark"] .ptb-btn--start {
+  background: var(--color-blue) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .ptb-btn--start:hover:not(:disabled) {
+  background: var(--color-blue-text) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   PIPELINE LOG PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Health banner gradients */
+[data-theme="dark"] .slog-health--ok {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.12) 0%, rgba(16, 185, 129, 0.06) 100%) !important;
+  border-color: rgba(16, 185, 129, 0.25) !important;
+}
+[data-theme="dark"] .slog-health--ok .slog-health-left {
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .slog-health--warn {
+  background: linear-gradient(135deg, rgba(245, 158, 11, 0.12) 0%, rgba(245, 158, 11, 0.06) 100%) !important;
+  border-color: rgba(245, 158, 11, 0.25) !important;
+}
+[data-theme="dark"] .slog-health--warn .slog-health-left {
+  color: var(--color-yellow-text) !important;
+}
+
+/* Health chip */
+[data-theme="dark"] .slog-health-chip {
+  background: rgba(255, 255, 255, 0.05) !important;
+}
+[data-theme="dark"] .slog-health-chip--error {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+
+/* Issue cards */
+[data-theme="dark"] .slog-issue-card--error {
+  background: var(--color-red-bg) !important;
+  border-color: var(--color-red-border) !important;
+}
+[data-theme="dark"] .slog-issue-card--error .slog-issue-head {
+  color: var(--color-red-text) !important;
+}
+[data-theme="dark"] .slog-issue-card--warn {
+  background: var(--color-yellow-bg) !important;
+  border-color: var(--color-yellow-border) !important;
+}
+[data-theme="dark"] .slog-issue-card--warn .slog-issue-head {
+  color: var(--color-yellow-text) !important;
+}
+
+/* Filter hint */
+[data-theme="dark"] .slog-filter-hint {
+  background: var(--color-yellow-bg) !important;
+  color: var(--color-yellow-text) !important;
+}
+
+/* Colored table rows */
+[data-theme="dark"] .slog-row--ERROR td {
+  background: rgba(239, 68, 68, 0.07) !important;
+}
+[data-theme="dark"] .slog-row--ERROR:hover td {
+  background: rgba(239, 68, 68, 0.13) !important;
+}
+[data-theme="dark"] .slog-row--WARNING td {
+  background: rgba(245, 158, 11, 0.07) !important;
+}
+[data-theme="dark"] .slog-row--WARNING:hover td {
+  background: rgba(245, 158, 11, 0.13) !important;
+}
+[data-theme="dark"] .slog-row--SUCCESS td {
+  background: rgba(16, 185, 129, 0.07) !important;
+}
+[data-theme="dark"] .slog-row--SUCCESS:hover td {
+  background: rgba(16, 185, 129, 0.12) !important;
+}
+
+/* Log level badges */
+[data-theme="dark"] .slog-lvl--INFO    { background: var(--color-blue-bg)   !important; color: var(--color-blue-text)   !important; }
+[data-theme="dark"] .slog-lvl--DEBUG   { background: var(--bg-card-soft)     !important; color: var(--text-secondary)     !important; }
+[data-theme="dark"] .slog-lvl--SUCCESS { background: var(--color-green-bg)   !important; color: var(--color-green-text)   !important; }
+[data-theme="dark"] .slog-lvl--WARNING { background: var(--color-yellow-bg)  !important; color: var(--color-yellow-text)  !important; }
+[data-theme="dark"] .slog-lvl--ERROR   { background: var(--color-red-bg)     !important; color: var(--color-red-text)     !important; }
+
+/* Tab strip */
+[data-theme="dark"] .slog-tab {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .slog-tab:hover {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .slog-tab--active {
+  background: var(--color-indigo) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .slog-tab--active:hover {
+  background: var(--color-indigo-text) !important;
+}
+
+/* Live controls */
+[data-theme="dark"] .slog-live-label {
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .slog-live-count {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .slog-live-dot--off {
+  background: var(--border-medium) !important;
+}
+[data-theme="dark"] .slog-live-dot--on {
+  background: var(--color-green) !important;
+}
+
+/* New-row flash animation */
+@keyframes slog-flash-dark {
+  0%   { background-color: rgba(99, 102, 241, 0.15); }
+  100% { background-color: transparent; }
+}
+[data-theme="dark"] .slog-row--new td {
+  animation: slog-flash-dark 0.6s ease-out !important;
+}
+
+/* Scroll-to-bottom button */
+[data-theme="dark"] .slog-scroll-bottom {
+  background: var(--bg-modal) !important;
+  border-color: var(--color-indigo-border) !important;
+  color: var(--color-indigo-text) !important;
+}
+[data-theme="dark"] .slog-scroll-bottom:hover {
+  background: var(--color-indigo-bg) !important;
+}
+
+/* Panel head border */
+[data-theme="dark"] .slog-panel-head {
+  border-bottom-color: var(--border-default) !important;
+}
+[data-theme="dark"] .slog-pagination {
+  border-top-color: var(--border-default) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   STREAM PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Card base & metric pills */
+[data-theme="dark"] .stream-card {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .stream-metric-pill {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+
+/* Event items */
+[data-theme="dark"] .stream-event-item {
+  border-bottom-color: var(--border-light) !important;
+}
+[data-theme="dark"] .stream-events-empty,
+[data-theme="dark"] .stream-sparkline-empty {
+  color: var(--text-secondary) !important;
+}
+
+/* Summary items */
+[data-theme="dark"] .stream-summary-item {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* Info rows */
+[data-theme="dark"] .stream-info-row {
+  border-bottom-color: var(--border-light) !important;
+}
+
+/* Test button */
+[data-theme="dark"] .stream-test-btn {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .stream-test-btn:hover:not(:disabled) {
+  background: var(--color-indigo-bg) !important;
+  color: var(--color-indigo-text) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* Preset buttons */
+[data-theme="dark"] .stream-preset-btn {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .stream-preset-btn:hover:not(:disabled) {
+  background: var(--color-indigo-bg) !important;
+  color: var(--color-indigo-text) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* Slider labels */
+[data-theme="dark"] .stream-slider-labels {
+  color: var(--text-secondary) !important;
+}
+
+/* Field labels */
+[data-theme="dark"] .stream-field label {
+  color: var(--text-secondary) !important;
+}
+
+/* Stream field text input */
+[data-theme="dark"] .stream-field input[type="text"] {
+  background: var(--bg-input) !important;
+  border-color: var(--border-medium) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   DETECTION STATS PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* KPI card hover border */
+[data-theme="dark"] .ds-kpi-card:hover {
+  border-color: var(--border-medium) !important;
+}
+
+/* Chart header & body */
+[data-theme="dark"] .ds-chart-header {
+  border-bottom-color: var(--border-default) !important;
+}
+
+/* Select options background */
+[data-theme="dark"] .ds-session-filter select option {
+  background: var(--bg-modal) !important;
+  color: var(--text-primary) !important;
+}
+
+/* Top frames table */
+[data-theme="dark"] .ds-table tbody tr {
+  border-bottom-color: var(--border-light) !important;
+}
+[data-theme="dark"] .ds-table tbody tr:hover {
+  background: var(--bg-hover) !important;
+}
+[data-theme="dark"] .ds-table tbody td {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .ds-table thead th {
+  color: var(--text-secondary) !important;
+  border-bottom-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ds-thumb-wrap {
+  border-color: var(--border-default) !important;
+}
+
+/* Recharts text/axis */
+[data-theme="dark"] .ds-chart-body .recharts-text {
+  fill: var(--text-secondary) !important;
+}
+[data-theme="dark"] .ds-chart-body .recharts-cartesian-axis-line,
+[data-theme="dark"] .ds-chart-body .recharts-cartesian-axis-tick-line {
+  stroke: var(--border-default) !important;
+}
+[data-theme="dark"] .ds-chart-body .recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .ds-chart-body .recharts-cartesian-grid-horizontal line,
+[data-theme="dark"] .ds-chart-body .recharts-cartesian-grid-vertical line {
+  stroke: var(--border-light) !important;
+}
+[data-theme="dark"] .ds-chart-body .recharts-reference-line line {
+  stroke: var(--border-medium) !important;
+}
+
+/* ── ds-widget (dashboard card variant) ── */
+[data-theme="dark"] .ds-header {
+  border-bottom-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ds-live-badge {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+  border-color: var(--color-green-border) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   FOD SNAPSHOT GALLERY — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Confidence fill bars */
+[data-theme="dark"] .fsg-conf-fill--high   { background: var(--color-red)    !important; }
+[data-theme="dark"] .fsg-conf-fill--medium { background: var(--color-yellow) !important; }
+[data-theme="dark"] .fsg-conf-fill--low    { background: var(--color-green)  !important; }
+
+/* vStatus pills */
+[data-theme="dark"] .fsg-vstatus--pending {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .fsg-vstatus--confirmed {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+  border-color: var(--color-green-border) !important;
+}
+[data-theme="dark"] .fsg-vstatus--rejected {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+  border-color: var(--color-red-border) !important;
+}
+[data-theme="dark"] .fsg-vstatus--resolved {
+  background: var(--color-blue-bg) !important;
+  color: var(--color-blue-text) !important;
+  border-color: var(--color-blue-border) !important;
+}
+
+/* Tab count badges when active */
+[data-theme="dark"] .fsg-tab.active[data-tab="pending"]   .fsg-tab-count {
+  background: var(--color-yellow-bg) !important;
+  color: var(--color-yellow-text) !important;
+}
+[data-theme="dark"] .fsg-tab.active[data-tab="confirmed"] .fsg-tab-count {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .fsg-tab.active[data-tab="rejected"]  .fsg-tab-count {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+[data-theme="dark"] .fsg-tab.active[data-tab="resolved"]  .fsg-tab-count {
+  background: var(--color-blue-bg) !important;
+  color: var(--color-blue-text) !important;
+}
+
+/* Modal action buttons */
+[data-theme="dark"] .fsg-btn--confirm {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+  border-color: var(--color-green-border) !important;
+}
+[data-theme="dark"] .fsg-btn--confirm:hover { background: rgba(16, 185, 129, 0.22) !important; }
+[data-theme="dark"] .fsg-btn--confirm.active {
+  background: var(--color-green) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .fsg-btn--reject {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+  border-color: var(--color-red-border) !important;
+}
+[data-theme="dark"] .fsg-btn--reject:hover { background: rgba(239, 68, 68, 0.22) !important; }
+[data-theme="dark"] .fsg-btn--reject.active {
+  background: var(--color-red) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .fsg-btn--resolve {
+  background: var(--color-blue-bg) !important;
+  color: var(--color-blue-text) !important;
+  border-color: var(--color-blue-border) !important;
+}
+[data-theme="dark"] .fsg-btn--resolve:hover { background: rgba(59, 130, 246, 0.22) !important; }
+[data-theme="dark"] .fsg-btn--resolve.active {
+  background: var(--color-blue) !important;
+  color: #fff !important;
+}
+[data-theme="dark"] .fsg-btn--cancel {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .fsg-btn--cancel:hover { background: var(--bg-hover) !important; }
+
+/* Scrollbar */
+[data-theme="dark"] .fsg-scroll {
+  scrollbar-color: var(--scrollbar-thumb) transparent !important;
+}
+
+/* Confidence track background */
+[data-theme="dark"] .fsg-conf-track {
+  background: var(--bg-card-soft) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   FOD SNAPSHOTS PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Confidence fill bars */
+[data-theme="dark"] .fsp-conf-fill--high   { background: var(--color-red)    !important; }
+[data-theme="dark"] .fsp-conf-fill--medium { background: var(--color-yellow) !important; }
+[data-theme="dark"] .fsp-conf-fill--low    { background: var(--color-green)  !important; }
+
+/* Severity overlays (semi-transparent, keep as-is but ensure text is white) */
+[data-theme="dark"] .fsp-severity--high,
+[data-theme="dark"] .fsp-severity--medium,
+[data-theme="dark"] .fsp-severity--low {
+  color: #fff !important;
+}
+
+/* Modal action buttons */
+[data-theme="dark"] .fsp-btn--confirm {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .fsp-btn--confirm:hover { background: rgba(16, 185, 129, 0.22) !important; }
+[data-theme="dark"] .fsp-btn--reject {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+[data-theme="dark"] .fsp-btn--reject:hover { background: rgba(239, 68, 68, 0.22) !important; }
+[data-theme="dark"] .fsp-btn--resolve {
+  background: var(--color-blue-bg) !important;
+  color: var(--color-blue-text) !important;
+}
+[data-theme="dark"] .fsp-btn--resolve:hover { background: rgba(59, 130, 246, 0.22) !important; }
+[data-theme="dark"] .fsp-btn--cancel {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .fsp-btn--cancel:hover { background: var(--bg-hover) !important; }
+
+/* Loader spinner border */
+[data-theme="dark"] .fsp-loader-spinner {
+  border-top-color: var(--color-indigo) !important;
+  border-color: var(--border-medium) !important;
+  border-top-color: var(--color-indigo) !important;
+}
+
+/* Empty state */
+[data-theme="dark"] .fsp-empty {
+  background: var(--bg-card) !important;
+}
+[data-theme="dark"] .fsp-error-panel {
+  background: var(--color-red-bg) !important;
+  border-color: var(--color-red-border) !important;
+  color: var(--color-red-text) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   INSPECTION LOG PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Status chips */
+[data-theme="dark"] .ilog-st--active,
+[data-theme="dark"] .ilog-st--confirmed {
+  background: var(--color-green-bg) !important;
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .ilog-st--cleared {
+  background: var(--color-yellow-bg) !important;
+  color: var(--color-yellow-text) !important;
+}
+[data-theme="dark"] .ilog-st--false,
+[data-theme="dark"] .ilog-st--review {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+
+/* Image button */
+[data-theme="dark"] .ilog-img-btn {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-img-btn:hover {
+  background: var(--color-indigo-bg) !important;
+  color: var(--color-indigo-text) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* Stat val accent */
+[data-theme="dark"] .ilog-stat-val--accent {
+  color: var(--color-green-text) !important;
+}
+
+/* Modal content */
+[data-theme="dark"] .ilog-modal-img-area {
+  background: #0a0a0a !important;
+}
+[data-theme="dark"] .ilog-modal-title {
+  color: var(--text-heading) !important;
+}
+[data-theme="dark"] .ilog-modal-row > span:first-child {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .ilog-modal-row > span:last-child {
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .ilog-modal-close {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-secondary) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-modal-close:hover {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+}
+
+/* Distribution track */
+[data-theme="dark"] .ilog-dist-track {
+  background: var(--bg-card-soft) !important;
+}
+
+/* Pager button hover */
+[data-theme="dark"] .ilog-pager-btns button:hover:not(:disabled) {
+  background: var(--bg-card-soft) !important;
+}
+
+/* Column picker area */
+[data-theme="dark"] .ilog-col-picker {
+  background: var(--bg-modal) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-col-picker label {
+  color: var(--text-primary) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   ACTIVITY HISTORY PAGE — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Hero & toolbar background */
+[data-theme="dark"] .ah-hero {
+  background: var(--bg-card) !important;
+}
+[data-theme="dark"] .ah-toolbar {
+  background: var(--bg-card) !important;
+}
+
+/* Source block / activity cell BG */
+[data-theme="dark"] .ah-activity-cell {
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .ah-source-block {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* kicker / timeline dot label */
+[data-theme="dark"] .ah-kicker {
+  color: var(--color-indigo-text) !important;
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   DETECTION STATISTIC WIDGET — Missing dark overrides
+   ═══════════════════════════════════════════════════ */
+
+/* Summary row gradient → flat card */
+[data-theme="dark"] .ds-summary {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+}
+
+/* Section label, severity label, pct */
+[data-theme="dark"] .ds-sev-label {
+  color: var(--text-primary) !important;
+}
+
+/* Score pill base */
+[data-theme="dark"] .ds-score-pill {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* Runway  */
+[data-theme="dark"] .ds-runway {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* Sparkline wrap */
+[data-theme="dark"] .ds-sparkline-wrap {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   SIDEBAR — switch knob (stays white in both modes)
+   ═══════════════════════════════════════════════════ */
+[data-theme="dark"] .theme-switch-knob {
+  background: #fff !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   TOPBAR — search focus & keyboard shortcut indicator
+   ═══════════════════════════════════════════════════ */
+[data-theme="dark"] .topbar-search:focus-within {
+  background: var(--bg-input) !important;
+  border-color: var(--color-indigo) !important;
+}
+[data-theme="dark"] .topbar-search-kbd {
+  background: var(--bg-card-soft) !important;
+  color: var(--text-muted) !important;
+}
+
+/* ═══════════════════════════════════════════════════
+   RECHARTS — global chart text/grid overrides
+   ═══════════════════════════════════════════════════ */
+[data-theme="dark"] .recharts-text,
+[data-theme="dark"] .recharts-cartesian-axis-tick text {
+  fill: var(--text-secondary) !important;
+}
+[data-theme="dark"] .recharts-cartesian-axis-line,
+[data-theme="dark"] .recharts-cartesian-axis-tick-line {
+  stroke: var(--border-default) !important;
+}
+[data-theme="dark"] .recharts-cartesian-grid-horizontal line,
+[data-theme="dark"] .recharts-cartesian-grid-vertical line {
+  stroke: var(--border-light) !important;
+}
+[data-theme="dark"] .recharts-legend-item-text {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background: var(--bg-tooltip) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .fsp-modal-details {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-light) !important;
+}
+[data-theme="dark"] .fsp-row {
+  background: var(--bg-card) !important;
+  border-color: var(--border-light) !important;
+}
+[data-theme="dark"] .fsp-row:hover {
+  background: var(--bg-hover) !important;
+}
+[data-theme="dark"] .fsp-dl-all-btn {
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+  color: var(--color-indigo-text) !important;
+}
+
+/* ── List view ── */
+[data-theme="dark"] .fsp-list {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .fsp-list-header {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* ── Image placeholders ── */
+[data-theme="dark"] .fsp-card-img-wrap,
+[data-theme="dark"] .fsp-modal-img-wrap,
+[data-theme="dark"] .fsp-row-thumb {
+  background: var(--bg-card-soft) !important;
+}
+
+/* ── Stat download button ── */
+[data-theme="dark"] .fsp-stat-dl {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .fsp-stat-dl:hover:not(:disabled) {
+  background: var(--color-indigo-bg) !important;
+  border-color: var(--color-indigo-border) !important;
+  color: var(--color-indigo-text) !important;
+}
+
+/* ── Cancel button ── */
+[data-theme="dark"] .fsp-btn--cancel {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .fsp-btn--cancel:hover {
+  background: var(--bg-hover) !important;
+}
+
+/* ── Tab count badge ── */
+[data-theme="dark"] .fsp-tab-count {
+  background: rgba(255, 255, 255, 0.12) !important;
+}
+
+/* ── Card / row borders ── */
+[data-theme="dark"] .fsp-card-meta,
+[data-theme="dark"] .fsp-card-actions {
+  border-color: var(--border-light) !important;
+}
+[data-theme="dark"] .fsp-modal-details {
+  border-color: var(--border-light) !important;
+}
+
+/* ── Spinner border ── */
+[data-theme="dark"] .fsp-spinner {
+  border-color: var(--border-default) !important;
+  border-top-color: var(--color-indigo) !important;
+}
+
+/* ── View toggle borders ── */
+[data-theme="dark"] .fsp-view-toggle {
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .fsp-view-btn:not(:last-child) {
+  border-color: var(--border-default) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   FOD Snapshot Gallery (widget)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fsg-card-body {
+  background: var(--bg-card) !important;
+}
+[data-theme="dark"] .fsg-count-badge {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .fsg-btn-delete {
+  background: var(--bg-card) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Stream page specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .stream-page-header-left {
+  color: var(--color-indigo);
+}
+[data-theme="dark"] .stream-event-item {
+  border-color: var(--border-light) !important;
+}
+[data-theme="dark"] .stream-event-dot {
+  border-color: var(--border-default);
+}
+[data-theme="dark"] .stream-info-mono {
+  color: var(--text-muted) !important;
+}
+[data-theme="dark"] .stream-live-badge {
+  background: var(--color-green-bg) !important;
+  border-color: var(--color-green-border) !important;
+  color: var(--color-green-text) !important;
+}
+[data-theme="dark"] .stream-field label {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .stream-slider-labels {
+  color: var(--text-muted) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Detection Stats Page specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ds-session-filter {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ds-session-filter select option {
+  background: var(--bg-card) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Inspection Log specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ilog-live-banner {
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-pager {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-modal {
+  background: var(--bg-modal) !important;
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .ilog-img-btn {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-secondary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Pipeline Log specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .slog-tab {
+  color: var(--text-secondary) !important;
+}
+[data-theme="dark"] .slog-tab--active {
+  background: var(--color-indigo-bg) !important;
+  color: var(--color-indigo-text) !important;
+}
+[data-theme="dark"] .slog-pagination {
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .slog-scroll-bottom {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+[data-theme="dark"] .slog-empty {
+  color: var(--text-muted) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Pipeline Control Panel specific
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .pipeline-header {
+  border-color: var(--border-default) !important;
+}
+[data-theme="dark"] .pipeline-stage-toggle.off {
+  background: var(--border-medium) !important;
+}
+[data-theme="dark"] .pipeline-btn-stop {
+  background: var(--color-red-bg) !important;
+  color: var(--color-red-text) !important;
+  border-color: var(--color-red-border) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   TopBar
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .topbar-search:focus-within {
+  background: var(--bg-input) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Recharts overrides (all charts)
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .recharts-cartesian-grid line {
+  stroke: var(--border-light);
+}
+
+[data-theme="dark"] .recharts-text,
+[data-theme="dark"] .recharts-cartesian-axis-tick-value {
+  fill: var(--text-muted) !important;
+}
+
+[data-theme="dark"] .recharts-tooltip-wrapper .recharts-default-tooltip {
+  background-color: var(--bg-modal) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Scrollbar
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] ::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+  border-radius: 3px;
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background: var(--scrollbar-hover);
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — FOD Snapshot Gallery
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fsg-modal-title,
+[data-theme="dark"] .fsg-modal-detail-value,
+[data-theme="dark"] .fsg-validated-info-value {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .fsg-tab:hover,
+[data-theme="dark"] .fsg-tab.active {
+  color: var(--text-primary) !important;
+  background: var(--bg-card-soft) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — FOD Snapshots Page
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fsp-count-badge {
+  color: var(--text-primary) !important;
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+}
+
+[data-theme="dark"] .fsp-empty-title {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .fsp-detail-value,
+[data-theme="dark"] .fsp-row-id,
+[data-theme="dark"] .fsp-row-cell {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .fsp-view-btn:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .fsp-search-clear:hover {
+  color: var(--text-secondary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — FOD Mapping Page
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .fodmap-route-top strong,
+[data-theme="dark"] .fodmap-detail-grid strong,
+[data-theme="dark"] .fodmap-empty-state strong,
+[data-theme="dark"] .fodmap-footer-note strong {
+  color: var(--text-primary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — Inspection Log Page
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .ilog-modal-title {
+  color: var(--text-heading) !important;
+}
+
+[data-theme="dark"] .ilog-modal-row > span:last-child {
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ilog-modal-close {
+  background: var(--bg-card-soft) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ilog-modal-close:hover {
+  background: var(--bg-hover) !important;
+}
+
+[data-theme="dark"] .ilog-pager-btns button {
+  background: var(--bg-card) !important;
+  border-color: var(--border-default) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .ilog-dist-num {
+  color: var(--text-heading) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — Pipeline Log Page
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .slog-tab:hover {
+  background: var(--bg-hover) !important;
+  color: var(--text-primary) !important;
+}
+
+[data-theme="dark"] .slog-live-label {
+  color: var(--text-primary) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Missing text overrides — Stream Page
+   ─────────────────────────────────────────────────── */
+[data-theme="dark"] .stream-sparkline-empty,
+[data-theme="dark"] .stream-events-empty {
+  color: var(--text-muted) !important;
+}
+
+/* ─────────────────────────────────────────────────── 
+   Smooth transitions
+   ─────────────────────────────────────────────────── */
+body,
+.sidebar,
+.layout,
+.layout-content,
+.livefeed-card,
+.ah-card,
+.topbar {
+  transition: background-color 0.3s ease, border-color 0.3s ease, color 0.3s ease;
+}

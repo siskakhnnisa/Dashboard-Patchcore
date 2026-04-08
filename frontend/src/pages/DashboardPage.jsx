@@ -27,9 +27,9 @@ function fmtConf(v) { return v != null ? `${(v * 100).toFixed(1)}%` : "—"; }
 function KpiCard({ icon: Icon, iconBg, iconColor, label, value, sub, subColor }) {
   return (
     <div style={{
-      background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+      background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 14,
       padding: "18px 20px", display: "flex", alignItems: "center", gap: 14,
-      boxShadow: "0 1px 4px rgba(0,0,0,0.05)",
+      boxShadow: "var(--shadow-card)",
     }}>
       <div style={{
         width: 44, height: 44, borderRadius: 11, background: iconBg,
@@ -38,9 +38,9 @@ function KpiCard({ icon: Icon, iconBg, iconColor, label, value, sub, subColor })
         <Icon size={20} color={iconColor} />
       </div>
       <div style={{ minWidth: 0 }}>
-        <div style={{ fontSize: "0.72rem", color: "#64748B", fontWeight: 500, marginBottom: 2 }}>{label}</div>
-        <div style={{ fontSize: "1.45rem", fontWeight: 700, color: "#1E293B", lineHeight: 1.15 }}>{value}</div>
-        {sub && <div style={{ fontSize: "0.7rem", color: subColor ?? "#94A3B8", marginTop: 2 }}>{sub}</div>}
+        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", fontWeight: 500, marginBottom: 2 }}>{label}</div>
+        <div style={{ fontSize: "1.45rem", fontWeight: 700, color: "var(--text-heading)", lineHeight: 1.15 }}>{value}</div>
+        {sub && <div style={{ fontSize: "0.7rem", color: subColor ?? "var(--text-muted)", marginTop: 2 }}>{sub}</div>}
       </div>
     </div>
   );
@@ -56,10 +56,10 @@ const NavCard = React.memo(function NavCard({ icon: Icon, iconColor, iconBg, tit
       onMouseDown={() => preloadRoute(to)}
       onClick={() => onNavigate(to)}
       style={{
-        background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
+        background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 14,
         padding: "18px 18px", textAlign: "left", cursor: "pointer",
         display: "flex", flexDirection: "column", gap: 10,
-        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        boxShadow: "var(--shadow-card)",
       }}
     >
       <div style={{
@@ -69,8 +69,8 @@ const NavCard = React.memo(function NavCard({ icon: Icon, iconColor, iconBg, tit
         <Icon size={17} color={iconColor} />
       </div>
       <div>
-        <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "#1E293B", marginBottom: 3 }}>{title}</div>
-        <div style={{ fontSize: "0.72rem", color: "#64748B", lineHeight: 1.4 }}>{desc}</div>
+        <div style={{ fontSize: "0.85rem", fontWeight: 700, color: "var(--text-heading)", marginBottom: 3 }}>{title}</div>
+        <div style={{ fontSize: "0.72rem", color: "var(--text-secondary)", lineHeight: 1.4 }}>{desc}</div>
       </div>
     </button>
   );
@@ -85,14 +85,18 @@ const DashboardHero = React.memo(function DashboardHero({ connected }) {
   }, []);
 
   const hour = now.getHours();
-  const greeting = hour < 12 ? "Selamat Pagi" : hour < 17 ? "Selamat Siang" : "Selamat Malam";
+  const greeting = hour < 5  ? "Selamat Malam"
+               : hour < 12 ? "Selamat Pagi"
+               : hour < 15 ? "Selamat Siang"
+               : hour < 19 ? "Selamat Sore"
+               :              "Selamat Malam";
   const dateStr = now.toLocaleDateString("id-ID", { weekday: "long", day: "2-digit", month: "long", year: "numeric" });
   const timeStr = now.toLocaleTimeString("id-ID", { hour: "2-digit", minute: "2-digit", second: "2-digit" });
 
   return (
     <div style={{
-      background: "linear-gradient(180deg, #FFFFFF 0%, #F8FAFC 100%)",
-      border: "1px solid #E2E8F0",
+      background: "linear-gradient(180deg, var(--bg-card) 0%, var(--bg-page) 100%)",
+      border: "1px solid var(--border-default)",
       borderRadius: 16,
       padding: "24px 28px",
       display: "flex",
@@ -100,7 +104,7 @@ const DashboardHero = React.memo(function DashboardHero({ connected }) {
       justifyContent: "space-between",
       gap: 16,
       flexWrap: "wrap",
-      boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+      boxShadow: "var(--shadow-card)",
     }}>
       <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
         <div style={{
@@ -116,20 +120,20 @@ const DashboardHero = React.memo(function DashboardHero({ connected }) {
           <Plane size={26} color="#2563EB" />
         </div>
         <div>
-          <div style={{ fontSize: "0.78rem", color: "#64748B", marginBottom: 4 }}>{greeting}</div>
-          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "#1E293B", letterSpacing: "-0.02em" }}>
+          <div style={{ fontSize: "0.78rem", color: "var(--text-secondary)", marginBottom: 4 }}>{greeting}</div>
+          <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "var(--text-heading)", letterSpacing: "-0.02em" }}>
             FOD Detection Dashboard
           </h1>
-          <p style={{ margin: "4px 0 0", fontSize: "0.78rem", color: "#64748B" }}>
+          <p style={{ margin: "4px 0 0", fontSize: "0.78rem", color: "var(--text-secondary)" }}>
             Runway Safety Intelligence System
           </p>
         </div>
       </div>
       <div style={{ textAlign: "right" }}>
-        <div style={{ fontSize: "1.8rem", fontWeight: 700, color: "#1E293B", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
+        <div style={{ fontSize: "1.8rem", fontWeight: 700, color: "var(--text-heading)", fontVariantNumeric: "tabular-nums", letterSpacing: "-0.02em" }}>
           {timeStr}
         </div>
-        <div style={{ fontSize: "0.75rem", color: "#64748B", marginTop: 2 }}>{dateStr}</div>
+        <div style={{ fontSize: "0.75rem", color: "var(--text-secondary)", marginTop: 2 }}>{dateStr}</div>
         <div style={{
           marginTop: 8,
           display: "inline-flex",
@@ -182,11 +186,11 @@ export default function DashboardPage() {
     page: {
       display: "flex", flexDirection: "column", gap: 22,
       padding: "24px 28px 48px", maxWidth: 1280, margin: "0 auto",
-      background: "#F9FAFB", minHeight: "100vh",
+      background: "var(--bg-page)", minHeight: "100vh",
       fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif",
     },
     sectionLabel: {
-      fontSize: "0.7rem", fontWeight: 700, color: "#94A3B8",
+      fontSize: "0.7rem", fontWeight: 700, color: "var(--text-muted)",
       textTransform: "uppercase", letterSpacing: "0.07em", marginBottom: 10,
     },
   };
@@ -200,11 +204,11 @@ export default function DashboardPage() {
       {/* ── System Status Bar ── */}
       <div style={{
         display: "flex", gap: 12, flexWrap: "wrap",
-        background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12,
+        background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 12,
         padding: "14px 20px", alignItems: "center",
-        boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+        boxShadow: "var(--shadow-card)",
       }}>
-        <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "#94A3B8", textTransform: "uppercase", letterSpacing: "0.06em", marginRight: 4 }}>
+        <span style={{ fontSize: "0.72rem", fontWeight: 700, color: "var(--text-muted)", textTransform: "uppercase", letterSpacing: "0.06em", marginRight: 4 }}>
           Status Sistem:
         </span>
 
@@ -347,11 +351,11 @@ export default function DashboardPage() {
       <div>
         <div style={S.sectionLabel}>Riwayat Upload & Streaming</div>
         <div style={{
-          background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
-          overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+          background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 14,
+          overflow: "hidden", boxShadow: "var(--shadow-card)",
         }}>
           <div style={{
-            padding: "14px 16px", borderBottom: "1px solid #E2E8F0",
+            padding: "14px 16px", borderBottom: "1px solid var(--border-default)",
             display: "flex", alignItems: "center", justifyContent: "space-between", gap: 12, flexWrap: "wrap",
           }}>
             <div style={{ display: "flex", gap: 10, flexWrap: "wrap" }}>
@@ -372,8 +376,8 @@ export default function DashboardPage() {
               onMouseDown={() => preloadRoute("/activity-history")}
               onClick={() => navigateFast("/activity-history")}
               style={{
-                padding: "8px 12px", borderRadius: 10, border: "1px solid #CBD5E1",
-                background: "#F8FAFC", color: "#1E293B", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer",
+                padding: "8px 12px", borderRadius: 10, border: "1px solid var(--border-medium)",
+                background: "var(--bg-card-soft)", color: "var(--text-heading)", fontWeight: 700, fontSize: "0.8rem", cursor: "pointer",
               }}
             >
               Lihat Semua History
@@ -382,11 +386,11 @@ export default function DashboardPage() {
 
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #E2E8F0", background: "#F8FAFC" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-default)", background: "var(--bg-card-soft)" }}>
                 {['Tipe', 'Nama', 'Status', 'Waktu', 'Metadata'].map((h) => (
                   <th key={h} style={{
                     textAlign: "left", padding: "10px 16px",
-                    color: "#64748B", fontSize: "0.7rem", fontWeight: 700,
+                    color: "var(--text-secondary)", fontSize: "0.7rem", fontWeight: 700,
                     textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap",
                   }}>{h}</th>
                 ))}
@@ -402,16 +406,16 @@ export default function DashboardPage() {
                       ? { bg: "#EFF6FF", color: "#2563EB" }
                       : { bg: "#FFFBEB", color: "#D97706" };
                 return (
-                  <tr key={item.id} style={{ borderBottom: "1px solid #F1F5F9" }}>
-                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "#334155" }}>{item.activity_type === "upload" ? "Upload" : "Stream"}</td>
-                    <td style={{ padding: "10px 16px", color: "#1E293B" }}>{item.title}</td>
+                  <tr key={item.id} style={{ borderBottom: "1px solid var(--border-light)" }}>
+                    <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--text-primary)" }}>{item.activity_type === "upload" ? "Upload" : "Stream"}</td>
+                    <td style={{ padding: "10px 16px", color: "var(--text-heading)" }}>{item.title}</td>
                     <td style={{ padding: "10px 16px" }}>
                       <span style={{ padding: "4px 8px", borderRadius: 999, background: statusStyle.bg, color: statusStyle.color, fontWeight: 700, fontSize: "0.74rem" }}>
                         {item.status}
                       </span>
                     </td>
-                    <td style={{ padding: "10px 16px", color: "#64748B" }}>{item.started_at ? new Date(item.started_at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
-                    <td style={{ padding: "10px 16px", color: "#64748B" }}>
+                    <td style={{ padding: "10px 16px", color: "var(--text-secondary)" }}>{item.started_at ? new Date(item.started_at).toLocaleString("id-ID", { day: "2-digit", month: "short", hour: "2-digit", minute: "2-digit" }) : "—"}</td>
+                    <td style={{ padding: "10px 16px", color: "var(--text-secondary)" }}>
                       {item.activity_type === "upload"
                         ? `${item.resolution ?? "—"} · ${item.total_frames ?? 0} frame`
                         : `${item.stream_name ?? "Live Stream"}${item.detected_fod_count != null ? ` · ${item.detected_fod_count} FOD` : ""}`}
@@ -420,7 +424,7 @@ export default function DashboardPage() {
                 );
               }) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: "34px 16px", textAlign: "center", color: "#94A3B8" }}>
+                  <td colSpan={5} style={{ padding: "34px 16px", textAlign: "center", color: "var(--text-muted)" }}>
                     Belum ada history upload atau streaming.
                   </td>
                 </tr>
@@ -434,16 +438,16 @@ export default function DashboardPage() {
       <div>
         <div style={S.sectionLabel}>Sesi Deteksi Terakhir</div>
         <div style={{
-          background: "#fff", border: "1px solid #E2E8F0", borderRadius: 14,
-          overflow: "hidden", boxShadow: "0 1px 4px rgba(0,0,0,0.04)",
+          background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 14,
+          overflow: "hidden", boxShadow: "var(--shadow-card)",
         }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #E2E8F0", background: "#F8FAFC" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-default)", background: "var(--bg-card-soft)" }}>
                 {["#", "Sesi ID", "Tanggal Pertama Deteksi", "Jumlah FOD", "Avg Confidence"].map((h) => (
                   <th key={h} style={{
                     textAlign: "left", padding: "10px 16px",
-                    color: "#64748B", fontSize: "0.7rem", fontWeight: 700,
+                    color: "var(--text-secondary)", fontSize: "0.7rem", fontWeight: 700,
                     textTransform: "uppercase", letterSpacing: "0.05em", whiteSpace: "nowrap",
                   }}>{h}</th>
                 ))}
@@ -451,17 +455,17 @@ export default function DashboardPage() {
             </thead>
             <tbody>
               {sessions.length > 0 ? sessions.slice(0, 8).map((s, i) => (
-                <tr key={s.video_id} style={{ borderBottom: "1px solid #F1F5F9" }}>
+                <tr key={s.video_id} style={{ borderBottom: "1px solid var(--border-light)" }}>
                   <td style={{ padding: "10px 16px", color: "#6366F1", fontWeight: 700 }}>{i + 1}</td>
-                  <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: "0.75rem", color: "#374151" }}>
+                  <td style={{ padding: "10px 16px", fontFamily: "monospace", fontSize: "0.75rem", color: "var(--text-primary)" }}>
                     {s.short_id?.toUpperCase() ?? s.video_id}
                   </td>
-                  <td style={{ padding: "10px 16px", color: "#64748B" }}>
+                  <td style={{ padding: "10px 16px", color: "var(--text-secondary)" }}>
                     {s.first_detection
                       ? new Date(s.first_detection).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
                       : "—"}
                   </td>
-                  <td style={{ padding: "10px 16px", fontWeight: 700, color: "#1E293B" }}>{s.count}</td>
+                  <td style={{ padding: "10px 16px", fontWeight: 700, color: "var(--text-heading)" }}>{s.count}</td>
                   <td style={{ padding: "10px 16px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ flex: 1, height: 6, background: "#F1F5F9", borderRadius: 999, overflow: "hidden", minWidth: 60 }}>
@@ -472,13 +476,13 @@ export default function DashboardPage() {
                           borderRadius: 999,
                         }} />
                       </div>
-                      <span style={{ fontWeight: 700, color: "#374151", minWidth: 40 }}>{fmtConf(s.avg_confidence)}</span>
+                      <span style={{ fontWeight: 700, color: "var(--text-primary)", minWidth: 40 }}>{fmtConf(s.avg_confidence)}</span>
                     </div>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>
+                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>
                     Belum ada data sesi…
                   </td>
                 </tr>

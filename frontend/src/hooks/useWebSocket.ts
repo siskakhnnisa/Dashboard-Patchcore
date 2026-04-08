@@ -1,3 +1,8 @@
+/**
+ * @deprecated This file is legacy dead code — it is never imported anywhere.
+ * The WebSocket connection is now managed globally in `useDetectionStore` (Zustand).
+ * Use `useDetectionStream` from `hooks/useDetectionStream.ts` to consume detection state.
+ */
 import { useEffect, useRef, useState, useCallback } from "react";
 
 interface DetectionPayload {

@@ -1,8 +1,12 @@
 """
 Stream Reader — membaca frame dari live video stream (RTSP/RTMP/HTTP/SRT).
 
-Menggunakan PyAV (binding FFmpeg) untuk performa tinggi.
-Fallback ke OpenCV jika PyAV tidak tersedia.
+Menggunakan OpenCV VideoCapture agar pixel values identik dengan notebook
+(yang juga menggunakan cv2.VideoCapture). Decoder yang berbeda (PyAV, Decord)
+menghasilkan pixel values yang berbeda, yang menyebabkan PatchCore memberikan
+hasil deteksi yang sangat berbeda karena sensitivitas nearest-neighbor matching.
+
+Fallback ke PyAV hanya jika OpenCV gagal connect.
 """
 import cv2
 import time
@@ -12,14 +16,14 @@ from typing import Optional, Tuple
 from collections import deque
 from app.core.logger import logger
 
-# Try PyAV for high-performance stream decoding
+# PyAV tersedia sebagai fallback jika OpenCV tidak bisa membuka stream
 try:
     import av
     HAS_PYAV = True
-    logger.info("PyAV available — using FFmpeg-based stream decoding")
+    logger.info("PyAV available — sebagai fallback jika OpenCV gagal connect stream")
 except ImportError:
     HAS_PYAV = False
-    logger.warning("PyAV not installed — falling back to OpenCV for stream reading")
+    logger.info("PyAV not installed — menggunakan OpenCV saja untuk stream")
 
 
 class StreamReader:
@@ -98,7 +102,39 @@ class StreamReader:
         logger.info(f"Stream reader started: {stream_url}")
 
     def _connect(self, url: str):
-        """Establish connection to stream."""
+        """
+        Establish connection to stream.
+        
+        Prioritas: OpenCV VideoCapture (identik decoder dengan notebook)
+        Fallback : PyAV (jika OpenCV gagal, misalnya untuk SRT streams)
+        """
+        # ── OpenCV pertama (decoder identik dengan notebook) ─────────
+        try:
+            self._cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)
+            self._cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Minimal buffer
+            
+            if self._cap.isOpened():
+                self.fps = self._cap.get(cv2.CAP_PROP_FPS) or 30
+                self.width = int(self._cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+                self.height = int(self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
+                self._use_pyav = False
+                
+                logger.info(
+                    f"Stream connected (OpenCV — identik notebook): {url} | "
+                    f"{self.width}x{self.height} @ {self.fps:.1f}fps"
+                )
+                return
+            else:
+                self._cap.release()
+                self._cap = None
+                logger.warning(f"OpenCV gagal membuka stream, mencoba PyAV fallback...")
+        except Exception as e:
+            logger.warning(f"OpenCV gagal connect: {e}, mencoba PyAV fallback...")
+            if self._cap is not None:
+                self._cap.release()
+                self._cap = None
+
+        # ── PyAV fallback (hanya jika OpenCV gagal) ──────────────────
         if HAS_PYAV:
             try:
                 options = {
@@ -120,31 +156,16 @@ class StreamReader:
                 self._use_pyav = True
                 
                 logger.info(
-                    f"Stream connected (PyAV): {url} | "
+                    f"Stream connected (PyAV fallback): {url} | "
                     f"{self.width}x{self.height} @ {self.fps:.1f}fps"
                 )
                 return
             except Exception as e:
-                logger.warning(f"PyAV gagal connect, fallback OpenCV: {e}")
+                logger.warning(f"PyAV juga gagal connect: {e}")
                 self._container = None
                 self._use_pyav = False
 
-        # OpenCV fallback
-        self._cap = cv2.VideoCapture(url, cv2.CAP_FFMPEG)
-        self._cap.set(cv2.CAP_PROP_BUFFERSIZE, 1)  # Minimal buffer
-        
-        if not self._cap.isOpened():
-            raise ConnectionError(f"Gagal membuka stream: {url}")
-        
-        self.fps = self._cap.get(cv2.CAP_PROP_FPS) or 30
-        self.width = int(self._cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        self.height = int(self._cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-        self._use_pyav = False
-        
-        logger.info(
-            f"Stream connected (OpenCV): {url} | "
-            f"{self.width}x{self.height} @ {self.fps:.1f}fps"
-        )
+        raise ConnectionError(f"Gagal membuka stream (OpenCV & PyAV gagal): {url}")
 
     def _read_loop(self):
         """

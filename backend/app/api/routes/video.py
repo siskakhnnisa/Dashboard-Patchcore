@@ -12,12 +12,18 @@ async def upload_video(file: UploadFile = File(...)):
     Upload video file dari frontend.
     Frontend: PipelineControlPanel memanggil endpoint ini.
     """
-    # Validasi tipe file
-    allowed_types = ["video/mp4", "video/avi", "video/x-msvideo", "video/quicktime"]
-    if file.content_type not in allowed_types:
+    # Validasi berdasarkan ekstensi file (lebih reliable dari MIME type
+    # karena browser bisa kirim MIME type berbeda-beda untuk file yang sama,
+    # misal: video/mp4, video/mpeg, application/octet-stream, dsb.)
+    allowed_extensions = {".mp4", ".avi", ".mov", ".mkv", ".webm"}
+    filename_lower = (file.filename or "").lower()
+    import os as _os
+    _, ext = _os.path.splitext(filename_lower)
+    if ext not in allowed_extensions:
         raise HTTPException(
             status_code=400,
-            detail=f"Tipe file tidak didukung: {file.content_type}"
+            detail=f"Format file tidak didukung: '{ext or '(tidak ada ekstensi)'}'. "
+                   f"Format yang diterima: {', '.join(sorted(allowed_extensions))}"
         )
     
     # Validasi ukuran file

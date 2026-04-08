@@ -1,5 +1,7 @@
 import asyncio
 import time
+import numpy as np
+from collections import deque
 from typing import Optional, Set
 from fastapi import WebSocket
 from app.ml.inference import InferencePipeline
@@ -9,6 +11,99 @@ from app.services.event_logger import FODEventLogger
 from app.schemas.detection import PipelineStatus
 from app.config import settings
 from app.core.logger import logger
+
+# ─────────────────────────────────────────────────────────────────────────────
+# FOD Tracker — identik dengan FODTracker di notebook trial2
+# Digunakan agar hasil file pipeline sama dengan notebook:
+#   - Sebuah deteksi harus muncul di MIN_TRACK_FRAMES frame berturut-turut
+#     sebelum dianggap "confirmed" dan ditampilkan.
+#   - Box posisi mengikuti deteksi terakhir, ukuran dirata-rata (stabilisasi).
+# ─────────────────────────────────────────────────────────────────────────────
+_STABILIZATION_WINDOW = 5
+_IOU_THRESHOLD_TRACK  = 0.3
+_MAX_FRAMES_LOST      = 10
+_MIN_TRACK_FRAMES     = 3
+
+
+class _FODTracker:
+    def __init__(self, track_id, initial_box, confidence, frame_num):
+        self.track_id     = track_id
+        self.recent_boxes = deque([initial_box], maxlen=_STABILIZATION_WINDOW)
+        self.current_box  = initial_box
+        self.confidences  = deque([confidence],  maxlen=_STABILIZATION_WINDOW)
+        self.frames_seen  = 1
+        self.frames_lost  = 0
+        self.first_frame  = frame_num
+        self.last_frame   = frame_num
+        self.is_confirmed = False
+
+    def update(self, box, confidence, frame_num):
+        self.recent_boxes.append(box)
+        self.current_box  = box
+        self.confidences.append(confidence)
+        self.frames_seen += 1
+        self.frames_lost  = 0
+        self.last_frame   = frame_num
+        if self.frames_seen >= _MIN_TRACK_FRAMES:
+            self.is_confirmed = True
+
+    def mark_lost(self):
+        self.frames_lost += 1
+
+    def is_dead(self):
+        return self.frames_lost > _MAX_FRAMES_LOST
+
+    def get_stabilized_box(self):
+        arr    = np.array(self.recent_boxes)
+        w_mean = int(arr[:, 2].mean())
+        h_mean = int(arr[:, 3].mean())
+        x, y   = self.current_box[0], self.current_box[1]
+        return (x, y, w_mean, h_mean)
+
+    def get_avg_confidence(self):
+        return float(np.mean(self.confidences))
+
+    def should_draw(self):
+        return self.is_confirmed and self.frames_lost == 0
+
+
+def _compute_iou(box1, box2):
+    x1, y1, w1, h1 = box1
+    x2, y2, w2, h2 = box2
+    ix1 = max(x1, x2);  iy1 = max(y1, y2)
+    ix2 = min(x1+w1, x2+w2);  iy2 = min(y1+h1, y2+h2)
+    iw  = max(0, ix2 - ix1);  ih = max(0, iy2 - iy1)
+    inter = iw * ih
+    union = w1*h1 + w2*h2 - inter
+    return inter / union if union > 0 else 0.0
+
+
+def _match_detections(detections, trackers):
+    """Greedy IoU matching — identik dengan notebook."""
+    if not trackers:
+        return [], list(range(len(detections))), []
+    if not detections:
+        return [], [], list(range(len(trackers)))
+
+    iou_mat = np.zeros((len(detections), len(trackers)))
+    for d, det in enumerate(detections):
+        for t, tr in enumerate(trackers):
+            iou_mat[d, t] = _compute_iou(det, tr.get_stabilized_box())
+
+    matched, unmatched_d, unmatched_t = [], list(range(len(detections))), list(range(len(trackers)))
+    while unmatched_d and unmatched_t:
+        best = 0.0; bd = bt = -1
+        for d in unmatched_d:
+            for t in unmatched_t:
+                if iou_mat[d, t] > best:
+                    best = iou_mat[d, t]; bd = d; bt = t
+        if best < _IOU_THRESHOLD_TRACK:
+            break
+        matched.append((bd, bt))
+        unmatched_d.remove(bd)
+        unmatched_t.remove(bt)
+    return matched, unmatched_d, unmatched_t
+
 
 class PipelineManager:
     """
@@ -26,12 +121,20 @@ class PipelineManager:
         self.reader = VideoReader()
         self.processor = FrameProcessor()
         self.event_logger = FODEventLogger()
+
+        # Tracking state — identik dengan notebook trial2
+        self._trackers: list = []
+        self._next_track_id: int = 1
+        self._confirmed_ids: set = set()
         
         # WebSocket clients yang sedang terhubung
         self._active_clients: Set[WebSocket] = set()
         
         # Control flags
         self._running = False
+        self._paused = False
+        self._pause_event = asyncio.Event()
+        self._pause_event.set()  # not paused initially
         self._task: Optional[asyncio.Task] = None
         
         # Metrics
@@ -63,8 +166,15 @@ class PipelineManager:
         self.video_id = video_id
         self.event_logger.reset()
         self._running = True
+        self._paused = False
+        self._pause_event.set()
         self.status = PipelineStatus.RUNNING
         self._start_time = time.time()
+
+        # Reset tracker
+        self._trackers = []
+        self._next_track_id = 1
+        self._confirmed_ids = set()
         
         # Jalankan sebagai background task
         self._task = asyncio.create_task(self._run_loop())
@@ -73,6 +183,8 @@ class PipelineManager:
     async def stop_pipeline(self):
         """Stop pipeline deteksi"""
         self._running = False
+        self._paused = False
+        self._pause_event.set()
         if self._task:
             self._task.cancel()
             try:
@@ -85,6 +197,26 @@ class PipelineManager:
         
         # Notifikasi semua client
         await self._broadcast({"type": "status", "status": "stopped"})
+    
+    async def pause_pipeline(self):
+        """Pause pipeline deteksi"""
+        if not self._running or self._paused:
+            return
+        self._paused = True
+        self._pause_event.clear()
+        self.status = PipelineStatus.PAUSED
+        logger.info("Pipeline di-pause")
+        await self._broadcast({"type": "status", "pipeline_status": "paused", "status": "paused"})
+    
+    async def resume_pipeline(self):
+        """Resume pipeline dari pause"""
+        if not self._running or not self._paused:
+            return
+        self._paused = False
+        self._pause_event.set()
+        self.status = PipelineStatus.RUNNING
+        logger.info("Pipeline di-resume")
+        await self._broadcast({"type": "status", "pipeline_status": "running", "status": "running"})
     
     async def _run_loop(self):
         """
@@ -108,6 +240,10 @@ class PipelineManager:
             loop = asyncio.get_event_loop()
             
             while self._running:
+                # ── Wait if paused ───────────────────────────────────────
+                await self._pause_event.wait()
+                if not self._running:
+                    break
                 loop_start = time.time()
                 t_read = time.time()
                 # ── Baca frame (blocking → thread pool) ──────────────────
@@ -117,9 +253,14 @@ class PipelineManager:
                 t_read_done = time.time()
                 if result_read is None:
                     logger.info("Video selesai diputar")
+                    # Reset status SEBELUM broadcast agar WS client baru yang
+                    # connect setelah ini langsung mendapat pipeline_status: "idle"
+                    self.status = PipelineStatus.IDLE
+                    self._running = False
                     await self._broadcast({
                         "type": "status",
                         "status": "finished",
+                        "pipeline_status": "idle",
                         "total_fod": self.event_logger.total_fod_count
                     })
                     break
@@ -130,24 +271,59 @@ class PipelineManager:
                     None, self.inference.process_frame, frame
                 )
                 t_infer_done = time.time()
+                # ── Tracking — identik dengan notebook trial2 ─────────────
+                # Detections adalah list BoundingBox; buat list tuple (x,y,w,h)
+                det_boxes = [(b.x, b.y, b.width, b.height) for b in detection.bboxes]
+                det_confs = {(b.x, b.y, b.width, b.height): b.confidence for b in detection.bboxes}
+
+                matched, unmatched_dets, unmatched_tracks = _match_detections(
+                    det_boxes, self._trackers
+                )
+                for det_idx, track_idx in matched:
+                    box = det_boxes[det_idx]
+                    self._trackers[track_idx].update(box, det_confs[box], frame_idx)
+                for det_idx in unmatched_dets:
+                    box = det_boxes[det_idx]
+                    self._trackers.append(
+                        _FODTracker(self._next_track_id, box, det_confs[box], frame_idx)
+                    )
+                    self._next_track_id += 1
+                for track_idx in unmatched_tracks:
+                    self._trackers[track_idx].mark_lost()
+                self._trackers = [t for t in self._trackers if not t.is_dead()]
+                for t in self._trackers:
+                    if t.is_confirmed:
+                        self._confirmed_ids.add(t.track_id)
+
+                # Bboxes yang di-broadcast & divisualisasi hanya dari tracker confirmed
+                confirmed_bboxes = []
+                from app.schemas.detection import BoundingBox as _BBox
+                for t in self._trackers:
+                    if t.should_draw():
+                        x, y, w, h = t.get_stabilized_box()
+                        confirmed_bboxes.append(_BBox(
+                            x=x, y=y, width=w, height=h,
+                            confidence=round(t.get_avg_confidence(), 4),
+                            label="FOD"
+                        ))
+
+                # Override detection bboxes dengan tracker-confirmed bboxes
+                detection.bboxes = confirmed_bboxes
+                detection.anomaly_detected = len(confirmed_bboxes) > 0
+
                 # ── Record ke event logger ────────────────────────────────
                 self.event_logger.record(detection)
-                # ── Simpan snapshot FOD jika terdeteksi ────────────────
+                # ── Simpan snapshot FOD jika ada tracker confirmed ─────────
                 from app.services.fod_snapshot import save_fod_snapshot
                 from app.models.fod_snapshot import FODSnapshot
                 from app.db import SessionLocal
                 import datetime
-                import cv2 as _cv2
                 if detection.anomaly_detected and detection.bboxes:
-                    # bbox koordinat berdasarkan frame_resized (FRAME_WIDTH x FRAME_HEIGHT),
-                    # jadi kita resize frame agar crop koordinatnya cocok.
-                    frame_for_crop = _cv2.resize(frame, (settings.FRAME_WIDTH, settings.FRAME_HEIGHT))
                     db = SessionLocal()
                     try:
                         for bbox in detection.bboxes:
-                            # Crop & simpan gambar
                             img_filename = save_fod_snapshot(
-                                frame_for_crop,
+                                frame,
                                 {
                                     "x": bbox.x,
                                     "y": bbox.y,
@@ -159,20 +335,17 @@ class PipelineManager:
                                 bbox.label,
                                 bbox.confidence
                             )
-                            # Simpan metadata ke DB
                             snapshot = FODSnapshot(
-                                timestamp = datetime.datetime.utcnow(),
-                                video_id = self.video_id,
+                                timestamp    = datetime.datetime.utcnow(),
+                                video_id     = self.video_id,
                                 frame_number = frame_idx,
-                                bbox = {
-                                    "x": bbox.x,
-                                    "y": bbox.y,
-                                    "width": bbox.width,
-                                    "height": bbox.height
+                                bbox         = {
+                                    "x": bbox.x, "y": bbox.y,
+                                    "width": bbox.width, "height": bbox.height
                                 },
-                                image_path = img_filename,
-                                label = bbox.label,
-                                    confidence = bbox.confidence
+                                image_path  = img_filename,
+                                label       = bbox.label,
+                                confidence  = bbox.confidence
                             )
                             db.add(snapshot)
                         db.commit()
@@ -258,6 +431,11 @@ class PipelineManager:
         finally:
             self.reader.release()
             self._running = False
+            # Jika status masih RUNNING (belum di-reset secara eksplisit),
+            # reset ke IDLE agar koneksi WebSocket baru tidak mendapat
+            # pipeline_status: "running" yang salah.
+            if self.status == PipelineStatus.RUNNING:
+                self.status = PipelineStatus.IDLE
     
     async def _broadcast(self, data):
         """Kirim payload ke semua WebSocket client yang aktif"""

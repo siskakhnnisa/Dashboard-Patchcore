@@ -7,6 +7,7 @@ Menyediakan REST endpoints + WebSocket live tail.
 import asyncio
 import os
 import re
+import time
 from datetime import datetime, timedelta
 from typing import Optional
 
@@ -23,6 +24,49 @@ _LOG_RE = re.compile(
     r"\s*\|\s*(?P<level>\w+)\s*\|"
     r"\s*(?P<source>[^|]+?)\s*-\s*(?P<message>.*)$"
 )
+
+# ── In-memory cache untuk parsed log entries ──────────────────────────────
+_log_cache: dict = {
+    "entries": [],
+    "mtime": 0.0,
+    "size": 0,
+    "ts": 0.0,
+}
+_CACHE_TTL = 5.0  # detik
+
+
+def _get_cached_entries() -> list[dict]:
+    """Return parsed entries dari cache. Parse ulang hanya jika file berubah atau cache expired."""
+    now = time.monotonic()
+
+    # Cek file mtime/size untuk invalidate cache lebih cepat dari TTL
+    try:
+        stat = os.stat(LOG_FILE)
+        current_mtime = stat.st_mtime
+        current_size = stat.st_size
+    except FileNotFoundError:
+        return []
+
+    cache_valid = (
+        _log_cache["entries"]
+        and _log_cache["mtime"] == current_mtime
+        and _log_cache["size"] == current_size
+        and (now - _log_cache["ts"]) < _CACHE_TTL
+    )
+
+    if cache_valid:
+        return _log_cache["entries"]
+
+    # Cache miss — baca & parse ulang
+    raw_lines = _read_tail(LOG_FILE)
+    entries = _parse_log_lines(raw_lines)
+
+    _log_cache["entries"] = entries
+    _log_cache["mtime"] = current_mtime
+    _log_cache["size"] = current_size
+    _log_cache["ts"] = now
+
+    return entries
 
 
 def _parse_log_lines(raw_lines: list[str]) -> list[dict]:
@@ -70,8 +114,7 @@ async def get_system_logs(
     Baca system log terbaru dari file.
     Return terbaru dulu (descending).
     """
-    raw_lines = _read_tail(LOG_FILE)
-    entries = _parse_log_lines(raw_lines)
+    entries = list(_get_cached_entries())
 
     # Filter level
     if level:
@@ -109,8 +152,7 @@ async def get_system_logs(
 @router.get("/levels")
 async def get_log_levels():
     """Return daftar level unik yang ada di log file."""
-    raw_lines = _read_tail(LOG_FILE)
-    entries = _parse_log_lines(raw_lines)
+    entries = _get_cached_entries()
     levels = sorted({e["level"] for e in entries})
     return JSONResponse(content={"levels": levels})
 
@@ -118,8 +160,7 @@ async def get_log_levels():
 @router.get("/stats")
 async def get_log_stats():
     """Return ringkasan statistik log + operational insights untuk admin."""
-    raw_lines = _read_tail(LOG_FILE)
-    entries = _parse_log_lines(raw_lines)
+    entries = list(_get_cached_entries())
 
     level_counts: dict[str, int] = {}
     for e in entries:

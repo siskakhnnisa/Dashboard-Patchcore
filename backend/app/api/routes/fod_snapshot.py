@@ -12,7 +12,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select, delete
 from app.db_async import get_async_db
 from app.models.fod_snapshot import FODSnapshot
-from app.schemas.fod_snapshot import FODSnapshotSchema, FODSnapshotValidateSchema
+from app.schemas.fod_snapshot import FODSnapshotSchema, FODSnapshotValidateSchema, BulkValidateSchema, BulkDeleteSchema
 
 router = APIRouter(prefix="/fod-snapshots", tags=["FOD Snapshots"])
 
@@ -77,6 +77,12 @@ async def get_snapshots(
         default=None,
         description="Filter status validasi: pending | confirmed | rejected | resolved"
     ),
+    limit: Optional[int] = Query(
+        default=500,
+        ge=1,
+        le=5000,
+        description="Jumlah maksimum snapshot yang dikembalikan"
+    ),
     db: AsyncSession = Depends(get_async_db),
 ):
     stmt = select(FODSnapshot).order_by(FODSnapshot.created_at.desc())
@@ -84,6 +90,8 @@ async def get_snapshots(
         stmt = stmt.where(FODSnapshot.video_id == video_id)
     if validation_status:
         stmt = stmt.where(FODSnapshot.validation_status == validation_status)
+    if limit:
+        stmt = stmt.limit(limit)
     result = await db.execute(stmt)
     rows = result.scalars().all()
     return JSONResponse(content=_serialize(rows), headers=_CORS)
@@ -184,5 +192,89 @@ async def validate_snapshot(
 
     return JSONResponse(
         content=FODSnapshotSchema.model_validate(row.__dict__).model_dump(mode="json"),
+        headers=_CORS,
+    )
+
+
+# ── POST /fod-snapshots/bulk-validate ───────────────────────────────────────
+class _BulkValidateResult(dict): pass  # plain dict response
+
+@router.post("/bulk-validate")
+async def bulk_validate_snapshots(
+    body: BulkValidateSchema,
+    db: AsyncSession = Depends(get_async_db),
+):
+    """
+    Validasi banyak snapshot sekaligus.
+    Body: { ids: [int], validation_status: str, validated_by?: str, validation_notes?: str }
+    """
+    if not body.ids:
+        return JSONResponse(content={"updated": [], "count": 0}, headers=_CORS)
+
+    stmt = select(FODSnapshot).where(FODSnapshot.id.in_(body.ids))
+    result = await db.execute(stmt)
+    rows = result.scalars().all()
+
+    if not rows:
+        return JSONResponse(content={"updated": [], "count": 0}, headers=_CORS)
+
+    now = datetime.datetime.utcnow()
+    for row in rows:
+        row.validation_status = body.validation_status
+        row.validated_by      = body.validated_by or None
+        row.validated_at      = now
+        row.validation_notes  = body.validation_notes or None
+
+    await db.commit()
+
+    updated = []
+    for row in rows:
+        await db.refresh(row)
+        try:
+            updated.append(
+                FODSnapshotSchema.model_validate(row.__dict__).model_dump(mode="json")
+            )
+        except Exception as e:
+            logging.warning(f"Skip bulk-validate row id={getattr(row,'id','?')}: {e}")
+
+    return JSONResponse(
+        content={"updated": updated, "count": len(updated)},
+        headers=_CORS,
+    )
+
+
+# ── POST /fod-snapshots/bulk-delete ─────────────────────────────────────────
+@router.post("/bulk-delete")
+async def bulk_delete_snapshots(
+    body: BulkDeleteSchema,
+    db: AsyncSession = Depends(get_async_db),
+):
+    """
+    Hapus banyak snapshot sekaligus (DB + file gambar).
+    Body: { ids: [int] }
+    """
+    if not body.ids:
+        return JSONResponse(content={"deleted_ids": [], "count": 0}, headers=_CORS)
+
+    stmt = select(FODSnapshot).where(FODSnapshot.id.in_(body.ids))
+    result = await db.execute(stmt)
+    rows = result.scalars().all()
+
+    deleted_ids = []
+    for row in rows:
+        if row.image_path:
+            img_path = os.path.join(SNAPSHOT_DIR, row.image_path)
+            if os.path.isfile(img_path):
+                try:
+                    os.remove(img_path)
+                except Exception as e:
+                    logging.warning(f"Gagal hapus file: {img_path} | {e}")
+        deleted_ids.append(row.id)
+        await db.delete(row)
+
+    await db.commit()
+
+    return JSONResponse(
+        content={"deleted_ids": deleted_ids, "count": len(deleted_ids)},
         headers=_CORS,
     )

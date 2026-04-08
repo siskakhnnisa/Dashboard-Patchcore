@@ -43,6 +43,16 @@ export const api = {
     await fetch(`${BASE_URL}/api/pipeline/stop`, { method: "POST" });
   },
 
+  // Pause pipeline
+  async pausePipeline(): Promise<void> {
+    await fetch(`${BASE_URL}/api/pipeline/pause`, { method: "POST" });
+  },
+
+  // Resume pipeline
+  async resumePipeline(): Promise<void> {
+    await fetch(`${BASE_URL}/api/pipeline/resume`, { method: "POST" });
+  },
+
   // Update threshold real-time
   async updateThreshold(threshold: number): Promise<void> {
     await fetch(`${BASE_URL}/api/pipeline/threshold?threshold=${threshold}`, {

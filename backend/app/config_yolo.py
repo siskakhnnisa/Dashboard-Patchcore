@@ -1,6 +1,6 @@
-# Deprecated: YOLO config telah dipindahkan ke app/config.py (Settings.YOLO_MODEL_PATH)
+# Deprecated: YOLO telah diganti dengan ONNX classifier EfficientNet-B3 (trial2)
 # File ini hanya untuk kompatibilitas mundur.
 from app.config import settings
 
-YOLO_MODEL_PATH = settings.YOLO_MODEL_PATH
-YOLO_CONF_THRESHOLD = settings.YOLO_CONF_THRESHOLD
+CLASSIFIER_MODEL_PATH = settings.CLASSIFIER_MODEL_PATH
+CLASSIFIER_CONF_THRESHOLD = settings.CLASSIFIER_CONF_THRESHOLD

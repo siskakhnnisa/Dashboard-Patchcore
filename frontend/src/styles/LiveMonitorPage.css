@@ -9,8 +9,9 @@
   min-height: 100vh;
   margin: 0;
   box-sizing: border-box;
-  background: #F9FAFB;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif;
+  background: var(--bg-page);
+  font-family: var(--font-sans);
+  transition: background 0.3s ease;
   overflow-x: hidden;
 }
 
@@ -25,62 +26,58 @@
 .livefeed-title {
   font-size: 24px;
   font-weight: 600;
-  color: #1a1a1a;
+  color: var(--text-primary);
   margin: 0;
   letter-spacing: -0.3px;
 }
 
 /* ── Card Base ── */
 .livefeed-card {
-  background: #FFFFFF;
+  background: var(--bg-card);
   border-radius: 12px;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--shadow-card);
   padding: 20px;
   width: 100%;
-  color: #1f2937;
-  transition: box-shadow 0.2s;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  color: var(--text-primary);
+  transition: box-shadow 0.2s, background 0.3s ease;
+  border: 1px solid var(--border-light);
   box-sizing: border-box;
   overflow: hidden;
 }
 
 .livefeed-card:hover {
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--shadow-md);
 }
 
-/* ── Main Row: Monitor + Pipeline ── */
-.livefeed-main {
-  display: grid;
-  grid-template-columns: 2.2fr 1fr;
-  gap: 20px;
-  align-items: stretch;
-  width: 100%;
-}
-
-.livefeed-monitor-col {
-  display: flex;
-  flex-direction: column;
-  min-height: 320px;
-  padding: 0;
-  width: 100%;
+/* ── Unified Workspace: Control Toolbar + Monitor in one card ── */
+.livefeed-workspace {
+  background: var(--bg-card);
+  border-radius: 12px;
+  border: 1px solid var(--border-light);
+  box-shadow: var(--shadow-card);
   overflow: hidden;
-}
-
-.livefeed-pipeline-col {
   display: flex;
   flex-direction: column;
-  min-height: 320px;
-  padding: 24px;
+  transition: box-shadow 0.2s, border-color 0.2s, background 0.3s ease;
   width: 100%;
+}
+
+.livefeed-workspace:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.livefeed-workspace.alert-state {
+  border-color: rgba(239, 68, 68, 0.5) !important;
+  box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15), var(--shadow-md) !important;
+  animation: workspace-alert-pulse 2s ease infinite;
+}
+
+@keyframes workspace-alert-pulse {
+  0%, 100% { box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.15), var(--shadow-md); }
+  50%       { box-shadow: 0 0 0 2px rgba(239, 68, 68, 0.05), var(--shadow-md); }
 }
 
 /* ── Responsive ── */
-@media (max-width: 1200px) {
-  .livefeed-main {
-    grid-template-columns: 1fr;
-  }
-}
-
 @media (max-width: 768px) {
   .livefeed {
     padding: 16px;
@@ -90,4 +87,171 @@
   .livefeed-title {
     font-size: 20px;
   }
+}
+
+/* ── Tabs ── */
+.livefeed-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--border-light, #e2e8f0);
+  margin-bottom: 16px;
+}
+
+.livefeed-tab {
+  padding: 10px 20px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+  outline: none;
+  box-shadow: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.livefeed-tab:hover {
+  color: var(--text-primary, #1e293b);
+  background: var(--bg-card-soft, #f8fafc);
+}
+
+.livefeed-tab:focus,
+.livefeed-tab:focus-visible,
+.livefeed-tab:active {
+  outline: none;
+  box-shadow: none;
+}
+
+.livefeed-tab--active {
+  color: #2563eb;
+  border-bottom-color: #2563eb;
+}
+
+/* ── Inspection Log embedded ── */
+.livefeed-inspection-log {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.livefeed-ilog-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.livefeed-ilog-count {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--text-secondary, #64748b);
+}
+
+.livefeed-ilog-export {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  font-size: 12.5px;
+  font-weight: 600;
+  border-radius: 6px;
+  border: 1px solid var(--border-light, #e2e8f0);
+  background: var(--bg-card, #fff);
+  color: var(--text-secondary, #64748b);
+  cursor: pointer;
+  transition: all 0.15s;
+  font-family: inherit;
+}
+
+.livefeed-ilog-export:hover:not(:disabled) {
+  background: var(--bg-card-soft, #f8fafc);
+  border-color: #93c5fd;
+  color: #2563eb;
+}
+
+.livefeed-ilog-export:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.livefeed-ilog-scroll {
+  max-height: 420px;
+  overflow-y: auto;
+  border-radius: 8px;
+  border: 1px solid var(--border-light, #e2e8f0);
+}
+
+.livefeed-ilog-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 13px;
+}
+
+.livefeed-ilog-table thead {
+  position: sticky;
+  top: 0;
+  z-index: 2;
+}
+
+.livefeed-ilog-table th {
+  background: var(--bg-card-soft, #f8fafc);
+  color: var(--text-secondary, #64748b);
+  font-weight: 600;
+  font-size: 11.5px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 12px;
+  text-align: left;
+  border-bottom: 1px solid var(--border-light, #e2e8f0);
+}
+
+.livefeed-ilog-table td {
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border-light, #f1f5f9);
+  color: var(--text-primary, #1e293b);
+}
+
+.livefeed-ilog-table tbody tr:hover {
+  background: var(--bg-card-soft, #f8fafc);
+}
+
+.livefeed-ilog-mono {
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-size: 12px;
+}
+
+.livefeed-ilog-sev {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 700;
+  padding: 2px 8px;
+  border-radius: 999px;
+  letter-spacing: 0.03em;
+}
+
+.livefeed-ilog-sev--high {
+  background: #FEE2E2;
+  color: #DC2626;
+}
+
+.livefeed-ilog-sev--medium {
+  background: #FEF3C7;
+  color: #D97706;
+}
+
+.livefeed-ilog-sev--low {
+  background: #D1FAE5;
+  color: #059669;
+}
+
+.livefeed-ilog-empty {
+  padding: 48px 0;
+  text-align: center;
+  color: var(--text-secondary, #888);
+  font-size: 14px;
 }

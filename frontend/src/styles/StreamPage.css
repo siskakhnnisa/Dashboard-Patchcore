@@ -74,24 +74,115 @@
   50% { opacity: 0.3; }
 }
 
-/* ── Content Layout ── */
-.stream-content {
-  display: grid;
-  grid-template-columns: 2.4fr 1fr;
-  gap: 18px;
-  align-items: start;
+/* ── Workspace: monitor fills full width, drawer overlays from the right ── */
+.stream-workspace {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
 }
+
+/* Monitor column — always 100% of available space */
+.stream-monitor-col {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  min-width: 0;
+}
+
+/* ── Monitor row: video col + drawer side by side ── */
+.stream-monitor-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+  min-height: 0;
+}
+
+.stream-video-col {
+  flex: 1;
+  min-width: 0;
+  position: relative;
+}
+
+/* ── Inline Config Drawer — sibling of video col ── */
+.stream-config-drawer {
+  width: 0;
+  overflow: hidden;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  background: #FFFFFF;
+  border: 1px solid transparent;
+  border-radius: 12px;
+  box-shadow: none;
+  opacity: 0;
+  pointer-events: none;
+  transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  will-change: width;
+}
+
+.stream-config-drawer.open {
+  width: 340px;
+  margin-left: 14px;
+  border-color: #E2E8F0;
+  box-shadow: 0 4px 24px rgba(99, 102, 241, 0.10), 0 1px 6px rgba(0, 0, 0, 0.07);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* ── Floating toggle tab — sits on the right edge of the video card ── */
+.stream-drawer-tab {
+  position: absolute;
+  right: -1px;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 201;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 10px 7px 14px;
+  background: #FFFFFF;
+  border: 1px solid rgba(99, 102, 241, 0.28);
+  border-right: none;
+  border-radius: 10px 0 0 10px;
+  color: #6366F1;
+  cursor: pointer;
+  box-shadow: -3px 0 12px rgba(99, 102, 241, 0.12);
+  transition: background 0.18s, box-shadow 0.18s, right 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.stream-drawer-tab:hover {
+  background: rgba(99, 102, 241, 0.06);
+  box-shadow: -4px 0 18px rgba(99, 102, 241, 0.22);
+}
+
+/* When drawer is open, tab stays on edge of video col (no movement needed) */
+.stream-drawer-tab.open {
+  right: -1px;
+  border-radius: 10px 0 0 10px;
+}
+
+.stream-drawer-tab-label {
+  writing-mode: vertical-rl;
+  text-orientation: mixed;
+  transform: rotate(180deg);
+  font-size: 0.58rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  color: #94A3B8;
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+/* ── Old classes kept for backward compat (responsive breakpoints) ── */
 .stream-left {
   display: flex;
   flex-direction: column;
   gap: 14px;
 }
 .stream-right {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  position: sticky;
-  top: 24px;
+  display: none; /* replaced by drawer */
 }
 
 /* ── Card Base ── */
@@ -118,8 +209,10 @@
 /* ── Stream Canvas ── */
 .stream-video-card {
   padding: 0;
+  position: relative;
   border: 1px solid rgba(99, 102, 241, 0.28);
   box-shadow: 0 4px 24px rgba(99, 102, 241, 0.10), 0 1px 6px rgba(0, 0, 0, 0.07);
+  overflow: visible !important; /* allow drawer tab to overflow edge */
 }
 .stream-canvas-wrap {
   position: relative;
@@ -392,10 +485,8 @@
 }
 
 /* ── Control Panel ── */
-.stream-control-card .stream-card-body {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
+.stream-control-card {
+  overflow: hidden;
 }
 .stream-field {
   display: flex;
@@ -403,11 +494,14 @@
   gap: 5px;
 }
 .stream-field label {
-  font-size: 0.72rem;
-  color: #64748B;
-  font-weight: 500;
+  font-size: 0.7rem;
+  color: #94A3B8;
+  font-weight: 600;
   text-transform: uppercase;
-  letter-spacing: 0.03em;
+  letter-spacing: 0.06em;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
 }
 .stream-field input[type="text"] {
   padding: 8px 12px;
@@ -655,20 +749,6 @@
 }
 
 /* ── Responsive ── */
-@media (max-width: 1200px) {
-  .stream-content {
-    grid-template-columns: 1fr;
-  }
-  .stream-right {
-    position: static;
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 14px;
-  }
-  .stream-control-card {
-    grid-column: 1 / -1;
-  }
-}
 @media (max-width: 768px) {
   .stream-page {
     padding: 16px;
@@ -683,12 +763,195 @@
   .stream-bottom-grid {
     grid-template-columns: 1fr;
   }
-  .stream-right {
-    grid-template-columns: 1fr;
+  /* On mobile drawer takes full width */
+  .stream-monitor-row {
+    flex-direction: column;
+  }
+  .stream-config-drawer {
+    width: 100% !important;
+    max-height: 0;
+    overflow: hidden;
+    margin-left: 0;
+    margin-top: 0;
+    transition: max-height 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+  .stream-config-drawer.open {
+    max-height: 600px;
+    margin-top: 14px;
+  }
+  .stream-drawer-tab.open {
+    right: -1px;
   }
 }
 @media (max-width: 480px) {
   .stream-metrics-row {
     grid-template-columns: repeat(2, 1fr);
   }
+}
+
+/* ── Config Panel Header ── */
+.stream-config-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 16px;
+  background: linear-gradient(135deg, rgba(99,102,241,0.07) 0%, rgba(139,92,246,0.04) 100%);
+  border-bottom: 1px solid rgba(99,102,241,0.14);
+  border-left: 3px solid #6366F1;
+  gap: 8px;
+  flex-shrink: 0;
+}
+
+.stream-config-header-info {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  min-width: 0;
+}
+
+.stream-config-header-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  background: rgba(99,102,241,0.12);
+  border-radius: 8px;
+  color: #6366F1;
+  flex-shrink: 0;
+}
+
+.stream-config-header-title {
+  font-size: 0.86rem;
+  font-weight: 700;
+  color: #374151;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.stream-config-running-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 2px 8px;
+  background: rgba(34,197,94,0.12);
+  border: 1px solid rgba(34,197,94,0.2);
+  border-radius: 20px;
+  font-size: 0.62rem;
+  font-weight: 700;
+  color: #22C55E;
+  letter-spacing: 0.07em;
+  flex-shrink: 0;
+}
+
+.stream-config-running-dot {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #22C55E;
+  animation: streamPulse 1.5s ease infinite;
+}
+
+.stream-config-collapse-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 7px;
+  border: 1px solid rgba(99,102,241,0.22);
+  background: rgba(99,102,241,0.07);
+  color: #6366F1;
+  cursor: pointer;
+  transition: background 0.18s, border-color 0.18s, transform 0.18s;
+  flex-shrink: 0;
+}
+.stream-config-collapse-btn:hover {
+  background: rgba(99,102,241,0.16);
+  border-color: rgba(99,102,241,0.42);
+  transform: translateX(2px);
+}
+
+/* ── Config Panel Body ── */
+.stream-config-body {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  padding: 18px 16px;
+  flex: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.stream-config-body::-webkit-scrollbar {
+  width: 4px;
+}
+.stream-config-body::-webkit-scrollbar-thumb {
+  background: #CBD5E1;
+  border-radius: 4px;
+}
+
+/* ── Config Divider ── */
+.stream-config-divider {
+  height: 1px;
+  background: linear-gradient(to right, transparent, #E2E8F0 20%, #E2E8F0 80%, transparent);
+  margin: 2px 0;
+  flex-shrink: 0;
+}
+
+/* ── Threshold value badge ── */
+.stream-threshold-val {
+  color: #6366F1;
+  font-size: 0.84rem;
+  font-weight: 700;
+  font-family: 'JetBrains Mono', monospace;
+  margin-left: auto;
+}
+
+/* ── Dark mode: drawer and config elements ── */
+[data-theme="dark"] .stream-config-drawer {
+  background: #1C2238;
+}
+[data-theme="dark"] .stream-config-drawer.open {
+  border-color: #26305A;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.32), 0 1px 6px rgba(0,0,0,0.22);
+}
+[data-theme="dark"] .stream-drawer-tab {
+  background: #1C2238;
+  border-color: rgba(129,140,248,0.3);
+  color: #818CF8;
+  box-shadow: -3px 0 12px rgba(0,0,0,0.4);
+}
+[data-theme="dark"] .stream-drawer-tab:hover {
+  background: rgba(99,102,241,0.12);
+  box-shadow: -4px 0 18px rgba(99,102,241,0.25);
+}
+[data-theme="dark"] .stream-config-header {
+  background: linear-gradient(135deg, rgba(99,102,241,0.1) 0%, rgba(139,92,246,0.06) 100%);
+  border-bottom-color: rgba(99,102,241,0.2);
+  border-left-color: #818CF8;
+}
+[data-theme="dark"] .stream-config-header-title {
+  color: #C7D2FE;
+}
+[data-theme="dark"] .stream-config-header-icon {
+  background: rgba(99,102,241,0.15);
+  color: #818CF8;
+}
+[data-theme="dark"] .stream-config-collapse-btn {
+  border-color: rgba(129,140,248,0.25);
+  background: rgba(129,140,248,0.08);
+  color: #818CF8;
+}
+[data-theme="dark"] .stream-config-collapse-btn:hover {
+  background: rgba(129,140,248,0.18);
+  border-color: rgba(129,140,248,0.45);
+}
+[data-theme="dark"] .stream-config-body::-webkit-scrollbar-thumb {
+  background: var(--scrollbar-thumb);
+}
+[data-theme="dark"] .stream-config-divider {
+  background: linear-gradient(to right, transparent, var(--border-default) 20%, var(--border-default) 80%, transparent);
+}
+[data-theme="dark"] .stream-threshold-val {
+  color: #818CF8;
 }

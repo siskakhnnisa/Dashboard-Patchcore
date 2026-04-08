@@ -15,23 +15,48 @@ const PipelineLogPage     = lazy(() => import("./pages/PipelineLogPage"));
 const SettingsPage        = lazy(() => import("./pages/SettingsPage"));
 const ReportsPage         = lazy(() => import("./pages/ReportsPage"));
 
+function PageSkeleton() {
+  return (
+    <div style={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      height: "60vh",
+      color: "#9CA3AF",
+      fontSize: 14,
+      gap: 10,
+    }}>
+      <div style={{
+        width: 18,
+        height: 18,
+        border: "2px solid #E5E7EB",
+        borderTopColor: "#6B7280",
+        borderRadius: "50%",
+        animation: "spin 0.7s linear infinite",
+      }} />
+      Memuat halaman...
+      <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
+    </div>
+  );
+}
+
 function App() {
   return (
     <BrowserRouter>
       <Routes>
         <Route element={<MainLayout />}>
-          <Route path="/"                   element={<DashboardPage />} />
-          <Route path="/live-monitor"       element={<LiveMonitorPage />} />
-          <Route path="/stream"             element={<StreamPage />} />
-          <Route path="/fod-snapshots"      element={<FodSnapshotsPage />} />
-          <Route path="/fod-mapping"        element={<FodMappingPage />} />
-          <Route path="/activity-history"   element={<ActivityHistoryPage />} />
-          <Route path="/detection-stats"    element={<DetectionStatsPage />} />
-          <Route path="/anomaly-trends"     element={<AnomalyTrendsPage />} />
-          <Route path="/inspection-log"     element={<InspectionLogPage />} />
-          <Route path="/pipeline/log"        element={<PipelineLogPage />} />
-          <Route path="/settings"           element={<SettingsPage />} />
-          <Route path="/reports"            element={<ReportsPage />} />
+          <Route path="/"                   element={<Suspense fallback={<PageSkeleton />}><DashboardPage /></Suspense>} />
+          <Route path="/live-monitor"       element={<Suspense fallback={<PageSkeleton />}><LiveMonitorPage /></Suspense>} />
+          <Route path="/stream"             element={<Suspense fallback={<PageSkeleton />}><StreamPage /></Suspense>} />
+          <Route path="/fod-snapshots"      element={<Suspense fallback={<PageSkeleton />}><FodSnapshotsPage /></Suspense>} />
+          <Route path="/fod-mapping"        element={<Suspense fallback={<PageSkeleton />}><FodMappingPage /></Suspense>} />
+          <Route path="/activity-history"   element={<Suspense fallback={<PageSkeleton />}><ActivityHistoryPage /></Suspense>} />
+          <Route path="/detection-stats"    element={<Suspense fallback={<PageSkeleton />}><DetectionStatsPage /></Suspense>} />
+          <Route path="/anomaly-trends"     element={<Suspense fallback={<PageSkeleton />}><AnomalyTrendsPage /></Suspense>} />
+          <Route path="/inspection-log"     element={<Suspense fallback={<PageSkeleton />}><InspectionLogPage /></Suspense>} />
+          <Route path="/pipeline/log"       element={<Suspense fallback={<PageSkeleton />}><PipelineLogPage /></Suspense>} />
+          <Route path="/settings"           element={<Suspense fallback={<PageSkeleton />}><SettingsPage /></Suspense>} />
+          <Route path="/reports"            element={<Suspense fallback={<PageSkeleton />}><ReportsPage /></Suspense>} />
         </Route>
       </Routes>
     </BrowserRouter>

@@ -57,14 +57,14 @@ async def stop_stream():
 @router.post("/pause")
 async def pause_stream():
     """Pause stream processing (masih membaca tapi tidak inference)."""
-    stream_pipeline.pause_stream()
+    await stream_pipeline.pause_stream()
     return {"success": True, "paused": True}
 
 
 @router.post("/resume")
 async def resume_stream():
     """Resume stream processing."""
-    stream_pipeline.resume_stream()
+    await stream_pipeline.resume_stream()
     return {"success": True, "paused": False}
 
 

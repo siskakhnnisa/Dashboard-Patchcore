@@ -442,3 +442,348 @@
 .pipeline-badge.running { background: #dcfce7;  color: #16a34a; }
 .pipeline-badge.stopped { background: #fefce8;  color: #ca8a04; }
 .pipeline-badge.error   { background: #fff1f2;  color: #e11d48; }
+/* --- Pipeline Toolbar variant (inside .livefeed-workspace) ------------------- */
+.pipeline-toolbar {
+  display: flex;
+  align-items: center;
+  height: 52px;
+  border-bottom: 1px solid var(--border-default);
+  background: var(--bg-card);
+  font-family: 'DM Sans', system-ui, sans-serif;
+  flex-shrink: 0;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Status accent strip at left edge */
+.pipeline-toolbar::before {
+  content: '';
+  position: absolute;
+  left: 0; top: 0; bottom: 0;
+  width: 3px;
+  background: var(--border-medium);
+  transition: background 0.3s;
+}
+.pipeline-toolbar--running::before  { background: #22c55e; }
+.pipeline-toolbar--stopped::before  { background: #f59e0b; }
+.pipeline-toolbar--error::before    { background: #ef4444; }
+.pipeline-toolbar--idle::before     { background: var(--border-medium); }
+
+/* Segments */
+.ptb-seg {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 0 14px;
+  height: 100%;
+}
+
+.ptb-left {
+  flex-shrink: 0;
+  padding-left: 18px;
+  border-right: 1px solid var(--border-default);
+}
+
+.ptb-center {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.ptb-right {
+  flex-shrink: 0;
+  padding-right: 10px;
+  border-left: 1px solid var(--border-default);
+  gap: 8px;
+}
+
+/* Vertical separator within segments */
+.ptb-sep {
+  width: 1px;
+  height: 20px;
+  background: var(--border-default);
+  flex-shrink: 0;
+}
+
+/* Status badge */
+.ptb-status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 600;
+  padding: 3px 9px;
+  border-radius: 999px;
+  letter-spacing: 0.04em;
+  white-space: nowrap;
+}
+.ptb-status--idle    { background: var(--bg-card-soft); color: var(--text-secondary); }
+.ptb-status--running { background: var(--color-green-bg); color: var(--color-green-text); }
+.ptb-status--stopped { background: var(--color-yellow-bg); color: var(--color-yellow-text); }
+.ptb-status--error   { background: var(--color-red-bg); color: var(--color-red-text); }
+
+.ptb-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--text-muted);
+  flex-shrink: 0;
+}
+.ptb-dot--live {
+  background: var(--color-green);
+  animation: ptb-pulse 1.4s ease infinite;
+}
+@keyframes ptb-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
+/* FOD Alert chip */
+.ptb-alert-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 10.5px;
+  font-weight: 700;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: var(--color-red);
+  color: #fff;
+  letter-spacing: 0.05em;
+  animation: ptb-alert-blink 1s step-end infinite;
+  white-space: nowrap;
+}
+@keyframes ptb-alert-blink {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.55; }
+}
+
+/* Upload label */
+.ptb-upload {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 5px 10px;
+  border-radius: 6px;
+  border: 1px dashed var(--border-medium);
+  background: var(--bg-card-soft);
+  cursor: pointer;
+  font-size: 12.5px;
+  color: var(--text-secondary);
+  transition: all 0.15s;
+  white-space: nowrap;
+  user-select: none;
+}
+.ptb-upload:not(.ptb-upload--disabled):hover {
+  border-color: #93c5fd;
+  background: #eff6ff;
+  color: #2563eb;
+}
+.ptb-upload--disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+.ptb-upload-label {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* File metadata (resolution / fps / duration) */
+.ptb-file-meta {
+  font-size: 11.5px;
+  color: var(--text-muted);
+  white-space: nowrap;
+}
+
+/* Center: hint */
+.ptb-hint {
+  font-size: 12px;
+  color: var(--text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  width: 100%;
+}
+
+/* Monospace text (frames, pct) */
+.ptb-mono {
+  font-size: 11.5px;
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ptb-frames { color: var(--text-secondary); }
+.ptb-pct    { color: #3b82f6; font-weight: 600; min-width: 38px; text-align: right; }
+
+/* Progress bar */
+.ptb-progress-wrap {
+  flex: 1;
+  min-width: 60px;
+  max-width: 240px;
+  height: 5px;
+  background: var(--bg-card-soft);
+  border-radius: 999px;
+  overflow: hidden;
+}
+.ptb-progress-fill {
+  height: 100%;
+  background: #3b82f6;
+  border-radius: 999px;
+  transition: width 0.3s;
+}
+
+/* Threshold control */
+.ptb-threshold-ctrl {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.ptb-icon-muted { color: var(--text-muted); flex-shrink: 0; }
+.ptb-range {
+  width: 72px;
+  accent-color: #3b82f6;
+  cursor: pointer;
+}
+.ptb-threshold-val {
+  min-width: 30px;
+  text-align: right;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+/* FPS chip */
+.ptb-fps-chip {
+  font-family: 'SF Mono', 'Fira Code', Consolas, monospace;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: #22c55e;
+  background: rgba(34, 197, 94, 0.1);
+  padding: 2px 8px;
+  border-radius: 4px;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+.ptb-fps-unit {
+  font-weight: 400;
+  font-size: 10px;
+  opacity: 0.7;
+}
+
+/* Toolbar buttons */
+.ptb-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 12.5px;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: all 0.15s;
+  white-space: nowrap;
+  flex-shrink: 0;
+  font-family: inherit;
+}
+.ptb-btn:disabled { opacity: 0.38; cursor: not-allowed; }
+.ptb-stop-icon    { font-size: 9px; }
+
+.ptb-btn--start {
+  background: #2563eb;
+  color: #fff;
+}
+.ptb-btn--start:hover:not(:disabled) { background: #1d4ed8; }
+
+.ptb-btn--stop {
+  background: var(--color-red-bg);
+  color: var(--color-red-text);
+  border: 1px solid var(--color-red-border);
+}
+.ptb-btn--stop:hover:not(:disabled) { filter: brightness(0.96); }
+
+.ptb-btn--map {
+  width: 34px;
+  height: 34px;
+  padding: 0;
+  justify-content: center;
+  background: var(--color-indigo-bg);
+  color: var(--color-indigo-text);
+  border: 1px solid var(--color-indigo-border);
+  border-radius: 6px;
+}
+.ptb-btn--map:hover:not(:disabled) { filter: brightness(0.95); }
+
+/* ── Paused status ── */
+.ptb-status--paused { background: var(--color-yellow-bg, #FEF3C7); color: var(--color-yellow-text, #B45309); }
+.ptb-dot--paused {
+  background: var(--color-yellow, #EAB308);
+  animation: ptb-pulse 1.4s ease infinite;
+}
+
+/* Pause/Resume button */
+.ptb-btn--pause {
+  background: var(--color-yellow-bg, #FEF3C7);
+  color: var(--color-yellow-text, #B45309);
+  border: 1px solid var(--color-yellow-border, #FDE68A);
+}
+.ptb-btn--pause:hover:not(:disabled) { filter: brightness(0.96); }
+
+.ptb-btn--resume {
+  background: var(--color-green-bg, #DCFCE7);
+  color: var(--color-green-text, #16A34A);
+  border: 1px solid var(--color-green-border, #BBF7D0);
+}
+.ptb-btn--resume:hover:not(:disabled) { filter: brightness(0.96); }
+
+/* Paused chip in progress bar */
+.ptb-paused-chip {
+  font-size: 10px;
+  font-weight: 700;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: var(--color-yellow-bg, #FEF3C7);
+  color: var(--color-yellow-text, #B45309);
+  letter-spacing: 0.05em;
+  flex-shrink: 0;
+  animation: ptb-pulse 1.4s ease infinite;
+}
+
+/* Uploading hint with spinner in toolbar center */
+.ptb-uploading-hint {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: #60a5fa !important;
+  font-weight: 600 !important;
+  opacity: 1 !important;
+}
+
+.ptb-upload-spinner {
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(96, 165, 250, 0.25);
+  border-top-color: #60a5fa;
+  border-radius: 50%;
+  animation: ptb-spin 0.7s linear infinite;
+  flex-shrink: 0;
+}
+
+@keyframes ptb-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Pipeline panel pause button */
+.pipeline-btn-pause {
+  background: #FEF3C7;
+  color: #B45309;
+  border: 1px solid #FDE68A;
+}
+.pipeline-btn-pause:hover:not(:disabled) {
+  background: #FDE68A;
+}
+
+/* Pipeline badge paused */
+.pipeline-badge.paused { background: #FEF3C7; color: #B45309; }

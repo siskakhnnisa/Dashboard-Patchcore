@@ -1,4 +1,6 @@
 @import "tailwindcss";
+@import "./styles/theme.css";
+@import "./styles/dark-overrides.css";
 
 html {
   font-size: 17px;
@@ -10,13 +12,17 @@ html {
   font-weight: 400;
 
   color-scheme: light;
-  color: #1a1a1a;
-  background-color: #ffffff;
+  color: var(--text-primary);
+  background-color: var(--bg-page);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
+}
+
+[data-theme="dark"] {
+  color-scheme: dark;
 }
 
 a {
@@ -47,7 +53,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #1a1a1a;
+  background-color: var(--bg-card);
+  color: var(--text-primary);
   cursor: pointer;
 }
 button:hover {
@@ -59,7 +66,7 @@ button:focus-visible {
 }
 
 @media (prefers-color-scheme: light) {
-  :root {
+  :root:not([data-theme="dark"]) {
     color: #213547;
     background-color: #ffffff;
   }

@@ -24,17 +24,17 @@ function fmtConf(v) { return v != null ? `${(v * 100).toFixed(1)}%` : "â€”"
 /* â”€â”€ Section header â”€â”€ */
 function SectionHead({ icon: Icon, title, color = "#6366F1" }) {
   return (
-    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", borderBottom: "1px solid #E2E8F0" }}>
+    <div style={{ display: "flex", alignItems: "center", gap: 8, padding: "12px 16px", borderBottom: "1px solid var(--border-default)" }}>
       <Icon size={15} color={color} />
-      <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "#374151" }}>{title}</span>
+      <span style={{ fontSize: "0.82rem", fontWeight: 600, color: "var(--text-primary)" }}>{title}</span>
     </div>
   );
 }
 
-/* â”€â”€ Card wrapper â”€â”€ */
+/* ── Card wrapper ── */
 function Card({ children, style = {} }) {
   return (
-    <div style={{ background: "#fff", border: "1px solid #E2E8F0", borderRadius: 12, overflow: "hidden", ...style }}>
+    <div style={{ background: "var(--bg-card)", border: "1px solid var(--border-default)", borderRadius: 12, overflow: "hidden", ...style }}>
       {children}
     </div>
   );
@@ -76,7 +76,7 @@ export default function ReportsPage() {
     <div ref={printRef} style={{
       display: "flex", flexDirection: "column", gap: 20,
       padding: "24px 28px 48px", maxWidth: 1280, margin: "0 auto",
-      background: "#F9FAFB", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif",
+      background: "var(--bg-page)", fontFamily: "-apple-system, BlinkMacSystemFont, 'Segoe UI', 'Inter', Arial, sans-serif",
       minHeight: "100vh",
     }}>
 
@@ -85,11 +85,11 @@ export default function ReportsPage() {
         <div>
           <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
             <FileText size={20} color="#6366F1" />
-            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "#1E293B", letterSpacing: "-0.02em" }}>
+            <h1 style={{ margin: 0, fontSize: "1.5rem", fontWeight: 700, color: "var(--text-heading)", letterSpacing: "-0.02em" }}>
               Laporan Deteksi FOD
             </h1>
           </div>
-          <p style={{ margin: 0, fontSize: "0.82rem", color: "#64748B" }}>
+          <p style={{ margin: 0, fontSize: "0.82rem", color: "var(--text-secondary)" }}>
             Digenerate: {today}
           </p>
         </div>
@@ -145,23 +145,23 @@ export default function ReportsPage() {
         <div style={{ overflowX: "auto" }}>
           <table style={{ width: "100%", borderCollapse: "collapse", fontSize: "0.8rem" }}>
             <thead>
-              <tr style={{ borderBottom: "1px solid #E2E8F0" }}>
+              <tr style={{ borderBottom: "1px solid var(--border-default)" }}>
                 {["#", "Sesi ID", "Tanggal Pertama Deteksi", "Total FOD", "Avg Confidence"].map((h) => (
-                  <th key={h} style={{ textAlign: "left", padding: "10px 14px", color: "#64748B", fontSize: "0.72rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{h}</th>
+                  <th key={h} style={{ textAlign: "left", padding: "10px 14px", color: "var(--text-secondary)", fontSize: "0.72rem", fontWeight: 600, textTransform: "uppercase", letterSpacing: "0.04em", whiteSpace: "nowrap" }}>{h}</th>
                 ))}
               </tr>
             </thead>
             <tbody>
               {sessions.length > 0 ? sessions.map((s, i) => (
-                <tr key={s.video_id} style={{ borderBottom: "1px solid #F1F5F9" }}>
+                <tr key={s.video_id} style={{ borderBottom: "1px solid var(--border-light)" }}>
                   <td style={{ padding: "10px 14px", color: "#6366F1", fontWeight: 700 }}>{i + 1}</td>
-                  <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: "0.75rem", color: "#374151" }}>{s.short_id?.toUpperCase()}</td>
-                  <td style={{ padding: "10px 14px", color: "#64748B" }}>
+                  <td style={{ padding: "10px 14px", fontFamily: "monospace", fontSize: "0.75rem", color: "var(--text-primary)" }}>{s.short_id?.toUpperCase()}</td>
+                  <td style={{ padding: "10px 14px", color: "var(--text-secondary)" }}>
                     {s.first_detection
                       ? new Date(s.first_detection).toLocaleString("id-ID", { day: "2-digit", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit" })
                       : "â€”"}
                   </td>
-                  <td style={{ padding: "10px 14px", fontWeight: 700, color: "#1E293B" }}>{s.count}</td>
+                  <td style={{ padding: "10px 14px", fontWeight: 700, color: "var(--text-heading)" }}>{s.count}</td>
                   <td style={{ padding: "10px 14px" }}>
                     <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
                       <div style={{ flex: 1, height: 6, background: "#F1F5F9", borderRadius: 999, overflow: "hidden", minWidth: 60 }}>
@@ -172,13 +172,13 @@ export default function ReportsPage() {
                           borderRadius: 999,
                         }} />
                       </div>
-                      <span style={{ fontWeight: 700, color: "#374151", minWidth: 40 }}>{fmtConf(s.avg_confidence)}</span>
+                      <span style={{ fontWeight: 700, color: "var(--text-primary)", minWidth: 40 }}>{fmtConf(s.avg_confidence)}</span>
                     </div>
                   </td>
                 </tr>
               )) : (
                 <tr>
-                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "#94A3B8" }}>Belum ada data sesiâ€¦</td>
+                  <td colSpan={5} style={{ padding: "40px", textAlign: "center", color: "var(--text-muted)" }}>Belum ada data sesi…</td>
                 </tr>
               )}
             </tbody>

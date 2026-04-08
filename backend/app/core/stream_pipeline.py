@@ -19,6 +19,7 @@ from app.services.activity_history import finalize_stream_history
 from app.schemas.detection import PipelineStatus
 from app.config import settings
 from app.core.logger import logger
+from app.core.pipeline_manager import _FODTracker, _match_detections
 
 
 class StreamPipelineManager:
@@ -54,6 +55,11 @@ class StreamPipelineManager:
         self._current_fps = 0.0
         self._total_frames_processed = 0
 
+        # Tracking state — identik dengan notebook trial2
+        self._trackers: list = []
+        self._next_track_id: int = 1
+        self._confirmed_ids: set = set()
+
     def initialize(self, inference_pipeline):
         """Set shared inference pipeline (dipanggil saat startup)."""
         self.inference = inference_pipeline
@@ -81,6 +87,11 @@ class StreamPipelineManager:
         self._start_time = time.time()
         self._total_frames_processed = 0
 
+        # Reset tracker
+        self._trackers = []
+        self._next_track_id = 1
+        self._confirmed_ids = set()
+
         self._task = asyncio.create_task(self._run_loop())
         logger.info(f"Stream pipeline started: {stream_url} ({stream_name})")
 
@@ -100,15 +111,29 @@ class StreamPipelineManager:
         logger.info("Stream pipeline stopped")
         await self._broadcast({"type": "status", "status": "stopped", "stream_name": self.stream_name})
 
-    def pause_stream(self):
+    async def pause_stream(self):
         """Pause processing (masih membaca tapi tidak inference)."""
         self._paused = True
+        self.status = PipelineStatus.PAUSED
         logger.info("Stream pipeline paused")
+        await self._broadcast({
+            "type": "status",
+            "status": "paused",
+            "pipeline_status": "paused",
+            "stream_name": self.stream_name,
+        })
 
-    def resume_stream(self):
+    async def resume_stream(self):
         """Resume processing."""
         self._paused = False
+        self.status = PipelineStatus.RUNNING
         logger.info("Stream pipeline resumed")
+        await self._broadcast({
+            "type": "status",
+            "status": "running",
+            "pipeline_status": "running",
+            "stream_name": self.stream_name,
+        })
 
     async def _run_loop(self):
         """
@@ -165,16 +190,39 @@ class StreamPipelineManager:
                     None, self.inference.process_frame, frame
                 )
 
+                # Tracking — identik dengan notebook trial2
+                det_boxes = [(b.x, b.y, b.width, b.height) for b in detection.bboxes]
+                det_confs = {(b.x, b.y, b.width, b.height): b.confidence for b in detection.bboxes}
+                matched, unmatched_dets, unmatched_tracks = _match_detections(det_boxes, self._trackers)
+                for det_idx, track_idx in matched:
+                    box = det_boxes[det_idx]
+                    self._trackers[track_idx].update(box, det_confs[box], frame_idx)
+                for det_idx in unmatched_dets:
+                    box = det_boxes[det_idx]
+                    self._trackers.append(_FODTracker(self._next_track_id, box, det_confs[box], frame_idx))
+                    self._next_track_id += 1
+                for track_idx in unmatched_tracks:
+                    self._trackers[track_idx].mark_lost()
+                self._trackers = [t for t in self._trackers if not t.is_dead()]
+                for t in self._trackers:
+                    if t.is_confirmed:
+                        self._confirmed_ids.add(t.track_id)
+                from app.schemas.detection import BoundingBox as _BBox
+                confirmed_bboxes = []
+                for t in self._trackers:
+                    if t.should_draw():
+                        x, y, w, h = t.get_stabilized_box()
+                        confirmed_bboxes.append(_BBox(x=x, y=y, width=w, height=h,
+                                                      confidence=round(t.get_avg_confidence(), 4), label="FOD"))
+                detection.bboxes = confirmed_bboxes
+                detection.anomaly_detected = len(confirmed_bboxes) > 0
+
                 # Record event
                 self.event_logger.record(detection)
 
                 # Save snapshot if FOD detected
                 if detection.anomaly_detected and detection.bboxes:
-                    # bbox coordinates are based on frame_resized inside process_frame,
-                    # so resize frame to match before cropping.
-                    import cv2 as _cv2
-                    frame_for_crop = _cv2.resize(frame, (settings.FRAME_WIDTH, settings.FRAME_HEIGHT))
-                    await self._save_snapshots(frame_for_crop, detection, frame_idx)
+                    await self._save_snapshots(frame, detection, frame_idx)
 
                 # Draw overlay
                 annotated = self.processor.draw_detection_overlay(frame, detection)

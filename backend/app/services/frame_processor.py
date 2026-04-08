@@ -7,7 +7,7 @@ class FrameProcessor:
     """Utility untuk encode frame dan render overlay"""
     
     @staticmethod
-    def encode_frame_bytes(frame: np.ndarray, quality: int = 65, max_width: int = 640) -> bytes:
+    def encode_frame_bytes(frame: np.ndarray, quality: int = 85, max_width: int = 1280) -> bytes:
         """Resize frame dan encode ke JPEG bytes (untuk WebSocket binary)"""
         h, w = frame.shape[:2]
         if w > max_width:

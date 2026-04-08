@@ -87,6 +87,81 @@ export function useDeleteSnapshot() {
     },
   });
 }
+
+// ── Bulk validate snapshots ──────────────────────────────────────────────
+interface BulkValidateParams {
+  ids: number[];
+  status: string;
+  staffName?: string | null;
+  notes?: string | null;
+}
+
+async function bulkValidateSnapshots({ ids, status, staffName, notes }: BulkValidateParams) {
+  const res = await fetch(`${API_BASE}/fod-snapshots/bulk-validate`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      ids,
+      validation_status: status,
+      validated_by: staffName || undefined,
+      validation_notes: notes || undefined,
+    }),
+  });
+  if (!res.ok) throw new Error(`Bulk validasi gagal: ${res.status}`);
+  return res.json();
+}
+
+export function useBulkValidateSnapshots() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: bulkValidateSnapshots,
+    onSuccess: (data) => {
+      for (const snap of data.updated ?? []) {
+        syncSnapshotAcrossCaches(qc, snap);
+      }
+    },
+  });
+}
+
+// ── Bulk delete snapshots ─────────────────────────────────────────────────
+async function bulkDeleteSnapshots(ids: number[]) {
+  const res = await fetch(`${API_BASE}/fod-snapshots/bulk-delete`, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ ids }),
+  });
+  if (!res.ok) throw new Error(`Bulk hapus gagal: ${res.status}`);
+  return res.json();
+}
+
+export function useBulkDeleteSnapshots() {
+  const qc = useQueryClient();
+  return useMutation({
+    mutationFn: bulkDeleteSnapshots,
+    onMutate: async (ids) => {
+      await qc.cancelQueries({ queryKey: ["fod-snapshots"] });
+      const queries = qc.getQueryCache().findAll({ queryKey: ["fod-snapshots"] });
+      const previous = queries.map((q) => ({
+        queryKey: q.queryKey,
+        data: qc.getQueryData(q.queryKey),
+      }));
+      for (const id of ids) {
+        removeSnapshotAcrossCaches(qc, id);
+      }
+      return { previous };
+    },
+    onError: (_error, _ids, context) => {
+      for (const entry of context?.previous ?? []) {
+        qc.setQueryData(entry.queryKey, entry.data);
+      }
+    },
+    onSuccess: (data) => {
+      for (const id of data.deleted_ids ?? []) {
+        removeSnapshotAcrossCaches(qc, id);
+      }
+    },
+  });
+}
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const API_BASE = (import.meta as any).env?.VITE_API_BASE || "http://localhost:8000";
@@ -175,6 +250,7 @@ export function useValidateSnapshot() {
 async function fetchAllSnapshots(validationStatus?: string | null): Promise<any[]> {
   const qs = new URLSearchParams();
   if (validationStatus) qs.set("validation_status", validationStatus);
+  qs.set("limit", "500");
   const res = await fetch(`${API_BASE}/fod-snapshots/?${qs}`);
   if (!res.ok) throw new Error(`Gagal fetch all snapshots: ${res.status}`);
   return res.json();
@@ -187,8 +263,10 @@ export function useAllSnapshots(
   return useQuery({
     queryKey: ["fod-snapshots", "all", validationStatus ?? "all"],
     queryFn: () => fetchAllSnapshots(validationStatus),
-    staleTime: 5000,
-    refetchInterval: options?.refetchInterval ?? 10000,
+    staleTime: 30000,
+    gcTime: 60000,
+    refetchInterval: options?.refetchInterval ?? false,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -461,8 +539,9 @@ export function useSystemLogs(params: {
       if (!res.ok) throw new Error(`Gagal fetch system logs: ${res.status}`);
       return res.json();
     },
-    staleTime: 5000,
-    refetchInterval: 10000,
+    staleTime: 15000,
+    refetchInterval: false,
+    refetchOnWindowFocus: false,
   });
 }
 
@@ -474,8 +553,9 @@ export function useSystemLogStats() {
       if (!res.ok) throw new Error(`Gagal fetch log stats: ${res.status}`);
       return res.json();
     },
-    staleTime: 10000,
-    refetchInterval: 30000,
+    staleTime: 30000,
+    refetchInterval: 60000,
+    refetchOnWindowFocus: false,
   });
 }
 

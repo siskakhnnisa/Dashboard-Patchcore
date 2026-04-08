@@ -13,9 +13,12 @@ import {
   ScrollText,
   FolderSearch,
   Radio,
+  Sun,
+  Moon,
 } from "lucide-react";
 import "../../styles/Sidebar.css";
 import { preloadRoute } from "../../utils/routePreloaders";
+import { useThemeStore } from "../../stores/useThemeStore";
 
 const ROUTE_MAP = {
   "home":              "/",
@@ -61,6 +64,8 @@ const NAV_GROUPS = [
 export default function Sidebar() {
   const navigate = useNavigate();
   const location = useLocation();
+  const theme = useThemeStore((s) => s.theme);
+  const toggleTheme = useThemeStore((s) => s.toggleTheme);
 
   const currentId = Object.entries(ROUTE_MAP).find(
     ([, path]) => path === location.pathname
@@ -113,6 +118,20 @@ export default function Sidebar() {
           </div>
         ))}
       </nav>
+
+      {/* Theme Toggle */}
+      <div className="sidebar-theme-toggle">
+        <Sun size={14} className="sidebar-theme-icon" />
+        <button
+          type="button"
+          className={`theme-switch ${theme === "dark" ? "active" : ""}`}
+          onClick={toggleTheme}
+          aria-label="Toggle dark mode"
+        >
+          <span className="theme-switch-knob" />
+        </button>
+        <Moon size={14} className="sidebar-theme-icon" />
+      </div>
 
       {/* Footer */}
       <div className="sidebar-footer">

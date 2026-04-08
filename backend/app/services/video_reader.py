@@ -9,14 +9,17 @@ from typing import Optional
 from app.config import settings
 from app.core.logger import logger
 
-# Try to use Decord for faster video decoding (2-3x faster than OpenCV)
-try:
-    from decord import VideoReader as DecordReader, cpu, gpu
-    HAS_DECORD = True
-    logger.info("Decord available — using hardware-accelerated video decoding")
-except ImportError:
-    HAS_DECORD = False
-    logger.info("Decord not installed — falling back to OpenCV VideoCapture")
+# ── PENTING ──────────────────────────────────────────────────────────────────
+# Selalu gunakan cv2.VideoCapture untuk konsistensi dengan notebook.
+# Decoder yang berbeda (Decord, PyAV) menghasilkan pixel values yang sedikit
+# berbeda karena implementasi FFmpeg/codec yang berbeda. PatchCore sangat
+# sensitif terhadap perbedaan pixel value (nearest-neighbor di high-dim space),
+# sehingga bahkan selisih 1-2 piksel bisa menyebabkan hasil deteksi SANGAT
+# berbeda. Notebook menggunakan cv2.VideoCapture, maka dashboard juga harus
+# menggunakan cv2.VideoCapture agar hasilnya konsisten/identik.
+# ─────────────────────────────────────────────────────────────────────────────
+HAS_DECORD = False  # Disabled: Decord produces different pixel values than cv2
+logger.info("Video reader menggunakan OpenCV VideoCapture (identik dengan notebook)")
 
 
 class VideoReader:
